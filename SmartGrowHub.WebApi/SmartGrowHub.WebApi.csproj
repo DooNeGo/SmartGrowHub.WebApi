@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
-    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Domain\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
     <ProjectReference Include="..\SmartGrowHub.WebApi.Application\SmartGrowHub.WebApi.Application.csproj" />
     <ProjectReference Include="..\SmartGrowHub.WebApi.Infrastructure\SmartGrowHub.WebApi.Infrastructure.csproj" />
   </ItemGroup>

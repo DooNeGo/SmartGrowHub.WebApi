@@ -1,5 +1,4 @@
-﻿using SmartGrowHub.Domain.Model;
-using SmartGrowHub.Domain.Requests;
+﻿using SmartGrowHub.Domain.Requests;
 using SmartGrowHub.Domain.Responses;
 
 namespace SmartGrowHub.WebApi.Application.Interfaces.Services;

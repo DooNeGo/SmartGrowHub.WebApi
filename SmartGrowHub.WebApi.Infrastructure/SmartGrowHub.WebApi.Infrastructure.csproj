@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
     <ProjectReference Include="..\SmartGrowHub.WebApi.Application\SmartGrowHub.WebApi.Application.csproj" />
   </ItemGroup>
 

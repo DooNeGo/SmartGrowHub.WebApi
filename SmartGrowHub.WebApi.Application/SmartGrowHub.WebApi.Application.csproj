@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Domain\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
   </ItemGroup>
 
 </Project>
