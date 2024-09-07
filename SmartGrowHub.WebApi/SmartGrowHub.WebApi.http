@@ -1,0 +1,6 @@
+@SmartGrowHub.WebApi_HostAddress = http://localhost:5191
+
+GET {{SmartGrowHub.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
