@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartGrowHub.WebApi.Infrastructure.Data;
@@ -12,37 +11,33 @@ using SmartGrowHub.WebApi.Infrastructure.Data;
 namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240904110555_Initial")]
+    [Migration("20240909114246_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("SettingId")
                         .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Unit")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Value")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -54,14 +49,14 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("PlantId")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("UserId")
                         .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.HasKey("Id");
 
@@ -75,11 +70,11 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.PlantDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -89,25 +84,25 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("TEXT");
 
                     b.Property<byte[]>("GrowHubId")
                         .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Unit")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -119,17 +114,17 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<byte[]>("GrowHubId")
                         .IsRequired()
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<int>("Mode")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Type")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -141,23 +136,23 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", b =>
                 {
                     b.Property<byte[]>("Id")
-                        .HasColumnType("varbinary(16)");
+                        .HasColumnType("BLOB");
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

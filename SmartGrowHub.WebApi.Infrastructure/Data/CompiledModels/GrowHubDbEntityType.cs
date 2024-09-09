@@ -7,7 +7,8 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Json.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -35,7 +36,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(GrowHubDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 afterSaveBehavior: PropertySaveBehavior.Throw,
                 valueConverter: new UlidConverter());
-            id.TypeMapping = SqlServerByteArrayTypeMapping.Default.Clone(
+            id.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -49,18 +50,16 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
                     (Byte[] source) => source.ToArray()),
                 mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "varbinary(16)",
                     size: 16),
                 converter: new ValueConverter<Ulid, byte[]>(
                     (Ulid model) => model.ToByteArray(),
                     (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
                 jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
-                    JsonByteArrayReaderWriter.Instance,
+                    SqliteJsonByteArrayReaderWriter.Instance,
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            id.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var plantId = runtimeEntityType.AddProperty(
                 "PlantId",
@@ -69,7 +68,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(GrowHubDb).GetField("<PlantId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 valueConverter: new UlidConverter());
-            plantId.TypeMapping = SqlServerByteArrayTypeMapping.Default.Clone(
+            plantId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid?>(
                     (Nullable<Ulid> v1, Nullable<Ulid> v2) => v1.HasValue && v2.HasValue && ((Ulid)v1).Equals((Ulid)v2) || !v1.HasValue && !v2.HasValue,
                     (Nullable<Ulid> v) => v.HasValue ? ((Ulid)v).GetHashCode() : 0,
@@ -83,17 +82,15 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
                     (Byte[] source) => source.ToArray()),
                 mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "varbinary(16)",
                     size: 16),
                 converter: new ValueConverter<Ulid, byte[]>(
                     (Ulid model) => model.ToByteArray(),
                     (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
                 jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
-                    JsonByteArrayReaderWriter.Instance,
+                    SqliteJsonByteArrayReaderWriter.Instance,
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
-            plantId.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var userId = runtimeEntityType.AddProperty(
                 "UserId",
@@ -101,7 +98,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 propertyInfo: typeof(GrowHubDb).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubDb).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            userId.TypeMapping = SqlServerByteArrayTypeMapping.Default.Clone(
+            userId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -115,18 +112,16 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
                     (Byte[] source) => source.ToArray()),
                 mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "varbinary(16)",
                     size: 16),
                 converter: new ValueConverter<Ulid, byte[]>(
                     (Ulid model) => model.ToByteArray(),
                     (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
                 jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
-                    JsonByteArrayReaderWriter.Instance,
+                    SqliteJsonByteArrayReaderWriter.Instance,
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
             userId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            userId.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });

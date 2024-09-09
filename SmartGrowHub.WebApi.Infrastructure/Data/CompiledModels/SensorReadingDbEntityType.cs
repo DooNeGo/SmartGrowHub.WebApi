@@ -7,7 +7,8 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Internal;
+using Microsoft.EntityFrameworkCore.Sqlite.Storage.Json.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -36,7 +37,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(SensorReadingDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 afterSaveBehavior: PropertySaveBehavior.Throw,
                 valueConverter: new UlidConverter());
-            id.TypeMapping = SqlServerByteArrayTypeMapping.Default.Clone(
+            id.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -50,18 +51,16 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
                     (Byte[] source) => source.ToArray()),
                 mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "varbinary(16)",
                     size: 16),
                 converter: new ValueConverter<Ulid, byte[]>(
                     (Ulid model) => model.ToByteArray(),
                     (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
                 jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
-                    JsonByteArrayReaderWriter.Instance,
+                    SqliteJsonByteArrayReaderWriter.Instance,
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            id.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var createdAt = runtimeEntityType.AddProperty(
                 "CreatedAt",
@@ -69,20 +68,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 propertyInfo: typeof(SensorReadingDb).GetProperty("CreatedAt", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<CreatedAt>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 sentinel: new DateOnly(1, 1, 1));
-            createdAt.TypeMapping = SqlServerDateOnlyTypeMapping.Default.Clone(
-                comparer: new ValueComparer<DateOnly>(
-                    (DateOnly v1, DateOnly v2) => v1.Equals(v2),
-                    (DateOnly v) => v.GetHashCode(),
-                    (DateOnly v) => v),
-                keyComparer: new ValueComparer<DateOnly>(
-                    (DateOnly v1, DateOnly v2) => v1.Equals(v2),
-                    (DateOnly v) => v.GetHashCode(),
-                    (DateOnly v) => v),
-                providerValueComparer: new ValueComparer<DateOnly>(
-                    (DateOnly v1, DateOnly v2) => v1.Equals(v2),
-                    (DateOnly v) => v.GetHashCode(),
-                    (DateOnly v) => v));
-            createdAt.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
+            createdAt.TypeMapping = SqliteDateOnlyTypeMapping.Default;
 
             var growHubId = runtimeEntityType.AddProperty(
                 "GrowHubId",
@@ -90,7 +76,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 propertyInfo: typeof(SensorReadingDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            growHubId.TypeMapping = SqlServerByteArrayTypeMapping.Default.Clone(
+            growHubId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -104,18 +90,16 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
                     (Byte[] source) => source.ToArray()),
                 mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "varbinary(16)",
                     size: 16),
                 converter: new ValueConverter<Ulid, byte[]>(
                     (Ulid model) => model.ToByteArray(),
                     (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
                 jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
-                    JsonByteArrayReaderWriter.Instance,
+                    SqliteJsonByteArrayReaderWriter.Instance,
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
             growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            growHubId.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var type = runtimeEntityType.AddProperty(
                 "Type",
@@ -135,6 +119,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     (int v1, int v2) => v1 == v2,
                     (int v) => v,
                     (int v) => v),
+                mappingInfo: new RelationalTypeMappingInfo(
+                    storeTypeName: "INTEGER"),
                 converter: new ValueConverter<SensorType, int>(
                     (SensorType value) => (int)value,
                     (int value) => (SensorType)value),
@@ -144,57 +130,20 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                         (SensorType value) => (int)value,
                         (int value) => (SensorType)value)));
             type.SetSentinelFromProviderValue(0);
-            type.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
 
             var unit = runtimeEntityType.AddProperty(
                 "Unit",
                 typeof(string),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("Unit", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<Unit>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            unit.TypeMapping = SqlServerStringTypeMapping.Default.Clone(
-                comparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                keyComparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                providerValueComparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "nvarchar(max)",
-                    unicode: true,
-                    dbType: System.Data.DbType.String),
-                storeTypePostfix: StoreTypePostfix.None);
-            unit.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
+            unit.TypeMapping = SqliteStringTypeMapping.Default;
 
             var value = runtimeEntityType.AddProperty(
                 "Value",
                 typeof(string),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<Value>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            value.TypeMapping = SqlServerStringTypeMapping.Default.Clone(
-                comparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                keyComparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                providerValueComparer: new ValueComparer<string>(
-                    (string v1, string v2) => v1 == v2,
-                    (string v) => v.GetHashCode(),
-                    (string v) => v),
-                mappingInfo: new RelationalTypeMappingInfo(
-                    storeTypeName: "nvarchar(max)",
-                    unicode: true,
-                    dbType: System.Data.DbType.String),
-                storeTypePostfix: StoreTypePostfix.None);
-            value.AddAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.None);
+            value.TypeMapping = SqliteStringTypeMapping.Default;
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });

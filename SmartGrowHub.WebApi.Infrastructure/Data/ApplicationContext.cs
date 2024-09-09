@@ -1,12 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.WebApi.Infrastructure.Data.Convertors;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Data;
 
-internal sealed class ApplicationContext(DbContextOptions<ApplicationContext> options)
-    : DbContext(options)
+internal sealed class ApplicationContext : DbContext
 {
+    //public ApplicationContext()
+    //{
+    //    Database.EnsureCreated();
+    //}
+
     public DbSet<UserDb> Users => Set<UserDb>();
 
     public DbSet<GrowHubDb> GrowHubs => Set<GrowHubDb>();
@@ -26,6 +31,16 @@ internal sealed class ApplicationContext(DbContextOptions<ApplicationContext> op
         configurationBuilder
             .Properties<Ulid>()
             .HaveConversion<UlidConverter>();
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            .UseModel(ApplicationContextModel.Instance)
+            .UseSqlite("DataSource=SmartGrowHubLocalDb");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

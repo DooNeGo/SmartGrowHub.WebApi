@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/SmartGrowHub.WebApi/SmartGrowHubLocalDb
+/SmartGrowHub.WebApi/SmartGrowHubLocalDb-shm
+/SmartGrowHub.WebApi/SmartGrowHubLocalDb-wal

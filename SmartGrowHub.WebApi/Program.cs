@@ -20,7 +20,7 @@ internal sealed class Program
         });
 
         builder.Services
-            .AddInfrastructure(builder.Configuration)
+            .AddInfrastructure()
             .AddAuthentication(builder.Configuration)
             .AddAuthorization();
 

@@ -15,8 +15,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "Plants",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -27,11 +27,11 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    UserName = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,9 +42,9 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "GrowHubs",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    PlantId = table.Column<byte[]>(type: "varbinary(16)", nullable: true),
-                    UserId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    PlantId = table.Column<byte[]>(type: "BLOB", nullable: true),
+                    UserId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,12 +66,12 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "SensorReading",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
-                    GrowHubId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: false),
+                    Unit = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "TEXT", nullable: false),
+                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,10 +88,10 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "Settings",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Mode = table.Column<int>(type: "int", nullable: false),
-                    GrowHubId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Mode = table.Column<int>(type: "INTEGER", nullable: false),
+                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,11 +108,11 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 name: "Components",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "varbinary(16)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<int>(type: "int", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SettingId = table.Column<byte[]>(type: "varbinary(16)", nullable: false)
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Value = table.Column<int>(type: "INTEGER", nullable: false),
+                    Unit = table.Column<string>(type: "TEXT", nullable: false),
+                    SettingId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
