@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace SmartGrowHub.WebApi.SerializerContext;
 
 [JsonSerializable(typeof(UserDto))]
-[JsonSerializable(typeof(LoginResponseDto))]
+[JsonSerializable(typeof(LogInResponseDto))]
 [JsonSerializable(typeof(LogInRequestDto))]
 [JsonSerializable(typeof(RegisterRequestDto))]
 public sealed partial class SmartGrowHubSerializerContext
