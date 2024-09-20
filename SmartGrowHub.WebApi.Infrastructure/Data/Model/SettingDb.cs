@@ -15,5 +15,5 @@ internal sealed record SettingDb(
         default!, default,
         default, [],
         default, default!)
-    { }     // Used by EF Core
+    { } // Used by EF Core
 }

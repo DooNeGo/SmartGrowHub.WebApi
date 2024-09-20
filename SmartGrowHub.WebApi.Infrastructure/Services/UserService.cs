@@ -10,8 +10,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Services;
 internal sealed class UserService(IUserRepository userRepository) : IUserService
 {
     public EitherAsync<Exception, Unit> AddAsync(User user, CancellationToken cancellationToken) =>
-        userRepository
-            .Add(user).ToAsync()
+        userRepository.Add(user).ToAsync()
             .Bind(_ => userRepository.SaveChangesAsync(cancellationToken))
             .Match(
                 Succ: unit => (Either<Exception, Unit>)unit,
@@ -21,8 +20,7 @@ internal sealed class UserService(IUserRepository userRepository) : IUserService
             .ToAsync();
 
     public EitherAsync<Exception, User> GetAsync(UserName userName, CancellationToken cancellationToken) =>
-        userRepository
-            .GetAsync(userName, cancellationToken)
+        userRepository.GetAsync(userName, cancellationToken)
             .Match(
                 Some: fin => fin.Match(
                     Succ: user => (Either<Exception, User>)user,
@@ -32,8 +30,7 @@ internal sealed class UserService(IUserRepository userRepository) : IUserService
             .ToAsync();
 
     public EitherAsync<Exception, User> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
-        userRepository
-            .GetAsync(id, cancellationToken)
+        userRepository.GetAsync(id, cancellationToken)
             .Match(
                 Some: fin => fin.Match(
                     Succ: user => (Either<Exception, User>)user,

@@ -22,6 +22,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var sensorReadingDb = SensorReadingDbEntityType.Create(this);
             var settingDb = SettingDbEntityType.Create(this);
             var userDb = UserDbEntityType.Create(this);
+            var userSessionDb = UserSessionDbEntityType.Create(this);
 
             ComponentDbEntityType.CreateForeignKey1(componentDb, settingDb);
             GrowHubDbEntityType.CreateForeignKey1(growHubDb, plantDb);
@@ -35,6 +36,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             SensorReadingDbEntityType.CreateAnnotations(sensorReadingDb);
             SettingDbEntityType.CreateAnnotations(settingDb);
             UserDbEntityType.CreateAnnotations(userDb);
+            UserSessionDbEntityType.CreateAnnotations(userSessionDb);
 
             AddAnnotation("ProductVersion", "8.0.8");
             AddRuntimeAnnotation("Relational:RelationalModel", CreateRelationalModel());
@@ -411,6 +413,56 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             RelationalModel.CreateColumnMapping(emailColumn, userDb.FindProperty("Email")!, usersTableMapping);
             RelationalModel.CreateColumnMapping(passwordColumn, userDb.FindProperty("Password")!, usersTableMapping);
             RelationalModel.CreateColumnMapping(userNameColumn, userDb.FindProperty("UserName")!, usersTableMapping);
+
+            var userSessionDb = FindEntityType("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb")!;
+
+            var defaultTableMappings5 = new List<TableMappingBase<ColumnMappingBase>>();
+            userSessionDb.SetRuntimeAnnotation("Relational:DefaultMappings", defaultTableMappings5);
+            var smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", null, relationalModel);
+            var accessTokenColumnBase = new ColumnBase<ColumnMappingBase>("AccessToken", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("AccessToken", accessTokenColumnBase);
+            var idColumnBase5 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("Id", idColumnBase5);
+            var refreshTokenColumnBase = new ColumnBase<ColumnMappingBase>("RefreshToken", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("RefreshToken", refreshTokenColumnBase);
+            var userIdColumnBase0 = new ColumnBase<ColumnMappingBase>("UserId", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("UserId", userIdColumnBase0);
+            relationalModel.DefaultTables.Add("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            var smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase = new TableMappingBase<ColumnMappingBase>(userSessionDb, smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase, true);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.AddTypeMapping(smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase, false);
+            defaultTableMappings5.Add(smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase5, userSessionDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)accessTokenColumnBase, userSessionDb.FindProperty("AccessToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)refreshTokenColumnBase, userSessionDb.FindProperty("RefreshToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userIdColumnBase0, userSessionDb.FindProperty("UserId")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+
+            var tableMappings5 = new List<TableMapping>();
+            userSessionDb.SetRuntimeAnnotation("Relational:TableMappings", tableMappings5);
+            var userSessionsTable = new Table("UserSessions", null, relationalModel);
+            var idColumn5 = new Column("Id", "BLOB", userSessionsTable);
+            userSessionsTable.Columns.Add("Id", idColumn5);
+            var accessTokenColumn = new Column("AccessToken", "TEXT", userSessionsTable);
+            userSessionsTable.Columns.Add("AccessToken", accessTokenColumn);
+            var refreshTokenColumn = new Column("RefreshToken", "TEXT", userSessionsTable);
+            userSessionsTable.Columns.Add("RefreshToken", refreshTokenColumn);
+            var userIdColumn0 = new Column("UserId", "BLOB", userSessionsTable);
+            userSessionsTable.Columns.Add("UserId", userIdColumn0);
+            var pK_UserSessions = new UniqueConstraint("PK_UserSessions", userSessionsTable, new[] { idColumn5 });
+            userSessionsTable.PrimaryKey = pK_UserSessions;
+            var pK_UserSessionsUc = RelationalModel.GetKey(this,
+                "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb",
+                new[] { "Id" });
+            pK_UserSessions.MappedKeys.Add(pK_UserSessionsUc);
+            RelationalModel.GetOrCreateUniqueConstraints(pK_UserSessionsUc).Add(pK_UserSessions);
+            userSessionsTable.UniqueConstraints.Add("PK_UserSessions", pK_UserSessions);
+            relationalModel.Tables.Add(("UserSessions", null), userSessionsTable);
+            var userSessionsTableMapping = new TableMapping(userSessionDb, userSessionsTable, true);
+            userSessionsTable.AddTypeMapping(userSessionsTableMapping, false);
+            tableMappings5.Add(userSessionsTableMapping);
+            RelationalModel.CreateColumnMapping(idColumn5, userSessionDb.FindProperty("Id")!, userSessionsTableMapping);
+            RelationalModel.CreateColumnMapping(accessTokenColumn, userSessionDb.FindProperty("AccessToken")!, userSessionsTableMapping);
+            RelationalModel.CreateColumnMapping(refreshTokenColumn, userSessionDb.FindProperty("RefreshToken")!, userSessionsTableMapping);
+            RelationalModel.CreateColumnMapping(userIdColumn0, userSessionDb.FindProperty("UserId")!, userSessionsTableMapping);
             var fK_Components_Settings_SettingId = new ForeignKeyConstraint(
                 "FK_Components_Settings_SettingId", componentsTable, settingsTable,
                 new[] { settingIdColumn },

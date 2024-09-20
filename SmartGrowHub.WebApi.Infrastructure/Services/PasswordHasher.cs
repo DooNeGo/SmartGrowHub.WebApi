@@ -11,7 +11,7 @@ internal sealed class PasswordHasher : IPasswordHasher
 
     private static readonly HashAlgorithmName AlgorithmName = HashAlgorithmName.SHA512;
 
-    public string GetHash(string password)
+    public string Hash(string password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         byte[] hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, AlgorithmName, HashSize);

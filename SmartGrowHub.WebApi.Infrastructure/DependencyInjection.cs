@@ -16,5 +16,7 @@ public static class DependencyInjection
             .AddTransient<IUserService, UserService>()
             .AddTransient<IAuthService, AuthService>()
             .AddTransient<IPasswordHasher, PasswordHasher>()
-            .AddTransient<IUserRepository, UserRepository>();
+            .AddTransient<IUserRepository, UserRepository>()
+            .AddTransient<IUserSessionService, UserSessionService>()
+            .AddTransient<IUserSessionRepository, UserSessionRepository>();
 }

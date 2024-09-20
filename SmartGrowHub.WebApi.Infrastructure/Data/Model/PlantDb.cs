@@ -5,5 +5,5 @@ internal sealed record PlantDb(
 {
     private PlantDb() : this(
         default!, default!)
-    { }  // Used by EF Core
+    { } // Used by EF Core
 }

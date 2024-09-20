@@ -13,5 +13,5 @@ internal sealed record GrowHubDb(
         default!, [], [],
         default, default!,
         default, default!)
-    { }   // Used by EF Core
+    { } // Used by EF Core
 }

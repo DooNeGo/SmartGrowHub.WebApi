@@ -9,8 +9,8 @@ internal sealed record UserDb(
     IEnumerable<GrowHubDb> GrowHubs)
 {
     private UserDb() : this(
-        default!, default!,
+        default, default!,
         default!, default!,
         default!, [])
-    { }    // Used by EF Core
+    { } // Used by EF Core
 }
