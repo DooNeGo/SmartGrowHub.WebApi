@@ -15,9 +15,8 @@ public sealed class RefreshTokensEndpoint
         ILogger<RefreshTokensEndpoint> logger,
         CancellationToken cancellationToken)
         => RefreshToken.Create(request.RefreshToken).Match(
-            Succ: token => sessionService.RefreshTokensAsync(token, cancellationToken)
-                .Match(
-                    Right: tokens => Ok(response.ToDto()),
-                    Left: exception => HandleException(logger, exception)),
+            Succ: token => sessionService.RefreshTokensAsync(token, cancellationToken).Match(
+                Right: response => Ok(response.ToDto()),
+                Left: exception => HandleException(logger, exception)),
             Fail: error => HandleException(logger, error.ToException()).AsTask());
 }
