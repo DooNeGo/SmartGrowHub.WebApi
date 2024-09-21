@@ -14,10 +14,9 @@ public sealed class GetUserEndpoint
         IUserService userService,
         ILogger<GetUserEndpoint> logger,
         CancellationToken cancellationToken) =>
-        Id(new Id<User>(in id))
-            .Map(id => userService.GetAsync(id, cancellationToken))
-            .Map(either => either.Match(
-                Right: user => Ok(user.ToDto()),
-                Left: exception => HandleException(logger, exception)))
-            .Value;
+        userService.GetAsync(new Id<User>(in id), cancellationToken)
+            .RunAsync()
+            .Map(fin => fin.Match(
+                Succ: user => Ok(user.ToDto()),
+                Fail: error => HandleException(logger, error.ToException())));
 }

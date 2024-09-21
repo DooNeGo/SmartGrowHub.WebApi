@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFramework.Exceptions.Common;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Exceptions;
 using SmartGrowHub.Domain.Model;
@@ -9,33 +9,18 @@ namespace SmartGrowHub.WebApi.Infrastructure.Services;
 
 internal sealed class UserService(IUserRepository userRepository) : IUserService
 {
-    public EitherAsync<Exception, Unit> AddAsync(User user, CancellationToken cancellationToken) =>
-        userRepository.Add(user).ToAsync()
+    public Eff<Unit> AddAsync(User user, CancellationToken cancellationToken) =>
+        userRepository.Add(user)
             .Bind(_ => userRepository.SaveChangesAsync(cancellationToken))
-            .Match(
-                Succ: unit => (Either<Exception, Unit>)unit,
-                Fail: exception => exception is DbUpdateException
+            .MapFail(error => Id(error.ToException())
+                .Map<Exception>(exception => exception is UniqueConstraintException
                     ? new UserAlreadyExistException()
                     : new InternalException(exception))
-            .ToAsync();
+                .Value);
 
-    public EitherAsync<Exception, User> GetAsync(UserName userName, CancellationToken cancellationToken) =>
-        userRepository.GetAsync(userName, cancellationToken)
-            .Match(
-                Some: fin => fin.Match(
-                    Succ: user => (Either<Exception, User>)user,
-                    Fail: error => new InternalException(error.ToException())),
-                None: () => new ItemNotFoundException(nameof(User), None),
-                Fail: exception => new InternalException(exception))
-            .ToAsync();
+    public Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken) =>
+        userRepository.GetAsync(userName, cancellationToken);
 
-    public EitherAsync<Exception, User> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
-        userRepository.GetAsync(id, cancellationToken)
-            .Match(
-                Some: fin => fin.Match(
-                    Succ: user => (Either<Exception, User>)user,
-                    Fail: error => new InternalException(error.ToException())),
-                None: () => new ItemNotFoundException(nameof(User), None),
-                Fail: exception => exception)
-            .ToAsync();
+    public Eff<User> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
+        userRepository.GetAsync(id, cancellationToken);
 }

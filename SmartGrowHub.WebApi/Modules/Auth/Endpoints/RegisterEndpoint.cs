@@ -8,13 +8,13 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
 public sealed class RegisterEndpoint
 {
-    public static Task<IResult> Register(IAuthService authService, RegisterRequestDto request,
+    public static Task<IResult> Register(IAuthService authService, RegisterRequestDto requestDto,
         ILogger<RegisterEndpoint> logger, CancellationToken cancellationToken) =>
-        request.TryToDomain()
-            .Map(request => authService.RegisterAsync(request, cancellationToken))
-            .Match(
-                Succ: task => task.Match(
-                    Right: _ => Created(),
-                    Left: exception => HandleException(logger, exception)),
-                Fail: error => BadRequest(error.Message).AsTask());
+        (from request in requestDto.TryToDomain().ToEff()
+         from response in authService.RegisterAsync(request, cancellationToken)
+         select response)
+        .RunAsync()
+        .Map(effect => effect.Match(
+            Succ: _ => Created(),
+            Fail: exception => HandleException(logger, exception)));
 }

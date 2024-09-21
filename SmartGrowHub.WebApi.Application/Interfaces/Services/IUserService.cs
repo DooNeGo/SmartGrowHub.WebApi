@@ -5,7 +5,7 @@ namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
 
 public interface IUserService
 {
-    EitherAsync<Exception, Unit> AddAsync(User user, CancellationToken cancellationToken);
-    EitherAsync<Exception, User> GetAsync(UserName userName, CancellationToken cancellationToken);
-    EitherAsync<Exception, User> GetAsync(Id<User> id, CancellationToken cancellationToken);
+    Eff<Unit> AddAsync(User user, CancellationToken cancellationToken);
+    Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken);
+    Eff<User> GetAsync(Id<User> id, CancellationToken cancellationToken);
 }

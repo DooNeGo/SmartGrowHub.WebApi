@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Exceptions;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Infrastructure.Data;
@@ -9,30 +10,32 @@ namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 
 internal sealed class UserRepository(ApplicationContext context) : IUserRepository
 {
-    public Try<Unit> Add(User user) => () =>
-    {
-        context.Users.Add(user.ToDb());
-        return unit;
-    };
+    public Eff<Unit> Add(User user) =>
+        liftEff(() => context.Users
+            .Add(user.ToDb()))
+            .Map(_ => unit);
 
-    public TryOptionAsync<Fin<User>> GetAsync(UserName userName, CancellationToken cancellationToken) =>
-        TryOptionAsync(() => context.Users
+    public Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken) =>
+        liftEff(() => context.Users
             .Where(user => user.UserName == userName.Value)
             .FirstOrDefaultAsync(cancellationToken)
-            .Map(Optional)
-            .Map(option => option
-                .Map(user => user.TryToDomain())));
+            .Map(Optional))
+            .MapFail(error => Error.New(new InternalException(error.ToException())))
+            .Bind(option => option.Match(
+                Some: user => user.TryToDomain().ToEff(),
+                None: Error.New(new ItemNotFoundException(nameof(User), None))));
 
-    public TryOptionAsync<Fin<User>> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
-        TryOptionAsync(() => context.Users
-            .FindAsync([id.Value], cancellationToken)
-            .AsTask()
-            .Map(Optional)
-            .Map(option => option
-                .Map(user => user.TryToDomain())));
+    public Eff<User> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
+        liftEff(() => context.Users
+            .FindAsync([id.Value], cancellationToken).AsTask()
+            .Map(Optional))
+            .MapFail(error => Error.New(new InternalException(error.ToException())))
+            .Bind(option => option.Match(
+                Some: user => user.TryToDomain().ToEff(),
+                None: Error.New(new ItemNotFoundException(nameof(User), None))));
 
-    public TryAsync<Unit> SaveChangesAsync(CancellationToken cancellationToken) =>
-        TryAsync(() => context
+    public Eff<Unit> SaveChangesAsync(CancellationToken cancellationToken) =>
+        liftEff(() => context
             .SaveChangesAsync(cancellationToken)
             .ToUnit());
 }

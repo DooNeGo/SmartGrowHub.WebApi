@@ -9,12 +9,12 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 public sealed class LogInEndpoint
 {
     public static Task<IResult> LogIn(IAuthService authService, ILogger<LogInEndpoint> logger,
-        LogInRequestDto request, CancellationToken cancellationToken) =>
-        request.TryToDomain()
-            .Map(request => authService.LogInAsync(request, cancellationToken))
-            .Match(
-                Succ: either => either.Match(
-                    Right: response => Ok(response.ToDto()),
-                    Left: exception => HandleException(logger, exception)),
-                Fail: error => HandleException(logger, error.ToException()).AsTask());
+        LogInRequestDto requestDto, CancellationToken cancellationToken) =>
+        (from request in requestDto.TryToDomain().ToEff()
+         from response in authService.LogInAsync(request, cancellationToken)
+         select response)
+        .RunAsync()
+        .Map(effect => effect.Match(
+            Succ: response => Ok(response.ToDto()),
+            Fail: exception => HandleException(logger, exception)));
 }

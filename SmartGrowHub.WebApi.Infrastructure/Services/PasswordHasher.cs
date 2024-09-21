@@ -1,4 +1,5 @@
-﻿using SmartGrowHub.WebApi.Application.Interfaces.Services;
+﻿using SmartGrowHub.Domain.Common;
+using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using System.Security.Cryptography;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Services;
@@ -11,15 +12,15 @@ internal sealed class PasswordHasher : IPasswordHasher
 
     private static readonly HashAlgorithmName AlgorithmName = HashAlgorithmName.SHA512;
 
-    public string Hash(string password)
+    public Password Hash(Password password)
     {
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         byte[] hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, AlgorithmName, HashSize);
 
-        return $"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
+        return (Password)$"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
     }
 
-    public bool Verify(string password, string passwordHash)
+    public bool Verify(Password password, string passwordHash)
     {
         string[] parts = passwordHash.Split('-');
         byte[] hash = Convert.FromHexString(parts[0]);

@@ -5,6 +5,6 @@ namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
 
 public interface IUserSessionService
 {
-    EitherAsync<Exception, UserSession> CreateAsync(User user, CancellationToken cancellationToken);
-    EitherAsync<Exception, RefreshTokensResponse> RefreshTokensAsync(RefreshToken refreshToken, CancellationToken cancellationToken);
+    Eff<UserSession> CreateAsync(User user, CancellationToken cancellationToken);
+    Eff<AuthTokens> RefreshTokensAsync(RefreshToken refreshToken, CancellationToken cancellationToken);
 }

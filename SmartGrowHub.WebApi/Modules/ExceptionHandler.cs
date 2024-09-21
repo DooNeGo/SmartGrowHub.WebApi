@@ -7,7 +7,12 @@ internal static partial class ExceptionHandler
 {
     public static IResult HandleInternalException(ILogger logger, InternalException exception)
     {
-        LogInternalException(logger, exception.InnerException!.Message);
+        Exception innerException = exception.InnerException!;
+
+        if (innerException is TaskCanceledException) return Results.Empty;
+
+        LogInternalException(logger, innerException.Message);
+
         return Problem("Internal error", null, 500, "Internal error");
     }
 

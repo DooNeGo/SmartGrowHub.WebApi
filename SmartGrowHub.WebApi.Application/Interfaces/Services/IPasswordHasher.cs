@@ -1,7 +1,9 @@
-﻿namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
+﻿using SmartGrowHub.Domain.Common;
+
+namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
 
 public interface IPasswordHasher
 {
-    string Hash(string password);
-    bool Verify(string password, string passwordHash);
+    Password Hash(Password password);
+    bool Verify(Password password, string passwordHash);
 }

@@ -11,43 +11,36 @@ namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 
 internal sealed class UserSessionRepository(ApplicationContext context) : IUserSessionRepository
 {
-    public Either<InternalException, Unit> Add(UserSession userSession) =>
-        Try(() => context.Add(userSession.ToDb()))
-            .ToEither(exception => new InternalException(exception))
-            .Map(_ => unit);
+    public Eff<Unit> Add(UserSession userSession) =>
+        liftEff(() => context.Add(userSession.ToDb()))
+            .Map(_ => unit)
+            .MapFail(error => Error.New(new InternalException(error.ToException())));
 
-    public EitherAsync<Exception, UserSession> GetAsync(RefreshToken token,
-        CancellationToken cancellationToken) =>
-        TryOptionAsync(() => context.UserSessions
-            .Where(session => session.RefreshToken == token.Value)
+    public Eff<UserSession> GetAsync(RefreshToken token, CancellationToken cancellationToken) =>
+        liftEff(() => context.UserSessions
+            .Where(session => session.RefreshToken == token.Value.Value)
             .FirstOrDefaultAsync(cancellationToken)
             .Map(Optional))
-        .ToEither(exception => (Exception)new InternalException(exception))
-        .ToAsync()
-        .Bind(opt => opt.Match(
-            Some: session => session
-                .TryToDomain()
-                .ToEitherAsync()
-                .MapLeft(error => error.ToException()),
-            None: () => new ItemNotFoundException(nameof(UserSession), None)));
+        .MapFail(error => Error.New(new InternalException(error.ToException())))
+        .Bind(option => option.Match(
+            Some: session => session.TryToDomain().ToEff(),
+            None: Error.New(new ItemNotFoundException(nameof(UserSession), None))));
 
-    public EitherAsync<InternalException, Unit> RemoveAllAsync(Id<User> id,
-        CancellationToken cancellationToken) =>
-        TryAsync(() => context.UserSessions
+    public Eff<Unit> RemoveAllAsync(Id<User> id, CancellationToken cancellationToken) =>
+        liftEff(() => context.UserSessions
             .Where(session => session.UserId == id.Value)
-            .ExecuteDeleteAsync(cancellationToken))
-            .ToEither(error => new InternalException(error.ToException()))
-            .Map(_ => unit);
+            .ExecuteDeleteAsync(cancellationToken)
+            .ToUnit())
+            .MapFail(error => Error.New(new InternalException(error.ToException())));
 
-    public EitherAsync<Exception, Unit> SaveChangesAsync(CancellationToken cancellationToken) =>
-        TryAsync(() => context
+    public Eff<Unit> SaveChangesAsync(CancellationToken cancellationToken) =>
+        liftEff(() => context
             .SaveChangesAsync(cancellationToken)
-            .Map(_ => unit))
-            .ToEither(error => error.ToException());
+            .ToUnit())
+            .MapFail(error => Error.New(new InternalException(error.ToException())));
 
-    public EitherAsync<InternalException, Unit> UpdateAsync(UserSession userSession,
-        CancellationToken cancellationToken) =>
-        TryAsync(() => context.UserSessions
+    public Eff<Unit> UpdateAsync(UserSession userSession, CancellationToken cancellationToken) =>
+        liftEff(() => context.UserSessions
             .Where(session => session.Id == userSession.Id)
             .Select(oldSession => new
             {
@@ -64,5 +57,5 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
                     tuple => tuple.RefreshToken),
                 cancellationToken)
             .Map(_ => unit))
-            .ToEither(error => new InternalException(error.ToException()));
+            .MapFail(error => Error.New(new InternalException(error.ToException())));
 }

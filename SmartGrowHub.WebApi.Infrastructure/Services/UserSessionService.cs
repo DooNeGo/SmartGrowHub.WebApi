@@ -11,23 +11,20 @@ internal sealed class UserSessionService(
     ITokenService tokenService)
     : IUserSessionService
 {
-    public EitherAsync<Exception, UserSession> CreateAsync(User user, CancellationToken cancellationToken)
+    public Eff<UserSession> CreateAsync(User user, CancellationToken cancellationToken)
         => sessionRepository.RemoveAllAsync(user.Id, cancellationToken)
-            .MapLeft(exception => (Exception)exception)
             .Map(_ => tokenService.CreateTokens(user))
             .Map(tokens => UserSession.Create(user.Id, tokens))
             .Bind(session => sessionRepository
-                .Add(session).ToAsync().MapLeft(exception => (Exception)exception)
+                .Add(session)
                 .Bind(_ => sessionRepository.SaveChangesAsync(cancellationToken))
                 .Map(_ => session));
 
-    public EitherAsync<Exception, RefreshTokensResponse> RefreshTokensAsync(
-        RefreshToken refreshToken, CancellationToken cancellationToken) =>
-        sessionRepository.GetAsync(refreshToken, cancellationToken)
+    public Eff<AuthTokens> RefreshTokensAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+        => sessionRepository.GetAsync(refreshToken, cancellationToken)
             .Bind(session => userService.GetAsync(session.UserId, cancellationToken)
                 .Map(user => tokenService.CreateTokens(user))
                 .Bind(tokens => sessionRepository
                     .UpdateAsync(session with { AuthTokens = tokens }, cancellationToken)
-                    .MapLeft(exception => (Exception)exception)
-                    .Map(_ => new RefreshTokensResponse(tokens))));
+                    .Map(_ => tokens)));
 }

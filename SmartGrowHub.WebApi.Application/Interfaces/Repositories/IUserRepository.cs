@@ -5,8 +5,8 @@ namespace SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 
 public interface IUserRepository
 {
-    TryOptionAsync<Fin<User>> GetAsync(UserName userName, CancellationToken cancellationToken);
-    TryOptionAsync<Fin<User>> GetAsync(Id<User> id, CancellationToken cancellationToken);
-    Try<Unit> Add(User user);
-    TryAsync<Unit> SaveChangesAsync(CancellationToken cancellationToken);
+    Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken);
+    Eff<User> GetAsync(Id<User> id, CancellationToken cancellationToken);
+    Eff<Unit> Add(User user);
+    Eff<Unit> SaveChangesAsync(CancellationToken cancellationToken);
 }
