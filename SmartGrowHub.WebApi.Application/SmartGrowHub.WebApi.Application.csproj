@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="LanguageExt.Core" Version="5.0.0-beta-22" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -14,7 +14,7 @@ public sealed class LogInEndpoint
          from response in authService.LogInAsync(request, cancellationToken)
          select response)
         .RunAsync()
-        .Map(effect => effect.Match(
+        .Map(fin => fin.Match(
             Succ: response => Ok(response.ToDto()),
             Fail: exception => HandleException(logger, exception)));
 }

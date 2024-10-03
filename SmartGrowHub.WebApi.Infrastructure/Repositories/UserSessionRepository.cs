@@ -16,15 +16,21 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
             .Map(_ => unit)
             .MapFail(error => Error.New(new InternalException(error.ToException())));
 
+    public Eff<Unit> RemoveAsync(Id<UserSession> id, CancellationToken cancellationToken) =>
+        liftEff(() => context.UserSessions
+            .Where(session => session.Id == id)
+            .ExecuteDeleteAsync(cancellationToken)
+            .ToUnit());
+
     public Eff<UserSession> GetAsync(RefreshToken token, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
-            .Where(session => session.RefreshToken == token.Value.Value)
+            .Where(session => session.RefreshToken == (string)token)
             .FirstOrDefaultAsync(cancellationToken)
             .Map(Optional))
         .MapFail(error => Error.New(new InternalException(error.ToException())))
         .Bind(option => option.Match(
             Some: session => session.TryToDomain().ToEff(),
-            None: Error.New(new ItemNotFoundException(nameof(UserSession), None))));
+            None: Error.New("Invalid refresh token")));
 
     public Eff<Unit> RemoveAllAsync(Id<User> id, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
@@ -45,8 +51,8 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
             .Select(oldSession => new
             {
                 oldSession,
-                RefreshToken = userSession.AuthTokens.RefreshToken.Value.Value,
-                AccessToken = userSession.AuthTokens.AccessToken.Value.Value
+                RefreshToken = (string)userSession.AuthTokens.RefreshToken,
+                AccessToken = (string)userSession.AuthTokens.AccessToken
             })
             .ExecuteUpdateAsync(properties => properties
                 .SetProperty(

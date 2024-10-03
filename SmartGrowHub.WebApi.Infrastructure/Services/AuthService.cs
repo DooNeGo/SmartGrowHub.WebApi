@@ -1,6 +1,7 @@
 ﻿using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Exceptions;
 using SmartGrowHub.Domain.Features.LogIn;
+using SmartGrowHub.Domain.Features.LogOut;
 using SmartGrowHub.Domain.Features.Register;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
@@ -24,11 +25,16 @@ internal sealed class AuthService(
         passwordHasher.Verify(requestPassword, user.Password)
             ? user : new ItemNotFoundException(nameof(User), None);
 
-    public Eff<RegisterResponse> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken) =>
+    public Eff<RegisterResponse> RegisterAsync(RegisterRequest request,
+        CancellationToken cancellationToken) =>
         Id(request.User)
             .Map(user => user with { Password = passwordHasher.Hash(user.Password) })
             .Map(user => userService
                 .AddAsync(user, cancellationToken)
                 .Map(_ => new RegisterResponse()))
             .Value;
+
+    public Eff<LogOutResponse> LogOutAsync(LogOutRequest request, CancellationToken cancellationToken) =>
+        sessionService.RemoveAsync(request.Id, cancellationToken)
+            .Map(_ => new LogOutResponse());
 }

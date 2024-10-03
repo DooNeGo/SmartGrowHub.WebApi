@@ -14,7 +14,7 @@ public sealed class RegisterEndpoint
          from response in authService.RegisterAsync(request, cancellationToken)
          select response)
         .RunAsync()
-        .Map(effect => effect.Match(
+        .Map(fin => fin.Match(
             Succ: _ => Created(),
             Fail: exception => HandleException(logger, exception)));
 }
