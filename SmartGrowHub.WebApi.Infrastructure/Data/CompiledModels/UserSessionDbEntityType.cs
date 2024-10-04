@@ -66,12 +66,44 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(UserSessionDb).GetField("<AccessToken>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             accessToken.TypeMapping = SqliteStringTypeMapping.Default;
 
+            var expires = runtimeEntityType.AddProperty(
+                "Expires",
+                typeof(DateTime),
+                propertyInfo: typeof(UserSessionDb).GetProperty("Expires", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(UserSessionDb).GetField("<Expires>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                sentinel: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+            expires.TypeMapping = SqliteDateTimeTypeMapping.Default;
+
             var refreshToken = runtimeEntityType.AddProperty(
                 "RefreshToken",
-                typeof(string),
+                typeof(Ulid),
                 propertyInfo: typeof(UserSessionDb).GetProperty("RefreshToken", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserSessionDb).GetField("<RefreshToken>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            refreshToken.TypeMapping = SqliteStringTypeMapping.Default;
+                fieldInfo: typeof(UserSessionDb).GetField("<RefreshToken>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                valueConverter: new UlidConverter());
+            refreshToken.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
+                comparer: new ValueComparer<Ulid>(
+                    (Ulid v1, Ulid v2) => v1.Equals(v2),
+                    (Ulid v) => v.GetHashCode(),
+                    (Ulid v) => v),
+                keyComparer: new ValueComparer<Ulid>(
+                    (Ulid v1, Ulid v2) => v1.Equals(v2),
+                    (Ulid v) => v.GetHashCode(),
+                    (Ulid v) => v),
+                providerValueComparer: new ValueComparer<byte[]>(
+                    (Byte[] v1, Byte[] v2) => StructuralComparisons.StructuralEqualityComparer.Equals((object)v1, (object)v2),
+                    (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
+                    (Byte[] source) => source.ToArray()),
+                mappingInfo: new RelationalTypeMappingInfo(
+                    size: 16),
+                converter: new ValueConverter<Ulid, byte[]>(
+                    (Ulid model) => model.ToByteArray(),
+                    (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider)),
+                jsonValueReaderWriter: new JsonConvertedValueReaderWriter<Ulid, byte[]>(
+                    SqliteJsonByteArrayReaderWriter.Instance,
+                    new ValueConverter<Ulid, byte[]>(
+                        (Ulid model) => model.ToByteArray(),
+                        (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
+            refreshToken.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var userId = runtimeEntityType.AddProperty(
                 "UserId",

@@ -5,12 +5,13 @@ internal sealed record UserDb(
     string UserName,
     string Password,
     string Email,
-    string DisplayName,
-    IEnumerable<GrowHubDb> GrowHubs)
+    string DisplayName)
 {
     private UserDb() : this(
         default, default!,
         default!, default!,
-        default!, [])
+        default!)
     { } // Used by EF Core
+
+    public IEnumerable<GrowHubDb> GrowHubs { get; } = [];
 }

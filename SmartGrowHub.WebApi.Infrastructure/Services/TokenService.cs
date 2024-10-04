@@ -44,16 +44,17 @@ internal sealed partial class TokenService : ITokenService
     }
 
     public AuthTokens CreateTokens(User user) =>
-        new(CreateAccessToken(user), CreateRefreshToken(user));
+        new(CreateAccessToken(user), CreateRefreshToken());
 
     private AccessToken CreateAccessToken(User user) =>
-        new(CreateToken(user, DateTime.UtcNow.AddMinutes(_accessTokenExpirationInMinutes)));
+        AccessToken.Create(CreateToken(user, DateTime.UtcNow.AddMinutes(_accessTokenExpirationInMinutes)))
+            .ThrowIfFail();
 
-    private RefreshToken CreateRefreshToken(User user) =>
-        new(CreateToken(user, DateTime.UtcNow.AddDays(_refreshTokenExpirationInDays)));
+    private RefreshToken CreateRefreshToken() =>
+        new(Ulid.NewUlid(), DateTime.UtcNow.AddDays(_refreshTokenExpirationInDays));
 
-    private NonEmptyString CreateToken(User user, DateTime expires) =>
-        (NonEmptyString)_tokenHandler.CreateToken(
+    private string CreateToken(User user, DateTime expires) =>
+        _tokenHandler.CreateToken(
             CreateTokenDescriptor(_issuer, _audience, expires, _signingCredentials, user));
 
     private static SecurityTokenDescriptor CreateTokenDescriptor(

@@ -16,6 +16,11 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
             .Map(_ => unit)
             .MapFail(error => Error.New(new InternalException(error.ToException())));
 
+    public Eff<Unit> Update(UserSession userSession) =>
+        liftEff(() => context.Update(userSession.ToDb()))
+            .Map(_ => unit)
+            .MapFail(error => Error.New(new InternalException(error.ToException())));
+
     public Eff<Unit> RemoveAsync(Id<UserSession> id, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
             .Where(session => session.Id == id)
@@ -24,7 +29,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
 
     public Eff<UserSession> GetAsync(RefreshToken token, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
-            .Where(session => session.RefreshToken == (string)token)
+            .Where(session => session.RefreshToken == token.Ulid)
             .FirstOrDefaultAsync(cancellationToken)
             .Map(Optional))
         .MapFail(error => Error.New(new InternalException(error.ToException())))
@@ -43,25 +48,5 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
         liftEff(() => context
             .SaveChangesAsync(cancellationToken)
             .ToUnit())
-            .MapFail(error => Error.New(new InternalException(error.ToException())));
-
-    public Eff<Unit> UpdateAsync(UserSession userSession, CancellationToken cancellationToken) =>
-        liftEff(() => context.UserSessions
-            .Where(session => session.Id == userSession.Id)
-            .Select(oldSession => new
-            {
-                oldSession,
-                RefreshToken = (string)userSession.AuthTokens.RefreshToken,
-                AccessToken = (string)userSession.AuthTokens.AccessToken
-            })
-            .ExecuteUpdateAsync(properties => properties
-                .SetProperty(
-                    tuple => tuple.oldSession.AccessToken,
-                    tuple => tuple.AccessToken)
-                .SetProperty(
-                    tuple => tuple.oldSession.RefreshToken,
-                    tuple => tuple.RefreshToken),
-                cancellationToken)
-            .Map(_ => unit))
             .MapFail(error => Error.New(new InternalException(error.ToException())));
 }

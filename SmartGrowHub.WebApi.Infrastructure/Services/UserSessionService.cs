@@ -26,7 +26,10 @@ internal sealed class UserSessionService(
             .Bind(session => userService.GetAsync(session.UserId, cancellationToken)
                 .Map(user => tokenService.CreateTokens(user))
                 .Bind(tokens => sessionRepository
-                    .UpdateAsync(session with { AuthTokens = tokens }, cancellationToken)
+                    .Update(session with { AuthTokens = tokens })
+                    .Map(_ => tokens))
+                .Bind(tokens => sessionRepository
+                    .SaveChangesAsync(cancellationToken)
                     .Map(_ => tokens)));
 
     public Eff<Unit> RemoveAsync(Id<UserSession> id, CancellationToken cancellationToken) =>

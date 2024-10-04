@@ -421,9 +421,11 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", null, relationalModel);
             var accessTokenColumnBase = new ColumnBase<ColumnMappingBase>("AccessToken", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("AccessToken", accessTokenColumnBase);
+            var expiresColumnBase = new ColumnBase<ColumnMappingBase>("Expires", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("Expires", expiresColumnBase);
             var idColumnBase5 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("Id", idColumnBase5);
-            var refreshTokenColumnBase = new ColumnBase<ColumnMappingBase>("RefreshToken", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            var refreshTokenColumnBase = new ColumnBase<ColumnMappingBase>("RefreshToken", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("RefreshToken", refreshTokenColumnBase);
             var userIdColumnBase0 = new ColumnBase<ColumnMappingBase>("UserId", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("UserId", userIdColumnBase0);
@@ -433,6 +435,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             defaultTableMappings5.Add(smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase5, userSessionDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)accessTokenColumnBase, userSessionDb.FindProperty("AccessToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)expiresColumnBase, userSessionDb.FindProperty("Expires")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)refreshTokenColumnBase, userSessionDb.FindProperty("RefreshToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userIdColumnBase0, userSessionDb.FindProperty("UserId")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
 
@@ -443,7 +446,9 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             userSessionsTable.Columns.Add("Id", idColumn5);
             var accessTokenColumn = new Column("AccessToken", "TEXT", userSessionsTable);
             userSessionsTable.Columns.Add("AccessToken", accessTokenColumn);
-            var refreshTokenColumn = new Column("RefreshToken", "TEXT", userSessionsTable);
+            var expiresColumn = new Column("Expires", "TEXT", userSessionsTable);
+            userSessionsTable.Columns.Add("Expires", expiresColumn);
+            var refreshTokenColumn = new Column("RefreshToken", "BLOB", userSessionsTable);
             userSessionsTable.Columns.Add("RefreshToken", refreshTokenColumn);
             var userIdColumn0 = new Column("UserId", "BLOB", userSessionsTable);
             userSessionsTable.Columns.Add("UserId", userIdColumn0);
@@ -461,6 +466,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             tableMappings5.Add(userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(idColumn5, userSessionDb.FindProperty("Id")!, userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(accessTokenColumn, userSessionDb.FindProperty("AccessToken")!, userSessionsTableMapping);
+            RelationalModel.CreateColumnMapping(expiresColumn, userSessionDb.FindProperty("Expires")!, userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(refreshTokenColumn, userSessionDb.FindProperty("RefreshToken")!, userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(userIdColumn0, userSessionDb.FindProperty("UserId")!, userSessionsTableMapping);
             var fK_Components_Settings_SettingId = new ForeignKeyConstraint(
