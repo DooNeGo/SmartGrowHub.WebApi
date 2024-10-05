@@ -24,7 +24,7 @@ internal sealed class UserRepository(ApplicationContext context) : IUserReposito
             .Bind(option => option.Match(
                 Some: user => user.TryToDomain().ToEff(),
                 None: Error.New(new ItemNotFoundException(nameof(User), None))));
-     
+
     public Eff<User> GetAsync(Id<User> id, CancellationToken cancellationToken) =>
         liftEff(() => context.Users
             .FindAsync([id.Value], cancellationToken).AsTask()
