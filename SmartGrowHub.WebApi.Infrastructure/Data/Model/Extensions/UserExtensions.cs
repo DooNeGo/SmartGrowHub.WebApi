@@ -7,14 +7,15 @@ internal static class UserExtensions
 {
     public static Fin<UserDb> TryToDb(this User user) =>
         from rawPassword in user.Password.Match<Fin<byte[]>>(
-            plainText: _ => Error.New("A password must be hashed before saving"),
-            hashed: bytes => bytes.ToArray())
+            plainText: _ => Error.New("The password must be hashed before saving"),
+            hashed: bytes => bytes.ToArray(),
+            empty: () => Error.New("The password must not be empty"))
         select new UserDb(user.Id, user.UserName, rawPassword, user.Email, user.DisplayName);
 
     public static Fin<User> TryToDomain(this UserDb user) =>
-        from userName in UserName.Create(user.UserName)
-        from password in Password.FromHashed([.. user.Password])
-        from email in EmailAddress.Create(user.Email)
-        from displayName in NonEmptyString.Create(user.DisplayName)
+        from userName in UserName.From(user.UserName)
+        from password in Password.FromHash([.. user.Password])
+        from email in EmailAddress.From(user.Email)
+        from displayName in NonEmptyString.From(user.DisplayName)
         select new User(new Id<User>(user.Id), userName, password, email, displayName);
 }

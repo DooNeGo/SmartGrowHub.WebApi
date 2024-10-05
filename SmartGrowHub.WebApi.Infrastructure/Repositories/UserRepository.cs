@@ -17,7 +17,7 @@ internal sealed class UserRepository(ApplicationContext context) : IUserReposito
 
     public Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken) =>
         liftEff(() => context.Users
-            .Where(user => user.UserName == userName.Value)
+            .Where(user => user.UserName == userName.To())
             .FirstOrDefaultAsync(cancellationToken)
             .Map(Optional))
             .MapFail(error => Error.New(new InternalException(error.ToException())))

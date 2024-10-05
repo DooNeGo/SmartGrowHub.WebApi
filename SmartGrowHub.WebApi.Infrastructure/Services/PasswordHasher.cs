@@ -17,7 +17,8 @@ internal sealed class PasswordHasher : IPasswordHasher
         password
             .Match(
                 plainText: password => FinSucc(password),
-                hashed: _ => Error.New("The password has already been hashed"))
+                hashed: _ => Error.New("The password has already been hashed"),
+                empty: () => Error.New("The password must not be empty"))
             .Bind(Hash);
 
     private Fin<Password> Hash(string password)
@@ -28,17 +29,19 @@ internal sealed class PasswordHasher : IPasswordHasher
         Span<byte> passwordHash = stackalloc byte[HashSize];
         Rfc2898DeriveBytes.Pbkdf2(password, salt, passwordHash, Iterations, AlgorithmName);
 
-        return Password.FromHashed([.. passwordHash, .. salt]);
+        return Password.FromHash([.. passwordHash, .. salt]);
     }
 
     public Fin<bool> TryVerify(Password password, Password hashedPassword) =>
         hashedPassword
             .Match(
                 plainText: _ => Error.New($"{nameof(hashedPassword)} must be hashed"),
-                hashed: bytes => FinSucc(bytes))
-            .Map(hash => password.Match(
+                hashed: bytes => FinSucc(bytes),
+                empty: () => Error.New("The hashed password must not be empty"))
+            .Bind(hash => password.Match<Fin<bool>>(
                 plainText: password => VerifyPlainText(password, hash.AsSpan()),
-                hashed: bytes => AreHashesEqual(bytes.AsSpan(), hash.AsSpan())));
+                hashed: bytes => AreHashesEqual(bytes.AsSpan(), hash.AsSpan()),
+                empty: () => Error.New("The password must not be empty")));
 
     private bool VerifyPlainText(string password, ReadOnlySpan<byte> hash)
     {
