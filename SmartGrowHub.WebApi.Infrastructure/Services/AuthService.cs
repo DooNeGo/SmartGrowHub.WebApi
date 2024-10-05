@@ -21,18 +21,21 @@ internal sealed class AuthService(
         from session in sessionService.CreateAsync(user, cancellationToken)
         select new LogInResponse(session);
 
-    private Either<Exception, User> VerifyPassword(User user, Password requestPassword) =>
-        passwordHasher.Verify(requestPassword, user.Password)
-            ? user : new ItemNotFoundException(nameof(User), None);
+    private Fin<Unit> VerifyPassword(User user, Password requestPassword) =>
+        passwordHasher.TryVerify(requestPassword, user.Password)
+            .Match(
+                Succ: result => result
+                    ? FinSucc(unit)
+                    : Error.New(new ItemNotFoundException(nameof(User), None)),
+                Fail: error => error);
 
     public Eff<RegisterResponse> RegisterAsync(RegisterRequest request,
         CancellationToken cancellationToken) =>
-        Id(request.User)
-            .Map(user => user with { Password = passwordHasher.Hash(user.Password) })
-            .Map(user => userService
+        passwordHasher.TryHash(request.User.Password).ToEff()
+            .Map(hashedPassword => request.User with { Password = hashedPassword })
+            .Bind(user => userService
                 .AddAsync(user, cancellationToken)
-                .Map(_ => new RegisterResponse()))
-            .Value;
+                .Map(_ => new RegisterResponse()));
 
     public Eff<LogOutResponse> LogOutAsync(LogOutRequest request, CancellationToken cancellationToken) =>
         sessionService.RemoveAsync(request.Id, cancellationToken)

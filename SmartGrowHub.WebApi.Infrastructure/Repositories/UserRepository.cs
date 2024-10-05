@@ -11,8 +11,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 internal sealed class UserRepository(ApplicationContext context) : IUserRepository
 {
     public Eff<Unit> Add(User user) =>
-        liftEff(() => context.Users
-            .Add(user.ToDb()))
+        user.TryToDb().ToEff()
+            .Map(userDb => context.Add(userDb))
             .Map(_ => unit);
 
     public Eff<User> GetAsync(UserName userName, CancellationToken cancellationToken) =>

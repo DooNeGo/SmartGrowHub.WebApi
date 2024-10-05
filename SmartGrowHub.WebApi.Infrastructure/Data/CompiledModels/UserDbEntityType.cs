@@ -75,10 +75,22 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
 
             var password = runtimeEntityType.AddProperty(
                 "Password",
-                typeof(string),
+                typeof(byte[]),
                 propertyInfo: typeof(UserDb).GetProperty("Password", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(UserDb).GetField("<Password>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            password.TypeMapping = SqliteStringTypeMapping.Default;
+            password.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
+                comparer: new ValueComparer<byte[]>(
+                    (Byte[] v1, Byte[] v2) => StructuralComparisons.StructuralEqualityComparer.Equals((object)v1, (object)v2),
+                    (Byte[] v) => v.GetHashCode(),
+                    (Byte[] v) => v),
+                keyComparer: new ValueComparer<byte[]>(
+                    (Byte[] v1, Byte[] v2) => StructuralComparisons.StructuralEqualityComparer.Equals((object)v1, (object)v2),
+                    (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
+                    (Byte[] source) => source.ToArray()),
+                providerValueComparer: new ValueComparer<byte[]>(
+                    (Byte[] v1, Byte[] v2) => StructuralComparisons.StructuralEqualityComparer.Equals((object)v1, (object)v2),
+                    (Byte[] v) => StructuralComparisons.StructuralEqualityComparer.GetHashCode((object)v),
+                    (Byte[] source) => source.ToArray()));
 
             var userName = runtimeEntityType.AddProperty(
                 "UserName",

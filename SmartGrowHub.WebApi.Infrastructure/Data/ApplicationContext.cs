@@ -8,11 +8,6 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data;
 
 internal sealed class ApplicationContext : DbContext
 {
-    //public ApplicationContext()
-    //{
-    //    Database.EnsureCreated();
-    //}
-
     public DbSet<UserDb> Users => Set<UserDb>();
 
     public DbSet<GrowHubDb> GrowHubs => Set<GrowHubDb>();

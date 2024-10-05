@@ -353,7 +353,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("Email", emailColumnBase);
             var idColumnBase4 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("Id", idColumnBase4);
-            var passwordColumnBase = new ColumnBase<ColumnMappingBase>("Password", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
+            var passwordColumnBase = new ColumnBase<ColumnMappingBase>("Password", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("Password", passwordColumnBase);
             var userNameColumnBase = new ColumnBase<ColumnMappingBase>("UserName", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("UserName", userNameColumnBase);
@@ -376,7 +376,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             usersTable.Columns.Add("DisplayName", displayNameColumn);
             var emailColumn = new Column("Email", "TEXT", usersTable);
             usersTable.Columns.Add("Email", emailColumn);
-            var passwordColumn = new Column("Password", "TEXT", usersTable);
+            var passwordColumn = new Column("Password", "BLOB", usersTable);
             usersTable.Columns.Add("Password", passwordColumn);
             var userNameColumn = new Column("UserName", "TEXT", usersTable);
             usersTable.Columns.Add("UserName", userNameColumn);

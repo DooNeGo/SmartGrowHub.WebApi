@@ -5,11 +5,16 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
 
 internal static class UserExtensions
 {
-    public static UserDb ToDb(this User user) =>
-        new(user.Id, user.UserName, user.Password,
-            user.Email, user.DisplayName);
+    public static Fin<UserDb> TryToDb(this User user) =>
+        from rawPassword in user.Password.Match<Fin<byte[]>>(
+            plainText: _ => Error.New("A password must be hashed before saving"),
+            hashed: bytes => bytes.ToArray())
+        select new UserDb(user.Id, user.UserName, rawPassword, user.Email, user.DisplayName);
 
     public static Fin<User> TryToDomain(this UserDb user) =>
-        User.Create(new Id<User>(user.Id), user.UserName,
-            user.Password, user.Email, user.DisplayName);
+        from userName in UserName.Create(user.UserName)
+        from password in Password.FromHashed([.. user.Password])
+        from email in EmailAddress.Create(user.Email)
+        from displayName in NonEmptyString.Create(user.DisplayName)
+        select new User(new Id<User>(user.Id), userName, password, email, displayName);
 }

@@ -3,7 +3,7 @@
 internal sealed record UserDb(
     Ulid Id,
     string UserName,
-    string Password,
+    byte[] Password,
     string Email,
     string DisplayName)
 {

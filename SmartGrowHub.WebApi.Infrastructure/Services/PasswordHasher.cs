@@ -11,23 +11,46 @@ internal sealed class PasswordHasher : IPasswordHasher
     private const int Iterations = 100000;
 
     private static readonly HashAlgorithmName AlgorithmName = HashAlgorithmName.SHA512;
+    private static readonly RandomNumberGenerator RandomNumberGenerator = RandomNumberGenerator.Create();
 
-    public Password Hash(Password password)
+    public Fin<Password> TryHash(Password password) =>
+        password
+            .Match(
+                plainText: password => FinSucc(password),
+                hashed: _ => Error.New("The password has already been hashed"))
+            .Bind(Hash);
+
+    private Fin<Password> Hash(string password)
     {
-        byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
-        byte[] hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, AlgorithmName, HashSize);
+        Span<byte> salt = stackalloc byte[SaltSize];
+        RandomNumberGenerator.GetBytes(salt);
 
-        return (Password)$"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
+        Span<byte> passwordHash = stackalloc byte[HashSize];
+        Rfc2898DeriveBytes.Pbkdf2(password, salt, passwordHash, Iterations, AlgorithmName);
+
+        return Password.FromHashed([.. passwordHash, .. salt]);
     }
 
-    public bool Verify(Password password, string passwordHash)
+    public Fin<bool> TryVerify(Password password, Password hashedPassword) =>
+        hashedPassword
+            .Match(
+                plainText: _ => Error.New($"{nameof(hashedPassword)} must be hashed"),
+                hashed: bytes => FinSucc(bytes))
+            .Map(hash => password.Match(
+                plainText: password => VerifyPlainText(password, hash.AsSpan()),
+                hashed: bytes => AreHashesEqual(bytes.AsSpan(), hash.AsSpan())));
+
+    private bool VerifyPlainText(string password, ReadOnlySpan<byte> hash)
     {
-        string[] parts = passwordHash.Split('-');
-        byte[] hash = Convert.FromHexString(parts[0]);
-        byte[] salt = Convert.FromHexString(parts[1]);
+        ReadOnlySpan<byte> passwordHash = hash[..HashSize];
+        ReadOnlySpan<byte> salt = hash[(hash.Length - SaltSize)..];
 
-        byte[] inputHash = Rfc2898DeriveBytes.Pbkdf2(password, salt, Iterations, AlgorithmName, HashSize);
+        Span<byte> inputHash = stackalloc byte[HashSize];
+        Rfc2898DeriveBytes.Pbkdf2(password, salt, inputHash, Iterations, AlgorithmName);
 
-        return CryptographicOperations.FixedTimeEquals(hash, inputHash);
+        return AreHashesEqual(passwordHash, inputHash);
     }
+
+    private static bool AreHashesEqual(ReadOnlySpan<byte> hash1, ReadOnlySpan<byte> hash2) =>
+        CryptographicOperations.FixedTimeEquals(hash1, hash2);
 }
