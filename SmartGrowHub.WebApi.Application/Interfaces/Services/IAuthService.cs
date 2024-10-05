@@ -1,6 +1,6 @@
-﻿using SmartGrowHub.Domain.Features.LogIn;
-using SmartGrowHub.Domain.Features.LogOut;
-using SmartGrowHub.Domain.Features.Register;
+﻿using SmartGrowHub.Application.LogIn;
+using SmartGrowHub.Application.LogOut;
+using SmartGrowHub.Application.Register;
 
 namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
 

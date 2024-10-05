@@ -1,5 +1,5 @@
-﻿using SmartGrowHub.Shared.UserSessions.Dto;
-using SmartGrowHub.Shared.UserSessions.Dto.RefreshTokens;
+﻿using SmartGrowHub.Shared.UserSessions.Dto.RefreshTokens;
+using SmartGrowHub.Shared.UserSessions.Extensions;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using static Microsoft.AspNetCore.Http.Results;
 using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
@@ -12,8 +12,8 @@ public sealed class RefreshTokensEndpoint
         IUserSessionService sessionService, ILogger<RefreshTokensEndpoint> logger,
         CancellationToken cancellationToken) =>
         (from request in requestDto.TryToDomain().ToEff()
-        from response in sessionService.RefreshTokensAsync(request.RefreshToken, cancellationToken)
-        select response)
+         from response in sessionService.RefreshTokensAsync(request.RefreshToken, cancellationToken)
+         select response)
             .RunAsync()
             .Map(effect => effect.Match(
                 Succ: tokens => Ok(new RefreshTokensResponseDto(tokens.ToDto())),

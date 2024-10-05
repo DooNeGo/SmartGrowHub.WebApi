@@ -1,4 +1,4 @@
-﻿using SmartGrowHub.Domain.Features.RefreshTokens;
+﻿using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.WebApi.Application.Interfaces.Services;

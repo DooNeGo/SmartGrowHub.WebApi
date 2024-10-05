@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Exceptions;
-using SmartGrowHub.Domain.Features.RefreshTokens;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Infrastructure.Data;

@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.WebApi.Applica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.WebApi.Infrastructure", "SmartGrowHub.WebApi.Infrastructure\SmartGrowHub.WebApi.Infrastructure.csproj", "{556EDF35-207C-4056-8234-2B2CBC4F2EB6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Shared", "SmartGrowHub.Shared\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj", "{601BF140-7CD7-4806-8372-A688E7E6C4E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Shared", "SmartGrowHub.Shared\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj", "{DA871D75-5126-4018-9CB3-EEB3F65526B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Domain", "SmartGrowHub.Shared\SmartGrowHub.Domain\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj", "{14A32922-014C-49FC-B1BD-D447568829CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Domain", "SmartGrowHub.Shared\SmartGrowHub.Core\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj", "{8C750AF9-6671-42EF-9826-2A28A9C82365}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Application", "SmartGrowHub.Shared\SmartGrowHub.Core\SmartGrowHub.Application\SmartGrowHub.Application.csproj", "{A2F3CCCB-0D66-4514-9787-230661491930}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +33,18 @@ Global
 		{556EDF35-207C-4056-8234-2B2CBC4F2EB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{556EDF35-207C-4056-8234-2B2CBC4F2EB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{556EDF35-207C-4056-8234-2B2CBC4F2EB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{601BF140-7CD7-4806-8372-A688E7E6C4E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{601BF140-7CD7-4806-8372-A688E7E6C4E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{601BF140-7CD7-4806-8372-A688E7E6C4E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{601BF140-7CD7-4806-8372-A688E7E6C4E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{14A32922-014C-49FC-B1BD-D447568829CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{14A32922-014C-49FC-B1BD-D447568829CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{14A32922-014C-49FC-B1BD-D447568829CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{14A32922-014C-49FC-B1BD-D447568829CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA871D75-5126-4018-9CB3-EEB3F65526B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA871D75-5126-4018-9CB3-EEB3F65526B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA871D75-5126-4018-9CB3-EEB3F65526B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA871D75-5126-4018-9CB3-EEB3F65526B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C750AF9-6671-42EF-9826-2A28A9C82365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C750AF9-6671-42EF-9826-2A28A9C82365}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C750AF9-6671-42EF-9826-2A28A9C82365}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C750AF9-6671-42EF-9826-2A28A9C82365}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2F3CCCB-0D66-4514-9787-230661491930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2F3CCCB-0D66-4514-9787-230661491930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2F3CCCB-0D66-4514-9787-230661491930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2F3CCCB-0D66-4514-9787-230661491930}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

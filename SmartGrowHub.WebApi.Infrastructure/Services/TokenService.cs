@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using SmartGrowHub.Domain.Features.RefreshTokens;
+using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using System.Security.Claims;

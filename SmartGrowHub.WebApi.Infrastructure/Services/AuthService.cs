@@ -1,8 +1,8 @@
-﻿using SmartGrowHub.Domain.Common;
+﻿using SmartGrowHub.Application.LogIn;
+using SmartGrowHub.Application.LogOut;
+using SmartGrowHub.Application.Register;
+using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Exceptions;
-using SmartGrowHub.Domain.Features.LogIn;
-using SmartGrowHub.Domain.Features.LogOut;
-using SmartGrowHub.Domain.Features.Register;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 
