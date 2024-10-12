@@ -1,17 +1,19 @@
-﻿namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-internal sealed record UserSessionDb(
-    Ulid Id,
-    Ulid UserId,
-    string AccessToken,
-    Ulid RefreshToken,
-    DateTime Expires)
+namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+
+[Index(nameof(RefreshToken), IsUnique = true)]
+internal sealed class UserSessionDb
 {
-    private UserSessionDb() : this(
-        default, default,
-        default!, default,
-        default)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
 
-    public UserDb User { get; } = null!;
+    public required Ulid UserDbId { get; set; }
+
+    public required string AccessToken { get; set; } = string.Empty;
+
+    public required Ulid RefreshToken { get; set; }
+
+    public required DateTime Expires { get; set; }
 }

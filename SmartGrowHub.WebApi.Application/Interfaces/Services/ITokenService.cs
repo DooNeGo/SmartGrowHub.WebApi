@@ -5,5 +5,5 @@ namespace SmartGrowHub.WebApi.Application.Interfaces.Services;
 
 public interface ITokenService
 {
-    AuthTokens CreateTokens(User user);
+    Eff<AuthTokens> CreateTokens(User user);
 }

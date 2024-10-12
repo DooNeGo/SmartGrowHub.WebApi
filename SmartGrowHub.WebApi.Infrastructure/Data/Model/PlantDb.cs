@@ -1,9 +1,11 @@
-﻿namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+﻿using System.ComponentModel.DataAnnotations;
 
-internal sealed record PlantDb(
-    Ulid Id, string Name)
+namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+
+internal sealed class PlantDb
 {
-    private PlantDb() : this(
-        default!, default!)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
+
+    public required string Name { get; set; } = string.Empty;
 }

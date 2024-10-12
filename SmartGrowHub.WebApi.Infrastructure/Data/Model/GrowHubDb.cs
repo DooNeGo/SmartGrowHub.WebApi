@@ -1,17 +1,17 @@
-﻿namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+﻿using System.ComponentModel.DataAnnotations;
 
-internal sealed record GrowHubDb(
-    Ulid Id,
-    IEnumerable<SensorReadingDb> SensorReadings,
-    IEnumerable<SettingDb> Settings,
-    Ulid? PlantId,
-    PlantDb? Plant,
-    Ulid UserId,
-    UserDb User)
+namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+
+internal sealed class GrowHubDb
 {
-    private GrowHubDb() : this(
-        default!, [], [],
-        default, default!,
-        default, default!)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
+
+    public required PlantDb? Plant { get; set; }
+
+    public required Ulid UserDbId { get; set; }
+
+    public required List<SensorReadingDb> SensorReadings { get; set; } = [];
+
+    public required List<SettingDb> Settings { get; set; } = [];
 }

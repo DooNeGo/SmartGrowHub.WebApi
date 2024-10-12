@@ -1,9 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EntityFramework.Exceptions.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using SmartGrowHub.Application.Services;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using SmartGrowHub.WebApi.Infrastructure.Data;
+using SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.WebApi.Infrastructure.Repositories;
 using SmartGrowHub.WebApi.Infrastructure.Services;
+using TimeProvider = SmartGrowHub.WebApi.Infrastructure.Services.TimeProvider;
 
 namespace SmartGrowHub.WebApi.Infrastructure;
 
@@ -11,12 +16,17 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services) =>
         services
-            .AddDbContext<ApplicationContext>()
-            .AddTransient<ITokenService, TokenService>()
-            .AddTransient<IUserService, UserService>()
+            .AddDbContextPool<ApplicationContext>(options => options
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+                .UseModel(ApplicationContextModel.Instance)
+                .UseSqlite("DataSource=SmartGrowHubLocalDb")
+                .UseExceptionProcessor()
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors())
+            .AddSingleton<ITokenService, TokenService>()
+            .AddSingleton<ITimeProvider, TimeProvider>()
+            .AddSingleton<IPasswordHasher, PasswordHasher>()
             .AddTransient<IAuthService, AuthService>()
-            .AddTransient<IPasswordHasher, PasswordHasher>()
             .AddTransient<IUserRepository, UserRepository>()
-            .AddTransient<IUserSessionService, UserSessionService>()
-            .AddTransient<IUserSessionRepository, UserSessionRepository>();
+            .AddTransient<IUserService, UserService>();
 }

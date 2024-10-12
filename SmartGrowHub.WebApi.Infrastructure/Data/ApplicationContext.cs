@@ -8,6 +8,10 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data;
 
 internal sealed class ApplicationContext : DbContext
 {
+    //public ApplicationContext() { }
+
+    public ApplicationContext(DbContextOptions options) : base(options) { }
+
     public DbSet<UserDb> Users => Set<UserDb>();
 
     public DbSet<GrowHubDb> GrowHubs => Set<GrowHubDb>();
@@ -31,30 +35,24 @@ internal sealed class ApplicationContext : DbContext
             .HaveConversion<UlidConverter>();
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-            .UseModel(ApplicationContextModel.Instance)
-            .UseSqlite("DataSource=SmartGrowHubLocalDb")
-            .UseExceptionProcessor();
-    }
+    //    optionsBuilder
+    //        .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+    //        .UseModel(ApplicationContextModel.Instance)
+    //        .UseSqlite("DataSource=SmartGrowHubLocalDb")
+    //        .UseExceptionProcessor()
+    //        .EnableSensitiveDataLogging()
+    //        .EnableDetailedErrors();
+    //}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<UserDb>().HasKey(user => user.Id);
-        modelBuilder.Entity<GrowHubDb>().HasKey(hub => hub.Id);
-        modelBuilder.Entity<PlantDb>().HasKey(plant => plant.Id);
-        modelBuilder.Entity<SettingDb>().HasKey(setting => setting.Id);
-        modelBuilder.Entity<SensorReadingDb>().HasKey(reading => reading.Id);
-        modelBuilder.Entity<ComponentDb>().HasKey(component => component.Id);
-        modelBuilder.Entity<UserSessionDb>().HasKey(session => session.Id);
-
-        modelBuilder.Entity<UserDb>().HasIndex(user => user.UserName).IsUnique();
-        modelBuilder.Entity<UserDb>().HasIndex(user => user.Email).IsUnique();
+        modelBuilder.Entity<UserDb>().Navigation(user => user.Sessions).AutoInclude();
+        modelBuilder.Entity<UserDb>().Navigation(user => user.GrowHubs).AutoInclude();
     }
 }

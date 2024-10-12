@@ -64,8 +64,6 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var plantId = runtimeEntityType.AddProperty(
                 "PlantId",
                 typeof(Ulid?),
-                propertyInfo: typeof(GrowHubDb).GetProperty("PlantId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(GrowHubDb).GetField("<PlantId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 valueConverter: new UlidConverter());
             plantId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
@@ -92,13 +90,13 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
 
-            var userId = runtimeEntityType.AddProperty(
-                "UserId",
+            var userDbId = runtimeEntityType.AddProperty(
+                "UserDbId",
                 typeof(Ulid),
-                propertyInfo: typeof(GrowHubDb).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(GrowHubDb).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(GrowHubDb).GetProperty("UserDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(GrowHubDb).GetField("<UserDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            userId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
+            userDbId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -121,7 +119,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
-            userId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            userDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -131,7 +129,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 new[] { plantId });
 
             var index0 = runtimeEntityType.AddIndex(
-                new[] { userId });
+                new[] { userDbId });
 
             return runtimeEntityType;
         }
@@ -154,25 +152,19 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
 
         public static RuntimeForeignKey CreateForeignKey2(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserDbId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
 
-            var user = declaringEntityType.AddNavigation("User",
-                runtimeForeignKey,
-                onDependent: true,
-                typeof(UserDb),
-                propertyInfo: typeof(GrowHubDb).GetProperty("User", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(GrowHubDb).GetField("<User>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-
             var growHubs = principalEntityType.AddNavigation("GrowHubs",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(IEnumerable<GrowHubDb>),
+                typeof(List<GrowHubDb>),
                 propertyInfo: typeof(UserDb).GetProperty("GrowHubs", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserDb).GetField("<GrowHubs>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                fieldInfo: typeof(UserDb).GetField("<GrowHubs>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                eagerLoaded: true);
 
             return runtimeForeignKey;
         }

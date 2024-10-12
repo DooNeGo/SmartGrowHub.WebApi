@@ -1,17 +1,24 @@
-﻿namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-internal sealed record UserDb(
-    Ulid Id,
-    string UserName,
-    byte[] Password,
-    string Email,
-    string DisplayName)
+namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
+
+[Index(nameof(UserName), IsUnique = true)]
+[Index(nameof(EmailAddress), IsUnique = true)]
+internal sealed class UserDb
 {
-    private UserDb() : this(
-        default, default!,
-        default!, default!,
-        default!)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
 
-    public IEnumerable<GrowHubDb> GrowHubs { get; } = [];
+    public required string UserName { get; set; } = string.Empty;
+
+    public required byte[] Password { get; set; } = [];
+
+    public required string EmailAddress { get; set; } = string.Empty;
+
+    public required string DisplayName { get; set; } = string.Empty;
+
+    public required List<GrowHubDb> GrowHubs { get; set; } = [];
+
+    public required List<UserSessionDb> Sessions { get; set; } = [];
 }

@@ -70,13 +70,13 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 sentinel: new DateOnly(1, 1, 1));
             createdAt.TypeMapping = SqliteDateOnlyTypeMapping.Default;
 
-            var growHubId = runtimeEntityType.AddProperty(
-                "GrowHubId",
+            var growHubDbId = runtimeEntityType.AddProperty(
+                "GrowHubDbId",
                 typeof(Ulid),
-                propertyInfo: typeof(SensorReadingDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SensorReadingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(SensorReadingDb).GetProperty("GrowHubDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(SensorReadingDb).GetField("<GrowHubDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            growHubId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
+            growHubDbId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -99,7 +99,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
-            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            growHubDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var type = runtimeEntityType.AddProperty(
                 "Type",
@@ -150,30 +150,23 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { growHubId });
+                new[] { growHubDbId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubDbId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
 
-            var growHub = declaringEntityType.AddNavigation("GrowHub",
-                runtimeForeignKey,
-                onDependent: true,
-                typeof(GrowHubDb),
-                propertyInfo: typeof(SensorReadingDb).GetProperty("GrowHub", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SensorReadingDb).GetField("<GrowHub>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-
             var sensorReadings = principalEntityType.AddNavigation("SensorReadings",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(IEnumerable<SensorReadingDb>),
+                typeof(List<SensorReadingDb>),
                 propertyInfo: typeof(GrowHubDb).GetProperty("SensorReadings", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubDb).GetField("<SensorReadings>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 

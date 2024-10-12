@@ -29,6 +29,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             GrowHubDbEntityType.CreateForeignKey2(growHubDb, userDb);
             SensorReadingDbEntityType.CreateForeignKey1(sensorReadingDb, growHubDb);
             SettingDbEntityType.CreateForeignKey1(settingDb, growHubDb);
+            UserSessionDbEntityType.CreateForeignKey1(userSessionDb, userDb);
 
             ComponentDbEntityType.CreateAnnotations(componentDb);
             GrowHubDbEntityType.CreateAnnotations(growHubDb);
@@ -38,7 +39,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             UserDbEntityType.CreateAnnotations(userDb);
             UserSessionDbEntityType.CreateAnnotations(userSessionDb);
 
-            AddAnnotation("ProductVersion", "8.0.8");
+            AddAnnotation("ProductVersion", "8.0.10");
             AddRuntimeAnnotation("Relational:RelationalModel", CreateRelationalModel());
         }
 
@@ -53,8 +54,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", null, relationalModel);
             var idColumnBase = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase.Columns.Add("Id", idColumnBase);
-            var settingIdColumnBase = new ColumnBase<ColumnMappingBase>("SettingId", "BLOB", smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase.Columns.Add("SettingId", settingIdColumnBase);
+            var settingDbIdColumnBase = new ColumnBase<ColumnMappingBase>("SettingDbId", "BLOB", smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase.Columns.Add("SettingDbId", settingDbIdColumnBase);
             var typeColumnBase = new ColumnBase<ColumnMappingBase>("Type", "INTEGER", smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase.Columns.Add("Type", typeColumnBase);
             var unitColumnBase = new ColumnBase<ColumnMappingBase>("Unit", "TEXT", smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase);
@@ -66,7 +67,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             smartGrowHubWebApiInfrastructureDataModelComponentDbTableBase.AddTypeMapping(smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase, false);
             defaultTableMappings.Add(smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase, componentDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)settingIdColumnBase, componentDb.FindProperty("SettingId")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)settingDbIdColumnBase, componentDb.FindProperty("SettingDbId")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)typeColumnBase, componentDb.FindProperty("Type")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)unitColumnBase, componentDb.FindProperty("Unit")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)valueColumnBase, componentDb.FindProperty("Value")!, smartGrowHubWebApiInfrastructureDataModelComponentDbMappingBase);
@@ -76,8 +77,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var componentsTable = new Table("Components", null, relationalModel);
             var idColumn = new Column("Id", "BLOB", componentsTable);
             componentsTable.Columns.Add("Id", idColumn);
-            var settingIdColumn = new Column("SettingId", "BLOB", componentsTable);
-            componentsTable.Columns.Add("SettingId", settingIdColumn);
+            var settingDbIdColumn = new Column("SettingDbId", "BLOB", componentsTable);
+            componentsTable.Columns.Add("SettingDbId", settingDbIdColumn);
             var typeColumn = new Column("Type", "INTEGER", componentsTable);
             componentsTable.Columns.Add("Type", typeColumn);
             var unitColumn = new Column("Unit", "TEXT", componentsTable);
@@ -92,20 +93,20 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             pK_Components.MappedKeys.Add(pK_ComponentsUc);
             RelationalModel.GetOrCreateUniqueConstraints(pK_ComponentsUc).Add(pK_Components);
             componentsTable.UniqueConstraints.Add("PK_Components", pK_Components);
-            var iX_Components_SettingId = new TableIndex(
-            "IX_Components_SettingId", componentsTable, new[] { settingIdColumn }, false);
-            var iX_Components_SettingIdIx = RelationalModel.GetIndex(this,
+            var iX_Components_SettingDbId = new TableIndex(
+            "IX_Components_SettingDbId", componentsTable, new[] { settingDbIdColumn }, false);
+            var iX_Components_SettingDbIdIx = RelationalModel.GetIndex(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb",
-                new[] { "SettingId" });
-            iX_Components_SettingId.MappedIndexes.Add(iX_Components_SettingIdIx);
-            RelationalModel.GetOrCreateTableIndexes(iX_Components_SettingIdIx).Add(iX_Components_SettingId);
-            componentsTable.Indexes.Add("IX_Components_SettingId", iX_Components_SettingId);
+                new[] { "SettingDbId" });
+            iX_Components_SettingDbId.MappedIndexes.Add(iX_Components_SettingDbIdIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_Components_SettingDbIdIx).Add(iX_Components_SettingDbId);
+            componentsTable.Indexes.Add("IX_Components_SettingDbId", iX_Components_SettingDbId);
             relationalModel.Tables.Add(("Components", null), componentsTable);
             var componentsTableMapping = new TableMapping(componentDb, componentsTable, true);
             componentsTable.AddTypeMapping(componentsTableMapping, false);
             tableMappings.Add(componentsTableMapping);
             RelationalModel.CreateColumnMapping(idColumn, componentDb.FindProperty("Id")!, componentsTableMapping);
-            RelationalModel.CreateColumnMapping(settingIdColumn, componentDb.FindProperty("SettingId")!, componentsTableMapping);
+            RelationalModel.CreateColumnMapping(settingDbIdColumn, componentDb.FindProperty("SettingDbId")!, componentsTableMapping);
             RelationalModel.CreateColumnMapping(typeColumn, componentDb.FindProperty("Type")!, componentsTableMapping);
             RelationalModel.CreateColumnMapping(unitColumn, componentDb.FindProperty("Unit")!, componentsTableMapping);
             RelationalModel.CreateColumnMapping(valueColumn, componentDb.FindProperty("Value")!, componentsTableMapping);
@@ -122,15 +123,15 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 IsNullable = true
             };
             smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase.Columns.Add("PlantId", plantIdColumnBase);
-            var userIdColumnBase = new ColumnBase<ColumnMappingBase>("UserId", "BLOB", smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase.Columns.Add("UserId", userIdColumnBase);
+            var userDbIdColumnBase = new ColumnBase<ColumnMappingBase>("UserDbId", "BLOB", smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase.Columns.Add("UserDbId", userDbIdColumnBase);
             relationalModel.DefaultTables.Add("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase);
             var smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase = new TableMappingBase<ColumnMappingBase>(growHubDb, smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase, true);
             smartGrowHubWebApiInfrastructureDataModelGrowHubDbTableBase.AddTypeMapping(smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase, false);
             defaultTableMappings0.Add(smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase0, growHubDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)plantIdColumnBase, growHubDb.FindProperty("PlantId")!, smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userIdColumnBase, growHubDb.FindProperty("UserId")!, smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userDbIdColumnBase, growHubDb.FindProperty("UserDbId")!, smartGrowHubWebApiInfrastructureDataModelGrowHubDbMappingBase);
 
             var tableMappings0 = new List<TableMapping>();
             growHubDb.SetRuntimeAnnotation("Relational:TableMappings", tableMappings0);
@@ -142,8 +143,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 IsNullable = true
             };
             growHubsTable.Columns.Add("PlantId", plantIdColumn);
-            var userIdColumn = new Column("UserId", "BLOB", growHubsTable);
-            growHubsTable.Columns.Add("UserId", userIdColumn);
+            var userDbIdColumn = new Column("UserDbId", "BLOB", growHubsTable);
+            growHubsTable.Columns.Add("UserDbId", userDbIdColumn);
             var pK_GrowHubs = new UniqueConstraint("PK_GrowHubs", growHubsTable, new[] { idColumn0 });
             growHubsTable.PrimaryKey = pK_GrowHubs;
             var pK_GrowHubsUc = RelationalModel.GetKey(this,
@@ -160,21 +161,21 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             iX_GrowHubs_PlantId.MappedIndexes.Add(iX_GrowHubs_PlantIdIx);
             RelationalModel.GetOrCreateTableIndexes(iX_GrowHubs_PlantIdIx).Add(iX_GrowHubs_PlantId);
             growHubsTable.Indexes.Add("IX_GrowHubs_PlantId", iX_GrowHubs_PlantId);
-            var iX_GrowHubs_UserId = new TableIndex(
-            "IX_GrowHubs_UserId", growHubsTable, new[] { userIdColumn }, false);
-            var iX_GrowHubs_UserIdIx = RelationalModel.GetIndex(this,
+            var iX_GrowHubs_UserDbId = new TableIndex(
+            "IX_GrowHubs_UserDbId", growHubsTable, new[] { userDbIdColumn }, false);
+            var iX_GrowHubs_UserDbIdIx = RelationalModel.GetIndex(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb",
-                new[] { "UserId" });
-            iX_GrowHubs_UserId.MappedIndexes.Add(iX_GrowHubs_UserIdIx);
-            RelationalModel.GetOrCreateTableIndexes(iX_GrowHubs_UserIdIx).Add(iX_GrowHubs_UserId);
-            growHubsTable.Indexes.Add("IX_GrowHubs_UserId", iX_GrowHubs_UserId);
+                new[] { "UserDbId" });
+            iX_GrowHubs_UserDbId.MappedIndexes.Add(iX_GrowHubs_UserDbIdIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_GrowHubs_UserDbIdIx).Add(iX_GrowHubs_UserDbId);
+            growHubsTable.Indexes.Add("IX_GrowHubs_UserDbId", iX_GrowHubs_UserDbId);
             relationalModel.Tables.Add(("GrowHubs", null), growHubsTable);
             var growHubsTableMapping = new TableMapping(growHubDb, growHubsTable, true);
             growHubsTable.AddTypeMapping(growHubsTableMapping, false);
             tableMappings0.Add(growHubsTableMapping);
             RelationalModel.CreateColumnMapping(idColumn0, growHubDb.FindProperty("Id")!, growHubsTableMapping);
             RelationalModel.CreateColumnMapping(plantIdColumn, growHubDb.FindProperty("PlantId")!, growHubsTableMapping);
-            RelationalModel.CreateColumnMapping(userIdColumn, growHubDb.FindProperty("UserId")!, growHubsTableMapping);
+            RelationalModel.CreateColumnMapping(userDbIdColumn, growHubDb.FindProperty("UserDbId")!, growHubsTableMapping);
 
             var plantDb = FindEntityType("SmartGrowHub.WebApi.Infrastructure.Data.Model.PlantDb")!;
 
@@ -221,8 +222,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb", null, relationalModel);
             var createdAtColumnBase = new ColumnBase<ColumnMappingBase>("CreatedAt", "TEXT", smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase.Columns.Add("CreatedAt", createdAtColumnBase);
-            var growHubIdColumnBase = new ColumnBase<ColumnMappingBase>("GrowHubId", "BLOB", smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase.Columns.Add("GrowHubId", growHubIdColumnBase);
+            var growHubDbIdColumnBase = new ColumnBase<ColumnMappingBase>("GrowHubDbId", "BLOB", smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase.Columns.Add("GrowHubDbId", growHubDbIdColumnBase);
             var idColumnBase2 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase.Columns.Add("Id", idColumnBase2);
             var typeColumnBase0 = new ColumnBase<ColumnMappingBase>("Type", "INTEGER", smartGrowHubWebApiInfrastructureDataModelSensorReadingDbTableBase);
@@ -237,7 +238,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             defaultTableMappings2.Add(smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase2, sensorReadingDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)createdAtColumnBase, sensorReadingDb.FindProperty("CreatedAt")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)growHubIdColumnBase, sensorReadingDb.FindProperty("GrowHubId")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)growHubDbIdColumnBase, sensorReadingDb.FindProperty("GrowHubDbId")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)typeColumnBase0, sensorReadingDb.FindProperty("Type")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)unitColumnBase0, sensorReadingDb.FindProperty("Unit")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)valueColumnBase0, sensorReadingDb.FindProperty("Value")!, smartGrowHubWebApiInfrastructureDataModelSensorReadingDbMappingBase);
@@ -249,8 +250,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             sensorReadingTable.Columns.Add("Id", idColumn2);
             var createdAtColumn = new Column("CreatedAt", "TEXT", sensorReadingTable);
             sensorReadingTable.Columns.Add("CreatedAt", createdAtColumn);
-            var growHubIdColumn = new Column("GrowHubId", "BLOB", sensorReadingTable);
-            sensorReadingTable.Columns.Add("GrowHubId", growHubIdColumn);
+            var growHubDbIdColumn = new Column("GrowHubDbId", "BLOB", sensorReadingTable);
+            sensorReadingTable.Columns.Add("GrowHubDbId", growHubDbIdColumn);
             var typeColumn0 = new Column("Type", "INTEGER", sensorReadingTable);
             sensorReadingTable.Columns.Add("Type", typeColumn0);
             var unitColumn0 = new Column("Unit", "TEXT", sensorReadingTable);
@@ -265,21 +266,21 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             pK_SensorReading.MappedKeys.Add(pK_SensorReadingUc);
             RelationalModel.GetOrCreateUniqueConstraints(pK_SensorReadingUc).Add(pK_SensorReading);
             sensorReadingTable.UniqueConstraints.Add("PK_SensorReading", pK_SensorReading);
-            var iX_SensorReading_GrowHubId = new TableIndex(
-            "IX_SensorReading_GrowHubId", sensorReadingTable, new[] { growHubIdColumn }, false);
-            var iX_SensorReading_GrowHubIdIx = RelationalModel.GetIndex(this,
+            var iX_SensorReading_GrowHubDbId = new TableIndex(
+            "IX_SensorReading_GrowHubDbId", sensorReadingTable, new[] { growHubDbIdColumn }, false);
+            var iX_SensorReading_GrowHubDbIdIx = RelationalModel.GetIndex(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb",
-                new[] { "GrowHubId" });
-            iX_SensorReading_GrowHubId.MappedIndexes.Add(iX_SensorReading_GrowHubIdIx);
-            RelationalModel.GetOrCreateTableIndexes(iX_SensorReading_GrowHubIdIx).Add(iX_SensorReading_GrowHubId);
-            sensorReadingTable.Indexes.Add("IX_SensorReading_GrowHubId", iX_SensorReading_GrowHubId);
+                new[] { "GrowHubDbId" });
+            iX_SensorReading_GrowHubDbId.MappedIndexes.Add(iX_SensorReading_GrowHubDbIdIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_SensorReading_GrowHubDbIdIx).Add(iX_SensorReading_GrowHubDbId);
+            sensorReadingTable.Indexes.Add("IX_SensorReading_GrowHubDbId", iX_SensorReading_GrowHubDbId);
             relationalModel.Tables.Add(("SensorReading", null), sensorReadingTable);
             var sensorReadingTableMapping = new TableMapping(sensorReadingDb, sensorReadingTable, true);
             sensorReadingTable.AddTypeMapping(sensorReadingTableMapping, false);
             tableMappings2.Add(sensorReadingTableMapping);
             RelationalModel.CreateColumnMapping(idColumn2, sensorReadingDb.FindProperty("Id")!, sensorReadingTableMapping);
             RelationalModel.CreateColumnMapping(createdAtColumn, sensorReadingDb.FindProperty("CreatedAt")!, sensorReadingTableMapping);
-            RelationalModel.CreateColumnMapping(growHubIdColumn, sensorReadingDb.FindProperty("GrowHubId")!, sensorReadingTableMapping);
+            RelationalModel.CreateColumnMapping(growHubDbIdColumn, sensorReadingDb.FindProperty("GrowHubDbId")!, sensorReadingTableMapping);
             RelationalModel.CreateColumnMapping(typeColumn0, sensorReadingDb.FindProperty("Type")!, sensorReadingTableMapping);
             RelationalModel.CreateColumnMapping(unitColumn0, sensorReadingDb.FindProperty("Unit")!, sensorReadingTableMapping);
             RelationalModel.CreateColumnMapping(valueColumn0, sensorReadingDb.FindProperty("Value")!, sensorReadingTableMapping);
@@ -289,8 +290,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var defaultTableMappings3 = new List<TableMappingBase<ColumnMappingBase>>();
             settingDb.SetRuntimeAnnotation("Relational:DefaultMappings", defaultTableMappings3);
             var smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", null, relationalModel);
-            var growHubIdColumnBase0 = new ColumnBase<ColumnMappingBase>("GrowHubId", "BLOB", smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase.Columns.Add("GrowHubId", growHubIdColumnBase0);
+            var growHubDbIdColumnBase0 = new ColumnBase<ColumnMappingBase>("GrowHubDbId", "BLOB", smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase.Columns.Add("GrowHubDbId", growHubDbIdColumnBase0);
             var idColumnBase3 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase.Columns.Add("Id", idColumnBase3);
             var modeColumnBase = new ColumnBase<ColumnMappingBase>("Mode", "INTEGER", smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase);
@@ -302,7 +303,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             smartGrowHubWebApiInfrastructureDataModelSettingDbTableBase.AddTypeMapping(smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase, false);
             defaultTableMappings3.Add(smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase3, settingDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)growHubIdColumnBase0, settingDb.FindProperty("GrowHubId")!, smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)growHubDbIdColumnBase0, settingDb.FindProperty("GrowHubDbId")!, smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)modeColumnBase, settingDb.FindProperty("Mode")!, smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)typeColumnBase1, settingDb.FindProperty("Type")!, smartGrowHubWebApiInfrastructureDataModelSettingDbMappingBase);
 
@@ -311,8 +312,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var settingsTable = new Table("Settings", null, relationalModel);
             var idColumn3 = new Column("Id", "BLOB", settingsTable);
             settingsTable.Columns.Add("Id", idColumn3);
-            var growHubIdColumn0 = new Column("GrowHubId", "BLOB", settingsTable);
-            settingsTable.Columns.Add("GrowHubId", growHubIdColumn0);
+            var growHubDbIdColumn0 = new Column("GrowHubDbId", "BLOB", settingsTable);
+            settingsTable.Columns.Add("GrowHubDbId", growHubDbIdColumn0);
             var modeColumn = new Column("Mode", "INTEGER", settingsTable);
             settingsTable.Columns.Add("Mode", modeColumn);
             var typeColumn1 = new Column("Type", "INTEGER", settingsTable);
@@ -325,20 +326,20 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             pK_Settings.MappedKeys.Add(pK_SettingsUc);
             RelationalModel.GetOrCreateUniqueConstraints(pK_SettingsUc).Add(pK_Settings);
             settingsTable.UniqueConstraints.Add("PK_Settings", pK_Settings);
-            var iX_Settings_GrowHubId = new TableIndex(
-            "IX_Settings_GrowHubId", settingsTable, new[] { growHubIdColumn0 }, false);
-            var iX_Settings_GrowHubIdIx = RelationalModel.GetIndex(this,
+            var iX_Settings_GrowHubDbId = new TableIndex(
+            "IX_Settings_GrowHubDbId", settingsTable, new[] { growHubDbIdColumn0 }, false);
+            var iX_Settings_GrowHubDbIdIx = RelationalModel.GetIndex(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb",
-                new[] { "GrowHubId" });
-            iX_Settings_GrowHubId.MappedIndexes.Add(iX_Settings_GrowHubIdIx);
-            RelationalModel.GetOrCreateTableIndexes(iX_Settings_GrowHubIdIx).Add(iX_Settings_GrowHubId);
-            settingsTable.Indexes.Add("IX_Settings_GrowHubId", iX_Settings_GrowHubId);
+                new[] { "GrowHubDbId" });
+            iX_Settings_GrowHubDbId.MappedIndexes.Add(iX_Settings_GrowHubDbIdIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_Settings_GrowHubDbIdIx).Add(iX_Settings_GrowHubDbId);
+            settingsTable.Indexes.Add("IX_Settings_GrowHubDbId", iX_Settings_GrowHubDbId);
             relationalModel.Tables.Add(("Settings", null), settingsTable);
             var settingsTableMapping = new TableMapping(settingDb, settingsTable, true);
             settingsTable.AddTypeMapping(settingsTableMapping, false);
             tableMappings3.Add(settingsTableMapping);
             RelationalModel.CreateColumnMapping(idColumn3, settingDb.FindProperty("Id")!, settingsTableMapping);
-            RelationalModel.CreateColumnMapping(growHubIdColumn0, settingDb.FindProperty("GrowHubId")!, settingsTableMapping);
+            RelationalModel.CreateColumnMapping(growHubDbIdColumn0, settingDb.FindProperty("GrowHubDbId")!, settingsTableMapping);
             RelationalModel.CreateColumnMapping(modeColumn, settingDb.FindProperty("Mode")!, settingsTableMapping);
             RelationalModel.CreateColumnMapping(typeColumn1, settingDb.FindProperty("Type")!, settingsTableMapping);
 
@@ -349,8 +350,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             var smartGrowHubWebApiInfrastructureDataModelUserDbTableBase = new TableBase("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", null, relationalModel);
             var displayNameColumnBase = new ColumnBase<ColumnMappingBase>("DisplayName", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("DisplayName", displayNameColumnBase);
-            var emailColumnBase = new ColumnBase<ColumnMappingBase>("Email", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("Email", emailColumnBase);
+            var emailAddressColumnBase = new ColumnBase<ColumnMappingBase>("EmailAddress", "TEXT", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("EmailAddress", emailAddressColumnBase);
             var idColumnBase4 = new ColumnBase<ColumnMappingBase>("Id", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserDbTableBase.Columns.Add("Id", idColumnBase4);
             var passwordColumnBase = new ColumnBase<ColumnMappingBase>("Password", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserDbTableBase);
@@ -363,7 +364,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             defaultTableMappings4.Add(smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)idColumnBase4, userDb.FindProperty("Id")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)displayNameColumnBase, userDb.FindProperty("DisplayName")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)emailColumnBase, userDb.FindProperty("Email")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)emailAddressColumnBase, userDb.FindProperty("EmailAddress")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)passwordColumnBase, userDb.FindProperty("Password")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userNameColumnBase, userDb.FindProperty("UserName")!, smartGrowHubWebApiInfrastructureDataModelUserDbMappingBase);
 
@@ -374,8 +375,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             usersTable.Columns.Add("Id", idColumn4);
             var displayNameColumn = new Column("DisplayName", "TEXT", usersTable);
             usersTable.Columns.Add("DisplayName", displayNameColumn);
-            var emailColumn = new Column("Email", "TEXT", usersTable);
-            usersTable.Columns.Add("Email", emailColumn);
+            var emailAddressColumn = new Column("EmailAddress", "TEXT", usersTable);
+            usersTable.Columns.Add("EmailAddress", emailAddressColumn);
             var passwordColumn = new Column("Password", "BLOB", usersTable);
             usersTable.Columns.Add("Password", passwordColumn);
             var userNameColumn = new Column("UserName", "TEXT", usersTable);
@@ -388,14 +389,14 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             pK_Users.MappedKeys.Add(pK_UsersUc);
             RelationalModel.GetOrCreateUniqueConstraints(pK_UsersUc).Add(pK_Users);
             usersTable.UniqueConstraints.Add("PK_Users", pK_Users);
-            var iX_Users_Email = new TableIndex(
-            "IX_Users_Email", usersTable, new[] { emailColumn }, true);
-            var iX_Users_EmailIx = RelationalModel.GetIndex(this,
+            var iX_Users_EmailAddress = new TableIndex(
+            "IX_Users_EmailAddress", usersTable, new[] { emailAddressColumn }, true);
+            var iX_Users_EmailAddressIx = RelationalModel.GetIndex(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb",
-                new[] { "Email" });
-            iX_Users_Email.MappedIndexes.Add(iX_Users_EmailIx);
-            RelationalModel.GetOrCreateTableIndexes(iX_Users_EmailIx).Add(iX_Users_Email);
-            usersTable.Indexes.Add("IX_Users_Email", iX_Users_Email);
+                new[] { "EmailAddress" });
+            iX_Users_EmailAddress.MappedIndexes.Add(iX_Users_EmailAddressIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_Users_EmailAddressIx).Add(iX_Users_EmailAddress);
+            usersTable.Indexes.Add("IX_Users_EmailAddress", iX_Users_EmailAddress);
             var iX_Users_UserName = new TableIndex(
             "IX_Users_UserName", usersTable, new[] { userNameColumn }, true);
             var iX_Users_UserNameIx = RelationalModel.GetIndex(this,
@@ -410,7 +411,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             tableMappings4.Add(usersTableMapping);
             RelationalModel.CreateColumnMapping(idColumn4, userDb.FindProperty("Id")!, usersTableMapping);
             RelationalModel.CreateColumnMapping(displayNameColumn, userDb.FindProperty("DisplayName")!, usersTableMapping);
-            RelationalModel.CreateColumnMapping(emailColumn, userDb.FindProperty("Email")!, usersTableMapping);
+            RelationalModel.CreateColumnMapping(emailAddressColumn, userDb.FindProperty("EmailAddress")!, usersTableMapping);
             RelationalModel.CreateColumnMapping(passwordColumn, userDb.FindProperty("Password")!, usersTableMapping);
             RelationalModel.CreateColumnMapping(userNameColumn, userDb.FindProperty("UserName")!, usersTableMapping);
 
@@ -427,8 +428,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("Id", idColumnBase5);
             var refreshTokenColumnBase = new ColumnBase<ColumnMappingBase>("RefreshToken", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("RefreshToken", refreshTokenColumnBase);
-            var userIdColumnBase0 = new ColumnBase<ColumnMappingBase>("UserId", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
-            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("UserId", userIdColumnBase0);
+            var userDbIdColumnBase0 = new ColumnBase<ColumnMappingBase>("UserDbId", "BLOB", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
+            smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.Columns.Add("UserDbId", userDbIdColumnBase0);
             relationalModel.DefaultTables.Add("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase);
             var smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase = new TableMappingBase<ColumnMappingBase>(userSessionDb, smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase, true);
             smartGrowHubWebApiInfrastructureDataModelUserSessionDbTableBase.AddTypeMapping(smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase, false);
@@ -437,7 +438,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)accessTokenColumnBase, userSessionDb.FindProperty("AccessToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)expiresColumnBase, userSessionDb.FindProperty("Expires")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
             RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)refreshTokenColumnBase, userSessionDb.FindProperty("RefreshToken")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
-            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userIdColumnBase0, userSessionDb.FindProperty("UserId")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
+            RelationalModel.CreateColumnMapping((ColumnBase<ColumnMappingBase>)userDbIdColumnBase0, userSessionDb.FindProperty("UserDbId")!, smartGrowHubWebApiInfrastructureDataModelUserSessionDbMappingBase);
 
             var tableMappings5 = new List<TableMapping>();
             userSessionDb.SetRuntimeAnnotation("Relational:TableMappings", tableMappings5);
@@ -450,8 +451,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             userSessionsTable.Columns.Add("Expires", expiresColumn);
             var refreshTokenColumn = new Column("RefreshToken", "BLOB", userSessionsTable);
             userSessionsTable.Columns.Add("RefreshToken", refreshTokenColumn);
-            var userIdColumn0 = new Column("UserId", "BLOB", userSessionsTable);
-            userSessionsTable.Columns.Add("UserId", userIdColumn0);
+            var userDbIdColumn0 = new Column("UserDbId", "BLOB", userSessionsTable);
+            userSessionsTable.Columns.Add("UserDbId", userDbIdColumn0);
             var pK_UserSessions = new UniqueConstraint("PK_UserSessions", userSessionsTable, new[] { idColumn5 });
             userSessionsTable.PrimaryKey = pK_UserSessions;
             var pK_UserSessionsUc = RelationalModel.GetKey(this,
@@ -460,6 +461,22 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             pK_UserSessions.MappedKeys.Add(pK_UserSessionsUc);
             RelationalModel.GetOrCreateUniqueConstraints(pK_UserSessionsUc).Add(pK_UserSessions);
             userSessionsTable.UniqueConstraints.Add("PK_UserSessions", pK_UserSessions);
+            var iX_UserSessions_RefreshToken = new TableIndex(
+            "IX_UserSessions_RefreshToken", userSessionsTable, new[] { refreshTokenColumn }, true);
+            var iX_UserSessions_RefreshTokenIx = RelationalModel.GetIndex(this,
+                "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb",
+                new[] { "RefreshToken" });
+            iX_UserSessions_RefreshToken.MappedIndexes.Add(iX_UserSessions_RefreshTokenIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_UserSessions_RefreshTokenIx).Add(iX_UserSessions_RefreshToken);
+            userSessionsTable.Indexes.Add("IX_UserSessions_RefreshToken", iX_UserSessions_RefreshToken);
+            var iX_UserSessions_UserDbId = new TableIndex(
+            "IX_UserSessions_UserDbId", userSessionsTable, new[] { userDbIdColumn0 }, false);
+            var iX_UserSessions_UserDbIdIx = RelationalModel.GetIndex(this,
+                "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb",
+                new[] { "UserDbId" });
+            iX_UserSessions_UserDbId.MappedIndexes.Add(iX_UserSessions_UserDbIdIx);
+            RelationalModel.GetOrCreateTableIndexes(iX_UserSessions_UserDbIdIx).Add(iX_UserSessions_UserDbId);
+            userSessionsTable.Indexes.Add("IX_UserSessions_UserDbId", iX_UserSessions_UserDbId);
             relationalModel.Tables.Add(("UserSessions", null), userSessionsTable);
             var userSessionsTableMapping = new TableMapping(userSessionDb, userSessionsTable, true);
             userSessionsTable.AddTypeMapping(userSessionsTableMapping, false);
@@ -468,20 +485,20 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             RelationalModel.CreateColumnMapping(accessTokenColumn, userSessionDb.FindProperty("AccessToken")!, userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(expiresColumn, userSessionDb.FindProperty("Expires")!, userSessionsTableMapping);
             RelationalModel.CreateColumnMapping(refreshTokenColumn, userSessionDb.FindProperty("RefreshToken")!, userSessionsTableMapping);
-            RelationalModel.CreateColumnMapping(userIdColumn0, userSessionDb.FindProperty("UserId")!, userSessionsTableMapping);
-            var fK_Components_Settings_SettingId = new ForeignKeyConstraint(
-                "FK_Components_Settings_SettingId", componentsTable, settingsTable,
-                new[] { settingIdColumn },
+            RelationalModel.CreateColumnMapping(userDbIdColumn0, userSessionDb.FindProperty("UserDbId")!, userSessionsTableMapping);
+            var fK_Components_Settings_SettingDbId = new ForeignKeyConstraint(
+                "FK_Components_Settings_SettingDbId", componentsTable, settingsTable,
+                new[] { settingDbIdColumn },
                 settingsTable.FindUniqueConstraint("PK_Settings")!, ReferentialAction.Cascade);
-            var fK_Components_Settings_SettingIdFk = RelationalModel.GetForeignKey(this,
+            var fK_Components_Settings_SettingDbIdFk = RelationalModel.GetForeignKey(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb",
-                new[] { "SettingId" },
+                new[] { "SettingDbId" },
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb",
                 new[] { "Id" });
-            fK_Components_Settings_SettingId.MappedForeignKeys.Add(fK_Components_Settings_SettingIdFk);
-            RelationalModel.GetOrCreateForeignKeyConstraints(fK_Components_Settings_SettingIdFk).Add(fK_Components_Settings_SettingId);
-            componentsTable.ForeignKeyConstraints.Add(fK_Components_Settings_SettingId);
-            settingsTable.ReferencingForeignKeyConstraints.Add(fK_Components_Settings_SettingId);
+            fK_Components_Settings_SettingDbId.MappedForeignKeys.Add(fK_Components_Settings_SettingDbIdFk);
+            RelationalModel.GetOrCreateForeignKeyConstraints(fK_Components_Settings_SettingDbIdFk).Add(fK_Components_Settings_SettingDbId);
+            componentsTable.ForeignKeyConstraints.Add(fK_Components_Settings_SettingDbId);
+            settingsTable.ReferencingForeignKeyConstraints.Add(fK_Components_Settings_SettingDbId);
             var fK_GrowHubs_Plants_PlantId = new ForeignKeyConstraint(
                 "FK_GrowHubs_Plants_PlantId", growHubsTable, plantsTable,
                 new[] { plantIdColumn },
@@ -495,45 +512,58 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             RelationalModel.GetOrCreateForeignKeyConstraints(fK_GrowHubs_Plants_PlantIdFk).Add(fK_GrowHubs_Plants_PlantId);
             growHubsTable.ForeignKeyConstraints.Add(fK_GrowHubs_Plants_PlantId);
             plantsTable.ReferencingForeignKeyConstraints.Add(fK_GrowHubs_Plants_PlantId);
-            var fK_GrowHubs_Users_UserId = new ForeignKeyConstraint(
-                "FK_GrowHubs_Users_UserId", growHubsTable, usersTable,
-                new[] { userIdColumn },
+            var fK_GrowHubs_Users_UserDbId = new ForeignKeyConstraint(
+                "FK_GrowHubs_Users_UserDbId", growHubsTable, usersTable,
+                new[] { userDbIdColumn },
                 usersTable.FindUniqueConstraint("PK_Users")!, ReferentialAction.Cascade);
-            var fK_GrowHubs_Users_UserIdFk = RelationalModel.GetForeignKey(this,
+            var fK_GrowHubs_Users_UserDbIdFk = RelationalModel.GetForeignKey(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb",
-                new[] { "UserId" },
+                new[] { "UserDbId" },
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb",
                 new[] { "Id" });
-            fK_GrowHubs_Users_UserId.MappedForeignKeys.Add(fK_GrowHubs_Users_UserIdFk);
-            RelationalModel.GetOrCreateForeignKeyConstraints(fK_GrowHubs_Users_UserIdFk).Add(fK_GrowHubs_Users_UserId);
-            growHubsTable.ForeignKeyConstraints.Add(fK_GrowHubs_Users_UserId);
-            usersTable.ReferencingForeignKeyConstraints.Add(fK_GrowHubs_Users_UserId);
-            var fK_SensorReading_GrowHubs_GrowHubId = new ForeignKeyConstraint(
-                "FK_SensorReading_GrowHubs_GrowHubId", sensorReadingTable, growHubsTable,
-                new[] { growHubIdColumn },
+            fK_GrowHubs_Users_UserDbId.MappedForeignKeys.Add(fK_GrowHubs_Users_UserDbIdFk);
+            RelationalModel.GetOrCreateForeignKeyConstraints(fK_GrowHubs_Users_UserDbIdFk).Add(fK_GrowHubs_Users_UserDbId);
+            growHubsTable.ForeignKeyConstraints.Add(fK_GrowHubs_Users_UserDbId);
+            usersTable.ReferencingForeignKeyConstraints.Add(fK_GrowHubs_Users_UserDbId);
+            var fK_SensorReading_GrowHubs_GrowHubDbId = new ForeignKeyConstraint(
+                "FK_SensorReading_GrowHubs_GrowHubDbId", sensorReadingTable, growHubsTable,
+                new[] { growHubDbIdColumn },
                 growHubsTable.FindUniqueConstraint("PK_GrowHubs")!, ReferentialAction.Cascade);
-            var fK_SensorReading_GrowHubs_GrowHubIdFk = RelationalModel.GetForeignKey(this,
+            var fK_SensorReading_GrowHubs_GrowHubDbIdFk = RelationalModel.GetForeignKey(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb",
-                new[] { "GrowHubId" },
+                new[] { "GrowHubDbId" },
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb",
                 new[] { "Id" });
-            fK_SensorReading_GrowHubs_GrowHubId.MappedForeignKeys.Add(fK_SensorReading_GrowHubs_GrowHubIdFk);
-            RelationalModel.GetOrCreateForeignKeyConstraints(fK_SensorReading_GrowHubs_GrowHubIdFk).Add(fK_SensorReading_GrowHubs_GrowHubId);
-            sensorReadingTable.ForeignKeyConstraints.Add(fK_SensorReading_GrowHubs_GrowHubId);
-            growHubsTable.ReferencingForeignKeyConstraints.Add(fK_SensorReading_GrowHubs_GrowHubId);
-            var fK_Settings_GrowHubs_GrowHubId = new ForeignKeyConstraint(
-                "FK_Settings_GrowHubs_GrowHubId", settingsTable, growHubsTable,
-                new[] { growHubIdColumn0 },
+            fK_SensorReading_GrowHubs_GrowHubDbId.MappedForeignKeys.Add(fK_SensorReading_GrowHubs_GrowHubDbIdFk);
+            RelationalModel.GetOrCreateForeignKeyConstraints(fK_SensorReading_GrowHubs_GrowHubDbIdFk).Add(fK_SensorReading_GrowHubs_GrowHubDbId);
+            sensorReadingTable.ForeignKeyConstraints.Add(fK_SensorReading_GrowHubs_GrowHubDbId);
+            growHubsTable.ReferencingForeignKeyConstraints.Add(fK_SensorReading_GrowHubs_GrowHubDbId);
+            var fK_Settings_GrowHubs_GrowHubDbId = new ForeignKeyConstraint(
+                "FK_Settings_GrowHubs_GrowHubDbId", settingsTable, growHubsTable,
+                new[] { growHubDbIdColumn0 },
                 growHubsTable.FindUniqueConstraint("PK_GrowHubs")!, ReferentialAction.Cascade);
-            var fK_Settings_GrowHubs_GrowHubIdFk = RelationalModel.GetForeignKey(this,
+            var fK_Settings_GrowHubs_GrowHubDbIdFk = RelationalModel.GetForeignKey(this,
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb",
-                new[] { "GrowHubId" },
+                new[] { "GrowHubDbId" },
                 "SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb",
                 new[] { "Id" });
-            fK_Settings_GrowHubs_GrowHubId.MappedForeignKeys.Add(fK_Settings_GrowHubs_GrowHubIdFk);
-            RelationalModel.GetOrCreateForeignKeyConstraints(fK_Settings_GrowHubs_GrowHubIdFk).Add(fK_Settings_GrowHubs_GrowHubId);
-            settingsTable.ForeignKeyConstraints.Add(fK_Settings_GrowHubs_GrowHubId);
-            growHubsTable.ReferencingForeignKeyConstraints.Add(fK_Settings_GrowHubs_GrowHubId);
+            fK_Settings_GrowHubs_GrowHubDbId.MappedForeignKeys.Add(fK_Settings_GrowHubs_GrowHubDbIdFk);
+            RelationalModel.GetOrCreateForeignKeyConstraints(fK_Settings_GrowHubs_GrowHubDbIdFk).Add(fK_Settings_GrowHubs_GrowHubDbId);
+            settingsTable.ForeignKeyConstraints.Add(fK_Settings_GrowHubs_GrowHubDbId);
+            growHubsTable.ReferencingForeignKeyConstraints.Add(fK_Settings_GrowHubs_GrowHubDbId);
+            var fK_UserSessions_Users_UserDbId = new ForeignKeyConstraint(
+                "FK_UserSessions_Users_UserDbId", userSessionsTable, usersTable,
+                new[] { userDbIdColumn0 },
+                usersTable.FindUniqueConstraint("PK_Users")!, ReferentialAction.Cascade);
+            var fK_UserSessions_Users_UserDbIdFk = RelationalModel.GetForeignKey(this,
+                "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb",
+                new[] { "UserDbId" },
+                "SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb",
+                new[] { "Id" });
+            fK_UserSessions_Users_UserDbId.MappedForeignKeys.Add(fK_UserSessions_Users_UserDbIdFk);
+            RelationalModel.GetOrCreateForeignKeyConstraints(fK_UserSessions_Users_UserDbIdFk).Add(fK_UserSessions_Users_UserDbId);
+            userSessionsTable.ForeignKeyConstraints.Add(fK_UserSessions_Users_UserDbId);
+            usersTable.ReferencingForeignKeyConstraints.Add(fK_UserSessions_Users_UserDbId);
             return relationalModel.MakeReadOnly();
         }
     }

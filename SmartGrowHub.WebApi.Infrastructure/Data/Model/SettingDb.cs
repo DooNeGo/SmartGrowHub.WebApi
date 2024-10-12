@@ -1,19 +1,18 @@
 ﻿using SmartGrowHub.Domain.Model;
-using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
 
-internal sealed record SettingDb(
-    Ulid Id,
-    SettingType Type,
-    SettingMode Mode,
-    ImmutableArray<ComponentDb> Components,
-    Ulid GrowHubId,
-    GrowHubDb GrowHub)
+internal sealed class SettingDb
 {
-    private SettingDb() : this(
-        default!, default,
-        default, [],
-        default, default!)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
+
+    public required SettingType Type { get; set; }
+
+    public required SettingMode Mode { get; set; }
+
+    public required Ulid GrowHubDbId { get; set; }
+
+    public required List<ComponentDb> Components { get; set; } = [];
 }

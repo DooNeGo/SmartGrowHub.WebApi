@@ -1,18 +1,18 @@
 ﻿using SmartGrowHub.Domain.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Data.Model;
 
-internal sealed record ComponentDb(
-    Ulid Id,
-    ComponentType Type,
-    int Value,
-    string Unit,
-    Ulid SettingId,
-    SettingDb Setting)
+internal sealed class ComponentDb
 {
-    private ComponentDb() : this(
-        default!, default,
-        default, default!,
-        default, default!)
-    { } // Used by EF Core
+    [Key]
+    public required Ulid Id { get; set; }
+
+    public required ComponentType Type { get; set; }
+
+    public required int Value { get; set; }
+
+    public required string Unit { get; set; }
+
+    public required Ulid SettingDbId { get; set; }
 }

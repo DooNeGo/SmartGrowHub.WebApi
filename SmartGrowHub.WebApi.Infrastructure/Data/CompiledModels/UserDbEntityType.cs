@@ -66,12 +66,12 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(UserDb).GetField("<DisplayName>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             displayName.TypeMapping = SqliteStringTypeMapping.Default;
 
-            var email = runtimeEntityType.AddProperty(
-                "Email",
+            var emailAddress = runtimeEntityType.AddProperty(
+                "EmailAddress",
                 typeof(string),
-                propertyInfo: typeof(UserDb).GetProperty("Email", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserDb).GetField("<Email>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            email.TypeMapping = SqliteStringTypeMapping.Default;
+                propertyInfo: typeof(UserDb).GetProperty("EmailAddress", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(UserDb).GetField("<EmailAddress>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+            emailAddress.TypeMapping = SqliteStringTypeMapping.Default;
 
             var password = runtimeEntityType.AddProperty(
                 "Password",
@@ -104,7 +104,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { email },
+                new[] { emailAddress },
                 unique: true);
 
             var index0 = runtimeEntityType.AddIndex(

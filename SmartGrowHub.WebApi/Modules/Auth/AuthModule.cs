@@ -9,6 +9,7 @@ public sealed class AuthModule : IEndpointModule
         routeBuilder.MapPost("/auth/login", LogInEndpoint.LogIn);
         routeBuilder.MapPost("/auth/register", RegisterEndpoint.Register);
         routeBuilder.MapPost("/auth/logout", LogOutEndpoint.LogOut);
+        routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
 
         return routeBuilder;
     }

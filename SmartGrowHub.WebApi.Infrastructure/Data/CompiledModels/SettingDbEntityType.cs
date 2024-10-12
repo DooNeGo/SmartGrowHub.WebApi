@@ -62,13 +62,13 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
-            var growHubId = runtimeEntityType.AddProperty(
-                "GrowHubId",
+            var growHubDbId = runtimeEntityType.AddProperty(
+                "GrowHubDbId",
                 typeof(Ulid),
-                propertyInfo: typeof(SettingDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SettingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(SettingDb).GetProperty("GrowHubDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(SettingDb).GetField("<GrowHubDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            growHubId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
+            growHubDbId.TypeMapping = SqliteByteArrayTypeMapping.Default.Clone(
                 comparer: new ValueComparer<Ulid>(
                     (Ulid v1, Ulid v2) => v1.Equals(v2),
                     (Ulid v) => v.GetHashCode(),
@@ -91,7 +91,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                     new ValueConverter<Ulid, byte[]>(
                         (Ulid model) => model.ToByteArray(),
                         (Byte[] provider) => new Ulid((ReadOnlySpan<byte>)provider))));
-            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            growHubDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var mode = runtimeEntityType.AddProperty(
                 "Mode",
@@ -158,30 +158,23 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { growHubId });
+                new[] { growHubDbId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubDbId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
 
-            var growHub = declaringEntityType.AddNavigation("GrowHub",
-                runtimeForeignKey,
-                onDependent: true,
-                typeof(GrowHubDb),
-                propertyInfo: typeof(SettingDb).GetProperty("GrowHub", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SettingDb).GetField("<GrowHub>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-
             var settings = principalEntityType.AddNavigation("Settings",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(IEnumerable<SettingDb>),
+                typeof(List<SettingDb>),
                 propertyInfo: typeof(GrowHubDb).GetProperty("Settings", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubDb).GetField("<Settings>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 

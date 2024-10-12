@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SmartGrowHub.WebApi.Infrastructure;
+using SmartGrowHub.WebApi.Infrastructure.Tokens;
 using SmartGrowHub.WebApi.Modules;
 using SmartGrowHub.WebApi.SerializerContext;
-using System.Text;
 
 namespace SmartGrowHub.WebApi;
 
@@ -19,9 +19,13 @@ internal sealed class Program
                 .Add(SmartGrowHubSerializerContext.Default);
         });
 
+        AccessTokenConfiguration configuration = builder.Configuration
+            .CreateAccessTokenConfiguration()
+            .ThrowIfFail();
+
         builder.Services
             .AddInfrastructure()
-            .AddAuthentication(builder.Configuration)
+            .AddAuthentication(configuration)
             .AddAuthorization();
 
         WebApplication app = builder.Build();
@@ -41,7 +45,8 @@ internal sealed class Program
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddAuthentication(this IServiceCollection services,
+        AccessTokenConfiguration configuration)
     {
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
@@ -50,9 +55,9 @@ public static class AuthenticationExtensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!)),
+                    ValidIssuer = configuration.Issuer,
+                    ValidAudience = configuration.Audience,
+                    IssuerSigningKey = configuration.SigningCredentials.Key,
                     ClockSkew = TimeSpan.Zero
                 };
             });

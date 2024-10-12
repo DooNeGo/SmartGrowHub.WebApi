@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartGrowHub.WebApi.Infrastructure.Data;
 
@@ -10,19 +11,21 @@ using SmartGrowHub.WebApi.Infrastructure.Data;
 namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20241008143933_AddSessionsAndGrowHubsToUser")]
+    partial class AddSessionsAndGrowHubsToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.8");
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", b =>
                 {
                     b.Property<byte[]>("Id")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("SettingDbId")
+                    b.Property<byte[]>("SettingId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -38,7 +41,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SettingDbId");
+                    b.HasIndex("SettingId");
 
                     b.ToTable("Components");
                 });
@@ -51,7 +54,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     b.Property<byte[]>("PlantId")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("UserDbId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -59,7 +62,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("PlantId");
 
-                    b.HasIndex("UserDbId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("GrowHubs");
                 });
@@ -86,7 +89,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GrowHubDbId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -103,7 +106,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrowHubDbId");
+                    b.HasIndex("GrowHubId");
 
                     b.ToTable("SensorReading");
                 });
@@ -113,7 +116,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     b.Property<byte[]>("Id")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("GrowHubDbId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -125,7 +128,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrowHubDbId");
+                    b.HasIndex("GrowHubId");
 
                     b.ToTable("Settings");
                 });
@@ -139,7 +142,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EmailAddress")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -153,7 +156,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EmailAddress")
+                    b.HasIndex("Email")
                         .IsUnique();
 
                     b.HasIndex("UserName")
@@ -179,6 +182,9 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                         .HasColumnType("BLOB");
 
                     b.Property<byte[]>("UserDbId")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -189,16 +195,21 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserDbId");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", null)
+                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", "Setting")
                         .WithMany("Components")
-                        .HasForeignKey("SettingDbId")
+                        .HasForeignKey("SettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Setting");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", b =>
@@ -207,40 +218,44 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PlantId");
 
-                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", null)
+                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", "User")
                         .WithMany("GrowHubs")
-                        .HasForeignKey("UserDbId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Plant");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", null)
+                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("SensorReadings")
-                        .HasForeignKey("GrowHubDbId")
+                        .HasForeignKey("GrowHubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("GrowHub");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", null)
+                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("Settings")
-                        .HasForeignKey("GrowHubDbId")
+                        .HasForeignKey("GrowHubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("GrowHub");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", b =>
                 {
                     b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", null)
                         .WithMany("Sessions")
-                        .HasForeignKey("UserDbId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserDbId");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", b =>
