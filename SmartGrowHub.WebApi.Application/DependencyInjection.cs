@@ -6,5 +6,5 @@ namespace SmartGrowHub.WebApi.Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddWebApiApplication(this IServiceCollection collection) =>
-        collection.AddTransient<TokenExpirationService>();
+        collection.AddSingleton<TokenExpirationService>();
 }
