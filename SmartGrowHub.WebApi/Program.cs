@@ -4,6 +4,7 @@ using SmartGrowHub.WebApi.Infrastructure;
 using SmartGrowHub.WebApi.Infrastructure.Tokens;
 using SmartGrowHub.WebApi.Modules;
 using SmartGrowHub.WebApi.SerializerContext;
+using SmartGrowHub.WebApi.Application;
 
 namespace SmartGrowHub.WebApi;
 
@@ -25,6 +26,7 @@ internal sealed class Program
 
         builder.Services
             .AddInfrastructure()
+            .AddWebApiApplication()
             .AddAuthentication(configuration)
             .AddAuthorization();
 

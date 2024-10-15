@@ -11,7 +11,8 @@ public sealed class UserService(
     IUserSessionRepository sessionRepository,
     IPasswordHasher passwordHasher,
     ITokenService tokenService,
-    ITimeProvider timeProvider)
+    ITimeProvider timeProvider,
+    TokenExpirationService tokenExpirationService)
     : IUserService
 {
     public Eff<Unit> AddNewUser(User user, CancellationToken cancellationToken) =>
@@ -30,10 +31,12 @@ public sealed class UserService(
         from user in userRepository.GetById(session.UserId, cancellationToken)
         from newTokens in tokenService.CreateTokens(user)
         from utcNow in timeProvider.GetUtcNow()
-        from updatedSession in session.UpdateTokens(newTokens, utcNow).ToEff()
+        let currentRefreshToken = session.AuthTokens.RefreshToken
+        from _1 in tokenExpirationService.ValidateRefreshToken(currentRefreshToken, utcNow).ToEff()
             | @catch(error => sessionRepository
                 .Remove(session.Id, cancellationToken)
-                .Bind(_ => FailEff<UserSession>(error)))
-        from _ in sessionRepository.Update(updatedSession, cancellationToken)
+                .Bind(_ => FailEff<Unit>(error)))
+        let updatedSession = session.UpdateTokens(newTokens)
+        from _2 in sessionRepository.Update(updatedSession, cancellationToken)
         select newTokens;
 }
