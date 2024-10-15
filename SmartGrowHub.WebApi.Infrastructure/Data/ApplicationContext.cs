@@ -40,19 +40,11 @@ internal sealed class ApplicationContext : DbContext
     //    base.OnConfiguring(optionsBuilder);
 
     //    optionsBuilder
-    //        .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+    //        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
     //        .UseModel(ApplicationContextModel.Instance)
     //        .UseSqlite("DataSource=SmartGrowHubLocalDb")
     //        .UseExceptionProcessor()
     //        .EnableSensitiveDataLogging()
     //        .EnableDetailedErrors();
     //}
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-        modelBuilder.Entity<UserDb>().Navigation(user => user.Sessions).AutoInclude();
-        modelBuilder.Entity<UserDb>().Navigation(user => user.GrowHubs).AutoInclude();
-    }
 }

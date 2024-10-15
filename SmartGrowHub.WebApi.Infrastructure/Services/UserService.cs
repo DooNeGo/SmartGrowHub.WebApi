@@ -34,6 +34,6 @@ public sealed class UserService(
             | @catch(error => sessionRepository
                 .Remove(session.Id, cancellationToken)
                 .Bind(_ => FailEff<UserSession>(error)))
-        from _ in sessionRepository.Update(session, cancellationToken)
+        from _ in sessionRepository.Update(updatedSession, cancellationToken)
         select newTokens;
 }

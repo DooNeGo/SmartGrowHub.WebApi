@@ -165,8 +165,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 onDependent: false,
                 typeof(List<UserSessionDb>),
                 propertyInfo: typeof(UserDb).GetProperty("Sessions", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserDb).GetField("<Sessions>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                eagerLoaded: true);
+                fieldInfo: typeof(UserDb).GetField("<Sessions>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

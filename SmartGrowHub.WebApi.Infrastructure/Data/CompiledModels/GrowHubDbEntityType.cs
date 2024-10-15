@@ -163,8 +163,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
                 onDependent: false,
                 typeof(List<GrowHubDb>),
                 propertyInfo: typeof(UserDb).GetProperty("GrowHubs", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserDb).GetField("<GrowHubs>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                eagerLoaded: true);
+                fieldInfo: typeof(UserDb).GetField("<GrowHubs>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

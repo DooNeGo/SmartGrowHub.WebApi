@@ -40,7 +40,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("SettingDbId");
 
-                    b.ToTable("Components");
+                    b.ToTable("Components", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", b =>
@@ -61,7 +61,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserDbId");
 
-                    b.ToTable("GrowHubs");
+                    b.ToTable("GrowHubs", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.PlantDb", b =>
@@ -75,7 +75,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Plants");
+                    b.ToTable("Plants", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SensorReadingDb", b =>
@@ -105,7 +105,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("GrowHubDbId");
 
-                    b.ToTable("SensorReading");
+                    b.ToTable("SensorReading", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.SettingDb", b =>
@@ -127,7 +127,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("GrowHubDbId");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", b =>
@@ -159,7 +159,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", b =>
@@ -189,7 +189,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasIndex("UserDbId");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("UserSessions", (string)null);
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", b =>
