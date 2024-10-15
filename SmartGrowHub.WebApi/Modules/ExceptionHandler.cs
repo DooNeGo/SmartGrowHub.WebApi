@@ -5,7 +5,7 @@ namespace SmartGrowHub.WebApi.Modules;
 
 internal static partial class ExceptionHandler
 {
-    public static IResult HandleInternalException(ILogger logger, InternalException exception)
+    private static IResult HandleInternalException(ILogger logger, Exception exception)
     {
         Exception innerException = exception.InnerException!;
 
@@ -24,6 +24,21 @@ internal static partial class ExceptionHandler
         }
 
         return Problem(exception.Message, null, 400);
+    }
+
+    public static IResult HandleError(ILogger logger, Error error)
+    {
+        if (error.Code is Errors.CancelledCode)
+        {
+            return Results.Empty;
+        }
+
+        if (error.Message is "Internal error")
+        {
+            HandleInternalException(logger, error.ToException());
+        }
+
+        return Problem(error.Message, null, 400);
     }
 
     [LoggerMessage(LogLevel.Error, Message = "{message}")]

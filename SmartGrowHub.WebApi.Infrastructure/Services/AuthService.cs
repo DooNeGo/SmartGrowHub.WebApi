@@ -4,40 +4,45 @@ using SmartGrowHub.Application.RefreshTokens;
 using SmartGrowHub.Application.Register;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Exceptions;
 using SmartGrowHub.Domain.Model;
+using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Services;
 
 internal sealed class AuthService(
     IUserService userService,
+    IUserSessionRepository sessionRepository,
+    IUserRepository userRepository,
     IPasswordHasher passwordHasher)
     : IAuthService
 {
+    private static readonly Error UserNotFoundError = Error.New("The user with such a username and password was not found");
+
     public Eff<LogInResponse> LogIn(LogInRequest request, CancellationToken cancellationToken) =>
-        from user in userService.GetByUserName(request.UserName, cancellationToken)
+        from user in userRepository.GetByUserName(request.UserName, cancellationToken)
         from _ in VerifyPassword(user, request.Password).ToEff()
-        from result in userService.AddNewSessionToUser(user, cancellationToken)
-        select new LogInResponse(result.Session);
+        from newSession in userService.AddNewSessionToUser(user, cancellationToken)
+        select new LogInResponse(newSession);
 
     private Fin<Unit> VerifyPassword(User user, Password requestPassword) =>
         passwordHasher
             .Verify(requestPassword, user.Password)
             .Bind(result => result
                 ? FinSucc(unit)
-                : Error.New(new ItemNotFoundException(nameof(User), None)));
+                : UserNotFoundError);
 
     public Eff<RegisterResponse> Register(RegisterRequest request,
         CancellationToken cancellationToken) =>
-        from _ in userService.AddNewUser(User.New(
-            request.UserName, request.Password,
-            request.EmailAddress, request.DisplayName),
+        from _ in userService.AddNewUser(
+            User.New(
+                request.UserName, request.Password,
+                request.EmailAddress, request.DisplayName),
             cancellationToken)
         select new RegisterResponse();
 
     public Eff<LogOutResponse> LogOut(LogOutRequest request, CancellationToken cancellationToken) =>
-        from _ in userService.RemoveSession(request.Id, cancellationToken)
+        from _ in sessionRepository.Remove(request.Id, cancellationToken)
         select new LogOutResponse();
 
     public Eff<RefreshTokensResponse> RefreshTokens(RefreshTokensRequest request,

@@ -16,9 +16,7 @@ internal static class UserExtensions
             UserName = user.UserName,
             Password = rawPassword,
             EmailAddress = user.Email,
-            DisplayName = user.DisplayName,
-            Sessions = user.Sessions.ToDb(),
-            GrowHubs = []
+            DisplayName = user.DisplayName
         };
 
     public static Fin<User> TryToDomain(this UserDb user) =>
@@ -26,7 +24,6 @@ internal static class UserExtensions
         from password in Password.FromHash([.. user.Password])
         from email in EmailAddress.From(user.EmailAddress)
         from displayName in NonEmptyString.From(user.DisplayName)
-        from sessions in user.Sessions.TryToDomain()
         select new User(new Id<User>(user.Id), userName,
-            password, email, displayName, [], sessions);
+            password, email, displayName);
 }

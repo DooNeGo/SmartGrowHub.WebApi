@@ -17,16 +17,16 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services) =>
         services
             .AddDbContextPool<ApplicationContext>(options => options
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .UseModel(ApplicationContextModel.Instance)
-                .UseSqlite("DataSource=SmartGrowHubLocalDb")
-                .UseExceptionProcessor()
-                .EnableSensitiveDataLogging()
-                .EnableDetailedErrors())
+                .UseSqlite("DataSource=SmartGrowHubLocalDb", options => options
+                    .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+                .UseExceptionProcessor())
             .AddSingleton<ITokenService, TokenService>()
             .AddSingleton<ITimeProvider, TimeProvider>()
             .AddSingleton<IPasswordHasher, PasswordHasher>()
             .AddTransient<IAuthService, AuthService>()
             .AddTransient<IUserRepository, UserRepository>()
-            .AddTransient<IUserService, UserService>();
+            .AddTransient<IUserService, UserService>()
+            .AddTransient<IUserSessionRepository, UserSessionRepository>();
 }

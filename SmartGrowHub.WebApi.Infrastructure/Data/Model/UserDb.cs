@@ -18,7 +18,7 @@ internal sealed class UserDb
 
     public required string DisplayName { get; set; } = string.Empty;
 
-    public required List<GrowHubDb> GrowHubs { get; set; } = [];
+    public List<GrowHubDb> GrowHubs { get; set; } = [];
 
-    public required List<UserSessionDb> Sessions { get; set; } = [];
+    public List<UserSessionDb> Sessions { get; set; } = [];
 }

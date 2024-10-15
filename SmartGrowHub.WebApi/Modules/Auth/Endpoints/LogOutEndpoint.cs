@@ -10,7 +10,7 @@ internal sealed class LogOutEndpoint
 {
     public static Task<IResult> LogOut(IAuthService authService, ILogger<LogInEndpoint> logger,
         LogOutRequestDto requestDto, CancellationToken cancellationToken) =>
-        (from request in Pure(requestDto.ToDomain())
+        (from request in requestDto.TryToDomain().ToEff()
          from response in authService.LogOut(request, cancellationToken)
          select response)
         .RunAsync()

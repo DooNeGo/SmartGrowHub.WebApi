@@ -25,7 +25,4 @@ internal static class UserSessionExtensions
             new Id<UserSession>(session.Id),
             new Id<User>(session.UserDbId),
             new AuthTokens(accessToken, refreshToken));
-
-    public static Fin<ImmutableArray<UserSession>> TryToDomain(this IEnumerable<UserSessionDb> sessions) =>
-        sessions.SelectMany(session => session.TryToDomain()).ToImmutableArray();
 }
