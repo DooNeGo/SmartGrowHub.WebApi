@@ -2,7 +2,7 @@
 using SmartGrowHub.Shared.Auth.Dto.Register;
 using SmartGrowHub.Shared.Auth.Extensions;
 using static Microsoft.AspNetCore.Http.Results;
-using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
+using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
 namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
@@ -16,5 +16,5 @@ public sealed class RegisterEndpoint
         .RunAsync()
         .Map(fin => fin.Match(
             Succ: _ => Created(),
-            Fail: exception => HandleException(logger, exception)));
+            Fail: error => HandleError(logger, error)));
 }

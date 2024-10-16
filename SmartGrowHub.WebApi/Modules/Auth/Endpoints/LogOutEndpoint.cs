@@ -2,7 +2,7 @@
 using SmartGrowHub.Shared.Auth.Dto.LogOut;
 using SmartGrowHub.Shared.Auth.Extensions;
 using static Microsoft.AspNetCore.Http.Results;
-using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
+using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
 namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
@@ -16,5 +16,5 @@ internal sealed class LogOutEndpoint
         .RunAsync()
         .Map(fin => fin.Match(
             Succ: response => Ok(response),
-            Fail: exception => HandleException(logger, exception)));
+            Fail: error => HandleError(logger, error)));
 }

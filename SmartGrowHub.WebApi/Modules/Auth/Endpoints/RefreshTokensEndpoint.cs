@@ -2,7 +2,7 @@
 using SmartGrowHub.Shared.UserSessions.Dto.RefreshTokens;
 using SmartGrowHub.Shared.UserSessions.Extensions;
 using static Microsoft.AspNetCore.Http.Results;
-using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
+using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
 namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
@@ -17,5 +17,5 @@ public sealed class RefreshTokensEndpoint
             .RunAsync()
             .Map(effect => effect.Match(
                 Succ: response => Ok(response.ToDto()),
-                Fail: exception => HandleException(logger, exception)));
+                Fail: error => HandleError(logger, error)));
 }

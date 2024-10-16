@@ -1,19 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Infrastructure.Data;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
+using SmartGrowHub.WebApi.Infrastructure.Services;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 
 internal sealed class UserSessionRepository(ApplicationContext context) : IUserSessionRepository
-{
-    private static readonly Error SessionNotFound = Error.New("The user's session was not found");
-
+{ 
     public Eff<Unit> Add(UserSession session, CancellationToken cancellationToken) =>
         Add(session) >> SaveChanges(cancellationToken);
 
@@ -32,7 +32,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
                 IEnumerable<Fin<UserSession>> convertedList = list.Select(session => session.TryToDomain());
                 return !convertedList.Any(fin => fin.IsFail)
                     ? SuccessEff(convertedList.SelectMany(fin => fin).ToImmutableArray())
-                    : Error.New("Invalid user session was found");
+                    : new UnexpectedError($"Invalid user session was found. UserId: {id}");
             });
 
     public Eff<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken) =>
@@ -69,5 +69,5 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
             .Map(Optional))
         .Bind(option => option.Match(
             Some: session => session.TryToDomain().ToEff(),
-            None: () => SessionNotFound));
+            None: DomainErrors.SessionNotFoundError));
 }

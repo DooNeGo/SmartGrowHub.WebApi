@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Shared.Users.Extensions;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
@@ -12,8 +13,6 @@ namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 
 internal sealed class UserRepository(ApplicationContext context) : IUserRepository
 {
-    private static readonly Error UserNotFoundError = Error.New("The user was not found");
-
     public Eff<Unit> Add(User user, CancellationToken cancellationToken) =>
         Add(user) >> SaveChanges(cancellationToken);
 
@@ -53,5 +52,5 @@ internal sealed class UserRepository(ApplicationContext context) : IUserReposito
             .Map(Optional))
         .Bind(option => option.Match(
             Some: user => user.TryToDomain().ToEff(),
-            None: () => UserNotFoundError));
+            None: DomainErrors.UserNotFoundError));
 }

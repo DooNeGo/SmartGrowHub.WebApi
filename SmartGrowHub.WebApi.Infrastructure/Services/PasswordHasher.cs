@@ -13,13 +13,17 @@ internal sealed class PasswordHasher : IPasswordHasher
     private static readonly HashAlgorithmName AlgorithmName = HashAlgorithmName.SHA512;
     private static readonly RandomNumberGenerator RandomNumberGenerator = RandomNumberGenerator.Create();
 
+    private static readonly UnexpectedError PasswordAlreadyHashedError = new("The password has already been hashed");
+    private static readonly UnexpectedError PasswordMustNotBeEmptyError = new("The password must not be empty");
+    private static readonly UnexpectedError HashedPasswordMustBeHashedError = new("The hashed password must be hashed");
+    private static readonly UnexpectedError HashedPasswordMustNotBeEmptyError = new("The hashed password must not be empty");
+
     public Fin<Password> Hash(Password password) =>
-        password
-            .Match(
-                plainText: password => FinSucc(password),
-                hash: _ => Error.New("The password has already been hashed"),
-                empty: () => Error.New("The password must not be empty"))
-            .Bind(HashPlainText);
+        password.Match(
+            plainText: password => FinSucc(password),
+            hash: _ => PasswordAlreadyHashedError,
+            empty: () => PasswordMustNotBeEmptyError)
+        .Bind(HashPlainText);
 
     private Fin<Password> HashPlainText(string password)
     {
@@ -35,13 +39,13 @@ internal sealed class PasswordHasher : IPasswordHasher
     public Fin<bool> Verify(Password password, Password hashedPassword) =>
         hashedPassword
             .Match(
-                plainText: _ => Error.New($"{nameof(hashedPassword)} must be hashed"),
+                plainText: _ => HashedPasswordMustBeHashedError,
                 hash: bytes => FinSucc(bytes),
-                empty: () => Error.New("The hashed password must not be empty"))
+                empty: () => HashedPasswordMustNotBeEmptyError)
             .Bind(hash => password.Match<Fin<bool>>(
                 plainText: password => VerifyPlainText(password, hash.AsSpan()),
                 hash: bytes => AreHashesEqual(bytes.AsSpan(), hash.AsSpan()),
-                empty: () => Error.New("The password must not be empty")));
+                empty: () => PasswordMustNotBeEmptyError));
 
     private bool VerifyPlainText(string password, ReadOnlySpan<byte> hash)
     {

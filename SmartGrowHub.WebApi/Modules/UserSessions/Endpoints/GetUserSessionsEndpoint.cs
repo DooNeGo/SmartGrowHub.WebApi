@@ -2,7 +2,7 @@
 using SmartGrowHub.Shared.UserSessions.Extensions;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using static Microsoft.AspNetCore.Http.Results;
-using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
+using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
 namespace SmartGrowHub.WebApi.Modules.UserSessions.Endpoints;
 

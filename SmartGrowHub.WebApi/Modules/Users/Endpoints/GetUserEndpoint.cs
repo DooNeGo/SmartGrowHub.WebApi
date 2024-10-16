@@ -2,7 +2,7 @@
 using SmartGrowHub.Shared.Users.Extensions;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using static Microsoft.AspNetCore.Http.Results;
-using static SmartGrowHub.WebApi.Modules.ExceptionHandler;
+using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
 namespace SmartGrowHub.WebApi.Modules.Users.Endpoints;
 
@@ -19,5 +19,5 @@ public sealed class GetUserEndpoint
             .RunAsync()
             .Map(fin => fin.Match(
                 Succ: user => Ok(user.ToDto()),
-                Fail: error => HandleException(logger, error.ToException())));
+                Fail: error => HandleError(logger, error.ToException())));
 }

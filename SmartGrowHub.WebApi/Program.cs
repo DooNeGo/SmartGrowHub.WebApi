@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SmartGrowHub.Shared.SerializerContext;
+using SmartGrowHub.WebApi.Application;
 using SmartGrowHub.WebApi.Infrastructure;
 using SmartGrowHub.WebApi.Infrastructure.Tokens;
 using SmartGrowHub.WebApi.Modules;
-using SmartGrowHub.WebApi.SerializerContext;
-using SmartGrowHub.WebApi.Application;
 
 namespace SmartGrowHub.WebApi;
 

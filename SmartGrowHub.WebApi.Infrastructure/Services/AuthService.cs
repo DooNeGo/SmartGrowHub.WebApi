@@ -4,6 +4,7 @@ using SmartGrowHub.Application.RefreshTokens;
 using SmartGrowHub.Application.Register;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
@@ -17,8 +18,6 @@ internal sealed class AuthService(
     IPasswordHasher passwordHasher)
     : IAuthService
 {
-    private static readonly Error UserNotFoundError = Error.New("The user with such a username and password was not found");
-
     public Eff<LogInResponse> LogIn(LogInRequest request, CancellationToken cancellationToken) =>
         from user in userRepository.GetByUserName(request.UserName, cancellationToken)
         from _ in VerifyPassword(user, request.Password).ToEff()
@@ -30,7 +29,7 @@ internal sealed class AuthService(
             .Verify(requestPassword, user.Password)
             .Bind(result => result
                 ? FinSucc(unit)
-                : UserNotFoundError);
+                : DomainErrors.LogInFailedError);
 
     public Eff<RegisterResponse> Register(RegisterRequest request,
         CancellationToken cancellationToken) =>
