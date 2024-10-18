@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Common.Password;
 using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
@@ -6,15 +7,15 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
 internal static class UserExtensions
 {
     public static Fin<UserDb> TryToDb(this User user) =>
-        from rawPassword in user.Password.Match<Fin<byte[]>>(
+        from password in user.Password.Match(
             plainText: _ => Error.New("The password must be hashed before saving"),
-            hash: bytes => bytes.ToArray(),
+            hash: hashed => FinSucc(hashed.To().ToArray()),
             empty: () => Error.New("The password must not be empty"))
         select new UserDb
         {
             Id = user.Id,
             UserName = user.UserName,
-            Password = rawPassword,
+            Password = password,
             EmailAddress = user.Email,
             DisplayName = user.DisplayName
         };

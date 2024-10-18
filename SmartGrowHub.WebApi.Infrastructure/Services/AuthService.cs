@@ -4,6 +4,7 @@ using SmartGrowHub.Application.RefreshTokens;
 using SmartGrowHub.Application.Register;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Common.Password;
 using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
@@ -31,12 +32,10 @@ internal sealed class AuthService(
                 ? FinSucc(unit)
                 : DomainErrors.LogInFailedError);
 
-    public Eff<RegisterResponse> Register(RegisterRequest request,
-        CancellationToken cancellationToken) =>
+    public Eff<RegisterResponse> Register(RegisterRequest request, CancellationToken cancellationToken) =>
         from _ in userService.AddNewUser(
-            User.New(
-                request.UserName, request.Password,
-                request.EmailAddress, request.DisplayName),
+            request.UserName, request.Password,
+            request.EmailAddress, request.DisplayName,
             cancellationToken)
         select new RegisterResponse();
 

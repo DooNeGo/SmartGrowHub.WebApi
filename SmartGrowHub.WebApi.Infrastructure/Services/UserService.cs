@@ -1,5 +1,6 @@
 ﻿using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Common.Password;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
@@ -15,9 +16,12 @@ public sealed class UserService(
     TokenExpirationService tokenExpirationService)
     : IUserService
 {
-    public Eff<Unit> AddNewUser(User user, CancellationToken cancellationToken) =>
-        from hashedPassword in passwordHasher.Hash(user.Password).ToEff()
-        from _ in userRepository.Add(user.UpdatePassword(hashedPassword), cancellationToken)
+    public Eff<Unit> AddNewUser(UserName userName, PlainTextPassword password, EmailAddress email,
+        NonEmptyString displayName, CancellationToken cancellationToken) =>
+        from hashedPassword in passwordHasher.Hash(password).ToEff()
+        from _ in userRepository.Add(
+            User.New(userName, hashedPassword, email, displayName),
+            cancellationToken)
         select unit;
 
     public Eff<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>

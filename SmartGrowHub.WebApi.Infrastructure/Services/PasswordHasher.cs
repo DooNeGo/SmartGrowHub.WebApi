@@ -1,4 +1,4 @@
-﻿using SmartGrowHub.Domain.Common;
+﻿using SmartGrowHub.Domain.Common.Password;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using System.Security.Cryptography;
 
@@ -13,38 +13,30 @@ internal sealed class PasswordHasher : IPasswordHasher
     private static readonly HashAlgorithmName AlgorithmName = HashAlgorithmName.SHA512;
     private static readonly RandomNumberGenerator RandomNumberGenerator = RandomNumberGenerator.Create();
 
-    private static readonly UnexpectedError PasswordAlreadyHashedError = new("The password has already been hashed");
     private static readonly UnexpectedError PasswordMustNotBeEmptyError = new("The password must not be empty");
     private static readonly UnexpectedError HashedPasswordMustBeHashedError = new("The hashed password must be hashed");
     private static readonly UnexpectedError HashedPasswordMustNotBeEmptyError = new("The hashed password must not be empty");
 
-    public Fin<Password> Hash(Password password) =>
-        password.Match(
-            plainText: password => FinSucc(password),
-            hash: _ => PasswordAlreadyHashedError,
-            empty: () => PasswordMustNotBeEmptyError)
-        .Bind(HashPlainText);
-
-    private Fin<Password> HashPlainText(string password)
+    public Fin<HashedPassword> Hash(PlainTextPassword password)
     {
         Span<byte> salt = stackalloc byte[SaltSize];
         RandomNumberGenerator.GetBytes(salt);
 
         Span<byte> passwordHash = stackalloc byte[HashSize];
-        Rfc2898DeriveBytes.Pbkdf2(password, salt, passwordHash, Iterations, AlgorithmName);
+        Rfc2898DeriveBytes.Pbkdf2(password.To(), salt, passwordHash, Iterations, AlgorithmName);
 
-        return Password.FromHash([.. passwordHash, .. salt]);
+        return HashedPassword.From([.. passwordHash, .. salt]);
     }
 
-    public Fin<bool> Verify(Password password, Password hashedPassword) =>
-        hashedPassword
+    public Fin<bool> Verify(Password password1, Password password2) =>
+        password2
             .Match(
                 plainText: _ => HashedPasswordMustBeHashedError,
-                hash: bytes => FinSucc(bytes),
+                hash: bytes => FinSucc(bytes.To()),
                 empty: () => HashedPasswordMustNotBeEmptyError)
-            .Bind(hash => password.Match<Fin<bool>>(
+            .Bind(hash => password1.Match<Fin<bool>>(
                 plainText: password => VerifyPlainText(password, hash.AsSpan()),
-                hash: bytes => AreHashesEqual(bytes.AsSpan(), hash.AsSpan()),
+                hash: bytes => AreHashesEqual(bytes.To().AsSpan(), hash.AsSpan()),
                 empty: () => PasswordMustNotBeEmptyError));
 
     private bool VerifyPlainText(string password, ReadOnlySpan<byte> hash)

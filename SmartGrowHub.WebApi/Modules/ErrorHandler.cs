@@ -1,4 +1,4 @@
-﻿using SmartGrowHub.Shared.HttpErrors.Extensions;
+﻿using SmartGrowHub.Shared.Errors.Extensions;
 using static Microsoft.AspNetCore.Http.Results;
 
 namespace SmartGrowHub.WebApi.Modules;
@@ -21,7 +21,7 @@ internal static partial class ErrorHandler
 
         if (!error.IsExpected || error.IsExceptional)
         {
-            HandleInternalError(logger, error.ToException());
+            HandleInternalError(logger, error);
         }
 
         return BadRequest(error.ToDto());
