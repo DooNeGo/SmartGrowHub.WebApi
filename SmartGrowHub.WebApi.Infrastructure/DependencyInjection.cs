@@ -22,7 +22,8 @@ public static class DependencyInjection
                 .UseSqlite("DataSource=SmartGrowHubLocalDb", options => options
                     .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
                 .UseExceptionProcessor())
-            .AddSingleton<ITokenService, TokenService>()
+            .AddSingleton<ITokensIssuer, TokensIssuer>()
+            .AddSingleton<IAccessTokenReader, AccessTokenReader>()
             .AddSingleton<ITimeProvider, TimeProvider>()
             .AddSingleton<IPasswordHasher, PasswordHasher>()
             .AddTransient<IAuthService, AuthService>()

@@ -15,6 +15,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Domain", "Smar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartGrowHub.Application", "SmartGrowHub.Shared\SmartGrowHub.Core\SmartGrowHub.Application\SmartGrowHub.Application.csproj", "{A2F3CCCB-0D66-4514-9787-230661491930}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{A4C310D0-68EC-4564-8F86-2BF5285A84E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{07545CBE-B52A-4DDE-9418-1803D3B732A6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{CAF7824E-B3B3-4475-8682-354F69164B3A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{FA0A0B75-0B3A-4B55-B35D-AEECB605E4D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{7DD0C61F-3F87-491F-8395-05FCE7463892}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +58,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CDA464B5-3251-4990-A5B0-6DEDAC5AC9A0} = {FA0A0B75-0B3A-4B55-B35D-AEECB605E4D0}
+		{7A0891A9-8626-49E5-A518-EBF3041569E2} = {07545CBE-B52A-4DDE-9418-1803D3B732A6}
+		{556EDF35-207C-4056-8234-2B2CBC4F2EB6} = {CAF7824E-B3B3-4475-8682-354F69164B3A}
+		{DA871D75-5126-4018-9CB3-EEB3F65526B1} = {7DD0C61F-3F87-491F-8395-05FCE7463892}
+		{8C750AF9-6671-42EF-9826-2A28A9C82365} = {A4C310D0-68EC-4564-8F86-2BF5285A84E2}
+		{A2F3CCCB-0D66-4514-9787-230661491930} = {07545CBE-B52A-4DDE-9418-1803D3B732A6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {168F15A5-1351-404A-AB77-98D74827A0A4}

@@ -11,11 +11,11 @@ using System.Security.Claims;
 
 namespace SmartGrowHub.WebApi.Infrastructure;
 
-internal sealed partial class TokenService(
+internal sealed partial class TokensIssuer(
     IConfiguration configuration,
-    ILogger<TokenService> logger,
+    ILogger<TokensIssuer> logger,
     ITimeProvider timeProvider)
-    : ITokenService
+    : ITokensIssuer
 {
     private readonly JsonWebTokenHandler _tokenHandler = new();
 

@@ -11,7 +11,7 @@ public sealed class UserService(
     IUserRepository userRepository,
     IUserSessionRepository sessionRepository,
     IPasswordHasher passwordHasher,
-    ITokenService tokenService,
+    ITokensIssuer tokenService,
     ITimeProvider timeProvider,
     TokenExpirationService tokenExpirationService)
     : IUserService

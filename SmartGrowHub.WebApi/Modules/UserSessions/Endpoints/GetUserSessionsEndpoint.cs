@@ -14,8 +14,8 @@ public sealed class GetUserSessionsEndpoint
         (from id in Domain.Common.Id<User>.From(userId ?? string.Empty).ToEff()
          from sessions in sessionRepository.GetAllByUserId(id, cancellationToken)
          select sessions)
-        .RunAsync()
-        .Map(fin => fin.Match(
-            Succ: sessions => Ok(sessions.ToDto()),
-            Fail: error => HandleError(logger, error)));
+            .RunAsync()
+            .Map(fin => fin.Match(
+                Succ: sessions => Ok(sessions.ToDto()),
+                Fail: error => HandleError(logger, error)));
 }
