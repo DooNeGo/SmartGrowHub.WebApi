@@ -95,32 +95,32 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
 
             var type = runtimeEntityType.AddProperty(
                 "Type",
-                typeof(ComponentType),
+                typeof(SettingComponentType),
                 propertyInfo: typeof(ComponentDb).GetProperty("Type", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(ComponentDb).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             type.TypeMapping = IntTypeMapping.Default.Clone(
-                comparer: new ValueComparer<ComponentType>(
-                    (ComponentType v1, ComponentType v2) => object.Equals((object)v1, (object)v2),
-                    (ComponentType v) => v.GetHashCode(),
-                    (ComponentType v) => v),
-                keyComparer: new ValueComparer<ComponentType>(
-                    (ComponentType v1, ComponentType v2) => object.Equals((object)v1, (object)v2),
-                    (ComponentType v) => v.GetHashCode(),
-                    (ComponentType v) => v),
+                comparer: new ValueComparer<SettingComponentType>(
+                    (SettingComponentType v1, SettingComponentType v2) => object.Equals((object)v1, (object)v2),
+                    (SettingComponentType v) => v.GetHashCode(),
+                    (SettingComponentType v) => v),
+                keyComparer: new ValueComparer<SettingComponentType>(
+                    (SettingComponentType v1, SettingComponentType v2) => object.Equals((object)v1, (object)v2),
+                    (SettingComponentType v) => v.GetHashCode(),
+                    (SettingComponentType v) => v),
                 providerValueComparer: new ValueComparer<int>(
                     (int v1, int v2) => v1 == v2,
                     (int v) => v,
                     (int v) => v),
                 mappingInfo: new RelationalTypeMappingInfo(
                     storeTypeName: "INTEGER"),
-                converter: new ValueConverter<ComponentType, int>(
-                    (ComponentType value) => (int)value,
-                    (int value) => (ComponentType)value),
-                jsonValueReaderWriter: new JsonConvertedValueReaderWriter<ComponentType, int>(
+                converter: new ValueConverter<SettingComponentType, int>(
+                    (SettingComponentType value) => (int)value,
+                    (int value) => (SettingComponentType)value),
+                jsonValueReaderWriter: new JsonConvertedValueReaderWriter<SettingComponentType, int>(
                     JsonInt32ReaderWriter.Instance,
-                    new ValueConverter<ComponentType, int>(
-                        (ComponentType value) => (int)value,
-                        (int value) => (ComponentType)value)));
+                    new ValueConverter<SettingComponentType, int>(
+                        (SettingComponentType value) => (int)value,
+                        (int value) => (SettingComponentType)value)));
             type.SetSentinelFromProviderValue(0);
 
             var unit = runtimeEntityType.AddProperty(

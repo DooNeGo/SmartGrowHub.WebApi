@@ -8,7 +8,7 @@ internal sealed class ComponentDb
     [Key]
     public required Ulid Id { get; set; }
 
-    public required ComponentType Type { get; set; }
+    public required SettingComponentType Type { get; set; }
 
     public required int Value { get; set; }
 
