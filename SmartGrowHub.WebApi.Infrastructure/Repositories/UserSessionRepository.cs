@@ -6,14 +6,13 @@ using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Infrastructure.Data;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
-using SmartGrowHub.WebApi.Infrastructure.Services;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 namespace SmartGrowHub.WebApi.Infrastructure.Repositories;
 
 internal sealed class UserSessionRepository(ApplicationContext context) : IUserSessionRepository
-{ 
+{
     public Eff<Unit> Add(UserSession session, CancellationToken cancellationToken) =>
         Add(session) >> SaveChanges(cancellationToken);
 
@@ -27,13 +26,12 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
         liftEff(() => context.UserSessions
             .Where(session => session.UserDbId == id)
             .ToListAsync(cancellationToken))
-            .Bind(list =>
-            {
-                IEnumerable<Fin<UserSession>> convertedList = list.Select(session => session.TryToDomain());
-                return !convertedList.Any(fin => fin.IsFail)
-                    ? SuccessEff(convertedList.SelectMany(fin => fin).ToImmutableArray())
-                    : new UnexpectedError($"Invalid user session was found. UserId: {id}");
-            });
+            .Bind(list => list
+                .Select(session => session.TryToDomain())
+                .AsIterable()
+                .Traverse(fin => fin)
+                .Map(iterable => iterable.ToImmutableArray())
+                .As().ToEff());
 
     public Eff<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
