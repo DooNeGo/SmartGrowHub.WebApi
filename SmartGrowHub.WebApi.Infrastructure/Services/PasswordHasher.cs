@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.Domain.Common.Password;
+using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
 using System.Security.Cryptography;
 

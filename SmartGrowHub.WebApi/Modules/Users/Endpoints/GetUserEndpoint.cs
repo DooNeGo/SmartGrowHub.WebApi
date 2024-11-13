@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Shared.Users.Extensions;
 using SmartGrowHub.WebApi.Application.Interfaces.Repositories;
 using SmartGrowHub.WebApi.Application.Interfaces.Services;
-using SmartGrowHub.WebApi.Infrastructure.Services;
 using static Microsoft.AspNetCore.Http.Results;
 using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
