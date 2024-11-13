@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
+namespace SmartGrowHub.WebApi.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -29,8 +29,8 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", nullable: false),
-                    Password = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    Password = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    EmailAddress = table.Column<string>(type: "TEXT", nullable: false),
                     DisplayName = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -44,7 +44,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
                     PlantId = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    UserId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    UserDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,8 +55,29 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                         principalTable: "Plants",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_GrowHubs_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_GrowHubs_Users_UserDbId",
+                        column: x => x.UserDbId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserSessions",
+                columns: table => new
+                {
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    UserDbId = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    AccessToken = table.Column<string>(type: "TEXT", nullable: false),
+                    RefreshToken = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Expires = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserSessions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserSessions_Users_UserDbId",
+                        column: x => x.UserDbId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -71,14 +92,14 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     Value = table.Column<string>(type: "TEXT", nullable: false),
                     Unit = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    GrowHubDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SensorReading", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SensorReading_GrowHubs_GrowHubId",
-                        column: x => x.GrowHubId,
+                        name: "FK_SensorReading_GrowHubs_GrowHubDbId",
+                        column: x => x.GrowHubDbId,
                         principalTable: "GrowHubs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -91,14 +112,14 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Mode = table.Column<int>(type: "INTEGER", nullable: false),
-                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    GrowHubDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Settings_GrowHubs_GrowHubId",
-                        column: x => x.GrowHubId,
+                        name: "FK_Settings_GrowHubs_GrowHubDbId",
+                        column: x => x.GrowHubDbId,
                         principalTable: "GrowHubs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -112,23 +133,23 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false),
                     Unit = table.Column<string>(type: "TEXT", nullable: false),
-                    SettingId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    SettingDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Components", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Components_Settings_SettingId",
-                        column: x => x.SettingId,
+                        name: "FK_Components_Settings_SettingDbId",
+                        column: x => x.SettingDbId,
                         principalTable: "Settings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Components_SettingId",
+                name: "IX_Components_SettingDbId",
                 table: "Components",
-                column: "SettingId");
+                column: "SettingDbId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrowHubs_PlantId",
@@ -136,24 +157,24 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 column: "PlantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GrowHubs_UserId",
+                name: "IX_GrowHubs_UserDbId",
                 table: "GrowHubs",
-                column: "UserId");
+                column: "UserDbId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SensorReading_GrowHubId",
+                name: "IX_SensorReading_GrowHubDbId",
                 table: "SensorReading",
-                column: "GrowHubId");
+                column: "GrowHubDbId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_GrowHubId",
+                name: "IX_Settings_GrowHubDbId",
                 table: "Settings",
-                column: "GrowHubId");
+                column: "GrowHubDbId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Email",
+                name: "IX_Users_EmailAddress",
                 table: "Users",
-                column: "Email",
+                column: "EmailAddress",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -161,6 +182,17 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                 table: "Users",
                 column: "UserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSessions_RefreshToken",
+                table: "UserSessions",
+                column: "RefreshToken",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserSessions_UserDbId",
+                table: "UserSessions",
+                column: "UserDbId");
         }
 
         /// <inheritdoc />
@@ -171,6 +203,9 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "SensorReading");
+
+            migrationBuilder.DropTable(
+                name: "UserSessions");
 
             migrationBuilder.DropTable(
                 name: "Settings");

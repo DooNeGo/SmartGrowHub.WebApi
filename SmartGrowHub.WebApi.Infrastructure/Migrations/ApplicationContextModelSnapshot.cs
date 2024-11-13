@@ -2,23 +2,20 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartGrowHub.WebApi.Infrastructure.Data;
 
 #nullable disable
 
-namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
+namespace SmartGrowHub.WebApi.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241012153201_FixRelations")]
-    partial class FixRelations
+    partial class ApplicationContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.ComponentDb", b =>
                 {
@@ -142,7 +139,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("EmailAddress")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -156,7 +153,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("EmailAddress")
                         .IsUnique();
 
                     b.HasIndex("UserName")
@@ -190,8 +187,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
                     b.HasIndex("RefreshToken")
                         .IsUnique();
 
-                    b.HasIndex("UserDbId")
-                        .IsUnique();
+                    b.HasIndex("UserDbId");
 
                     b.ToTable("UserSessions");
                 });
@@ -240,13 +236,11 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserSessionDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", "User")
+                    b.HasOne("SmartGrowHub.WebApi.Infrastructure.Data.Model.UserDb", null)
                         .WithMany("Sessions")
                         .HasForeignKey("UserDbId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartGrowHub.WebApi.Infrastructure.Data.Model.GrowHubDb", b =>

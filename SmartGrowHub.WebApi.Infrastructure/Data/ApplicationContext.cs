@@ -1,6 +1,4 @@
-﻿using EntityFramework.Exceptions.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels;
+﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.WebApi.Infrastructure.Data.Convertors;
 using SmartGrowHub.WebApi.Infrastructure.Data.Model;
 
@@ -41,8 +39,8 @@ internal sealed class ApplicationContext : DbContext
 
     //    optionsBuilder
     //        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-    //        .UseModel(ApplicationContextModel.Instance)
     //        .UseSqlite("DataSource=SmartGrowHubLocalDb")
+    //        .UseModel(ApplicationContextModel.Instance)
     //        .UseExceptionProcessor()
     //        .EnableSensitiveDataLogging()
     //        .EnableDetailedErrors();

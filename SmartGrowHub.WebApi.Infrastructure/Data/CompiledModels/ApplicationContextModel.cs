@@ -34,7 +34,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.CompiledModels
             }
 
             model.Customize();
-            _instance = model;
+            _instance = (ApplicationContextModel)model.FinalizeModel();
         }
 
         private static ApplicationContextModel _instance;

@@ -7,7 +7,7 @@ namespace SmartGrowHub.WebApi.Infrastructure.Data.Model.Extensions;
 internal static class UserSessionExtensions
 {
     public static UserSessionDb ToDb(this UserSession session) => new()
-    { 
+    {
         Id = session.Id,
         UserDbId = session.UserId,
         AccessToken = session.AuthTokens.AccessToken,
