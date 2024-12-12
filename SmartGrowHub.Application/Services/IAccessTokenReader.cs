@@ -5,5 +5,5 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IAccessTokenReader
 {
-    public Fin<Id<User>> GetUserId(AccessToken accessToken);
+    Fin<Id<User>> GetUserId(AccessToken accessToken);
 }
