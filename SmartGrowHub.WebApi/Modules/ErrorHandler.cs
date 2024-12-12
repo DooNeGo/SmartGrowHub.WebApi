@@ -1,4 +1,4 @@
-﻿using SmartGrowHub.Shared.Errors.Extensions;
+﻿using SmartGrowHub.Shared.Results;
 using static Microsoft.AspNetCore.Http.Results;
 
 namespace SmartGrowHub.WebApi.Modules;
@@ -23,8 +23,8 @@ internal static partial class ErrorHandler
         {
             HandleInternalError(logger, error);
         }
-
-        return BadRequest(error.ToDto());
+        
+        return BadRequest(error);
     }
 
     [LoggerMessage(LogLevel.Error, Message = "{message}")]

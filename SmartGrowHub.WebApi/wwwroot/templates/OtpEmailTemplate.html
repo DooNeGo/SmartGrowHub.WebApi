@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Time Password</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4caf50;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 20px;
+            color: #333333;
+            line-height: 1.6;
+        }
+        .content p {
+            margin: 0 0 10px;
+        }
+        .otp {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4caf50;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer {
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #666666;
+        }
+        .footer a {
+            color: #4caf50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <div class="header">
+        <h1>Smart Grow Hub</h1>
+    </div>
+    <div class="content">
+        <p>Здравствуйте!</p>
+        <p>Ваш одноразовый пароль для доступа к Smart Grow Hub:</p>
+        <div class="otp">{OTP}</div>
+        <p>⚠️ Этот пароль действителен в течение <strong>{Expiration} минут</strong>.</p>
+        <p>Если вы не запрашивали этот пароль, пожалуйста, проигнорируйте это письмо.</p>
+        <p>Спасибо, что используете Smart Grow Hub!</p>
+    </div>
+    <div class="footer">
+        <p>Если у вас есть вопросы, свяжитесь с нами через <a href="#">службу поддержки</a>.</p>
+    </div>
+</div>
+</body>
+</html>

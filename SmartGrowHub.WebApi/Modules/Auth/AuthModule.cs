@@ -6,10 +6,10 @@ public sealed class AuthModule : IEndpointModule
 {
     public static IEndpointRouteBuilder AddEndpointsTo(IEndpointRouteBuilder routeBuilder)
     {
-        routeBuilder.MapPost("/auth/login", LogInEndpoint.LogIn);
-        routeBuilder.MapPost("/auth/register", RegisterEndpoint.Register);
-        routeBuilder.MapPost("/auth/logout", LogOutEndpoint.LogOut);
-        routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
+        routeBuilder.MapPost("/auth/login/email", LogInByEmailEndpoint.LogIn);
+        routeBuilder.MapPost("/auth/login/phone", LogInByPhoneEndpoint.LogIn);
+        //routeBuilder.MapPost("/auth/logout", LogOutEndpoint.LogOut);
+        //routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
 
         return routeBuilder;
     }

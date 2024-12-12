@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using SmartGrowHub.Application;
+using SmartGrowHub.Application.Services;
+using SmartGrowHub.Infrastructure;
+using SmartGrowHub.Infrastructure.Tokens;
 using SmartGrowHub.Shared.SerializerContext;
-using SmartGrowHub.WebApi.Application;
-using SmartGrowHub.WebApi.Infrastructure;
-using SmartGrowHub.WebApi.Infrastructure.Tokens;
 using SmartGrowHub.WebApi.Modules;
+using SmartGrowHub.WebApi.Services;
 
 namespace SmartGrowHub.WebApi;
 
 internal sealed class Program
 {
-    private static void Main(string[] args)
+    public static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,19 +21,23 @@ internal sealed class Program
             options.SerializerOptions.TypeInfoResolverChain
                 .Add(SmartGrowHubSerializerContext.Default);
         });
-
+        
         AccessTokenConfiguration configuration = builder.Configuration
             .CreateAccessTokenConfiguration()
             .ThrowIfFail();
-
+        
         builder.Services
-            .AddInfrastructure()
-            .AddWebApiApplication()
+            .AddOpenApi()
+            .AddSingleton<IEmailTemplateService, EmailTemplateService>()
+            .AddApplication()
+            .AddInfrastructure(builder.Configuration)
             .AddAuthentication(configuration)
             .AddAuthorization();
 
         WebApplication app = builder.Build();
-
+        
+        app.UseHttpsRedirection();
+        
         app.UseAuthentication();
         app.UseAuthorization();
 
@@ -39,8 +45,10 @@ internal sealed class Program
         app.UseDeveloperExceptionPage();
 #endif
 
-        ApiModule.AddEndpointsTo(app);
+        app.MapOpenApi();
 
+        ApiModule.AddEndpointsTo(app);
+        
         app.Run();
     }
 }

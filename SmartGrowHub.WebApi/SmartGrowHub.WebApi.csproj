@@ -1,31 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>fd6c95f8-1b47-4074-ba12-c50610595d67</UserSecretsId>
+    <UserSecretsId>a6df9600-19e9-47fe-83a8-f3838d4b0ff9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	<AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Core\SmartGrowHub.Application\SmartGrowHub.Application.csproj" />
-    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Core\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
-    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
-    <ProjectReference Include="..\SmartGrowHub.WebApi.Application\SmartGrowHub.WebApi.Application.csproj" />
-    <ProjectReference Include="..\SmartGrowHub.WebApi.Infrastructure\SmartGrowHub.WebApi.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Infrastructure\SmartGrowHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="SmartGrowHubLocalDb">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\templates\OtpEmailTemplate.html" />
   </ItemGroup>
 
 </Project>
