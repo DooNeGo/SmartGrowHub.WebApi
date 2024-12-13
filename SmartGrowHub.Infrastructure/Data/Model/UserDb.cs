@@ -15,4 +15,6 @@ internal sealed class UserDb
     public List<GrowHubDb> GrowHubs { get; set; } = [];
 
     public List<UserSessionDb> Sessions { get; set; } = [];
+    
+    public List<OneTimePasswordDb> OneTimePasswords { get; set; } = [];
 }

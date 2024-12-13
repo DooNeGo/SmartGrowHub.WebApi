@@ -7,5 +7,5 @@ public interface IOtpIssuer
 {
     Eff<OneTimePassword> Create(Id<User> id);
     
-    TimeSpan OneTimePasswordLifetime { get; }
+    TimeSpan OtpLifetime { get; }
 }

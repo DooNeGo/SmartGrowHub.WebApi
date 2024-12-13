@@ -20,7 +20,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 "SmartGrowHub.Infrastructure.Data.Model.PlantDb",
                 typeof(PlantDb),
                 baseEntityType,
-                propertyCount: 2,
+                propertyCount: 3,
                 keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
@@ -31,6 +31,14 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 afterSaveBehavior: PropertySaveBehavior.Throw,
                 valueConverter: new UlidConverter());
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+
+            var growHubId = runtimeEntityType.AddProperty(
+                "GrowHubId",
+                typeof(Ulid),
+                propertyInfo: typeof(PlantDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(PlantDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                valueConverter: new UlidConverter());
+            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var name = runtimeEntityType.AddProperty(
                 "Name",

@@ -21,7 +21,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 typeof(UserDb),
                 baseEntityType,
                 propertyCount: 3,
-                navigationCount: 2,
+                navigationCount: 3,
                 unnamedIndexCount: 2,
                 keyCount: 1);
 

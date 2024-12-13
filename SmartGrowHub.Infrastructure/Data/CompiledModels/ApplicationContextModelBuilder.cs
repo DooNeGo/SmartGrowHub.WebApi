@@ -11,7 +11,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("235a113f-33a4-4932-8fb9-d01aca97c2a6"), entityTypeCount: 8)
+            : base(skipDetectChanges: false, modelId: new Guid("3999d3e9-0479-4dcb-9e9b-5a721a3a1e6a"), entityTypeCount: 8)
         {
         }
 
@@ -29,6 +29,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             ComponentDbEntityType.CreateForeignKey1(componentDb, settingDb);
             GrowHubDbEntityType.CreateForeignKey1(growHubDb, plantDb);
             GrowHubDbEntityType.CreateForeignKey2(growHubDb, userDb);
+            OneTimePasswordDbEntityType.CreateForeignKey1(oneTimePasswordDb, userDb);
             SensorReadingDbEntityType.CreateForeignKey1(sensorReadingDb, growHubDb);
             SettingDbEntityType.CreateForeignKey1(settingDb, growHubDb);
             UserSessionDbEntityType.CreateForeignKey1(userSessionDb, userDb);

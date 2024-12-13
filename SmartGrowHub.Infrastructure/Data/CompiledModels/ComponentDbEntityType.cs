@@ -24,6 +24,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 typeof(ComponentDb),
                 baseEntityType,
                 propertyCount: 5,
+                navigationCount: 1,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
                 keyCount: 1);
@@ -37,13 +38,13 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 valueConverter: new UlidConverter());
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
-            var settingDbId = runtimeEntityType.AddProperty(
-                "SettingDbId",
+            var settingId = runtimeEntityType.AddProperty(
+                "SettingId",
                 typeof(Ulid),
-                propertyInfo: typeof(ComponentDb).GetProperty("SettingDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(ComponentDb).GetField("<SettingDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(ComponentDb).GetProperty("SettingId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(ComponentDb).GetField("<SettingId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            settingDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            settingId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var type = runtimeEntityType.AddProperty(
                 "Type",
@@ -70,18 +71,25 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { settingDbId });
+                new[] { settingId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("SettingDbId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("SettingId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
+
+            var setting = declaringEntityType.AddNavigation("Setting",
+                runtimeForeignKey,
+                onDependent: true,
+                typeof(SettingDb),
+                propertyInfo: typeof(ComponentDb).GetProperty("Setting", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(ComponentDb).GetField("<Setting>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var components = principalEntityType.AddNavigation("Components",
                 runtimeForeignKey,

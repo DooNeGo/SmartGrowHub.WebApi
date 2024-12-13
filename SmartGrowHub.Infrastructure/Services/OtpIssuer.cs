@@ -29,7 +29,7 @@ internal sealed partial class OtpIssuer(
         let expires = utcNow + otpConfiguration.Expiration
         select OneTimePassword.New(id, otpValue, expires);
 
-    public TimeSpan OneTimePasswordLifetime { get; } = configuration.GetOtpLifeTime();
+    public TimeSpan OtpLifetime { get; } = configuration.GetOtpLifeTime();
 
     private static int GenerateOtpValue(int length)
     {

@@ -40,6 +40,8 @@ internal sealed class ApplicationContext : DbContext
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.Entity<UserDb>();
+        modelBuilder.Entity<SettingDb>();
+        modelBuilder.Entity<GrowHubDb>();
     }
 
     /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

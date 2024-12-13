@@ -9,7 +9,7 @@ internal static class UserSessionExtensions
     public static UserSessionDb ToDb(this UserSession session) => new()
     {
         Id = session.Id,
-        UserDbId = session.UserId,
+        UserId = session.UserId,
         AccessToken = session.AuthTokens.AccessToken,
         RefreshToken = session.AuthTokens.RefreshToken.Ulid,
         Expires = session.AuthTokens.RefreshToken.Expires
@@ -23,6 +23,6 @@ internal static class UserSessionExtensions
         let refreshToken = new RefreshToken(session.RefreshToken, session.Expires)
         select new UserSession(
             new Id<UserSession>(session.Id),
-            new Id<User>(session.UserDbId),
+            new Id<User>(session.UserId),
             new AuthTokens(accessToken, refreshToken));
 }

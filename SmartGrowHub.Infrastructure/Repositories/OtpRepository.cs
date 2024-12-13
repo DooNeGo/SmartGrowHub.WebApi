@@ -15,7 +15,7 @@ internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
 
     public Eff<ImmutableArray<OneTimePassword>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
         liftEff(() => context.OneTimePasswords
-                .Where(otp => otp.UserDbId == id.Value)
+                .Where(otp => otp.UserId == id.Value)
                 .ToListAsync(cancellationToken))
             .Bind(list => list
                 .AsIterable()

@@ -12,25 +12,12 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "OneTimePasswords",
-                columns: table => new
-                {
-                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    UserDbId = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    Value = table.Column<int>(type: "INTEGER", nullable: false),
-                    Expires = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OneTimePasswords", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Plants",
                 columns: table => new
                 {
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,7 +43,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
                     PlantId = table.Column<byte[]>(type: "BLOB", nullable: true),
-                    UserDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    UserId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -67,8 +54,28 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         principalTable: "Plants",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_GrowHubs_Users_UserDbId",
-                        column: x => x.UserDbId,
+                        name: "FK_GrowHubs_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OneTimePasswords",
+                columns: table => new
+                {
+                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    UserId = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Value = table.Column<int>(type: "INTEGER", nullable: false),
+                    Expires = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OneTimePasswords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OneTimePasswords_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -79,7 +86,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    UserDbId = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    UserId = table.Column<byte[]>(type: "BLOB", nullable: false),
                     AccessToken = table.Column<string>(type: "TEXT", nullable: false),
                     RefreshToken = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Expires = table.Column<DateTime>(type: "TEXT", nullable: false)
@@ -88,8 +95,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     table.PrimaryKey("PK_UserSessions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserSessions_Users_UserDbId",
-                        column: x => x.UserDbId,
+                        name: "FK_UserSessions_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -104,14 +111,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     Value = table.Column<string>(type: "TEXT", nullable: false),
                     Unit = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "TEXT", nullable: false),
-                    GrowHubDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SensorReading", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SensorReading_GrowHubs_GrowHubDbId",
-                        column: x => x.GrowHubDbId,
+                        name: "FK_SensorReading_GrowHubs_GrowHubId",
+                        column: x => x.GrowHubId,
                         principalTable: "GrowHubs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -124,14 +131,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     Id = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Mode = table.Column<int>(type: "INTEGER", nullable: false),
-                    GrowHubDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    GrowHubId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Settings_GrowHubs_GrowHubDbId",
-                        column: x => x.GrowHubDbId,
+                        name: "FK_Settings_GrowHubs_GrowHubId",
+                        column: x => x.GrowHubId,
                         principalTable: "GrowHubs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -145,23 +152,23 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Value = table.Column<int>(type: "INTEGER", nullable: false),
                     Unit = table.Column<string>(type: "TEXT", nullable: false),
-                    SettingDbId = table.Column<byte[]>(type: "BLOB", nullable: false)
+                    SettingId = table.Column<byte[]>(type: "BLOB", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Components", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Components_Settings_SettingDbId",
-                        column: x => x.SettingDbId,
+                        name: "FK_Components_Settings_SettingId",
+                        column: x => x.SettingId,
                         principalTable: "Settings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Components_SettingDbId",
+                name: "IX_Components_SettingId",
                 table: "Components",
-                column: "SettingDbId");
+                column: "SettingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GrowHubs_PlantId",
@@ -169,9 +176,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 column: "PlantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GrowHubs_UserDbId",
+                name: "IX_GrowHubs_UserId",
                 table: "GrowHubs",
-                column: "UserDbId");
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OneTimePasswords_UserId",
+                table: "OneTimePasswords",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OneTimePasswords_Value",
@@ -179,14 +191,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 column: "Value");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SensorReading_GrowHubDbId",
+                name: "IX_SensorReading_GrowHubId",
                 table: "SensorReading",
-                column: "GrowHubDbId");
+                column: "GrowHubId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Settings_GrowHubDbId",
+                name: "IX_Settings_GrowHubId",
                 table: "Settings",
-                column: "GrowHubDbId");
+                column: "GrowHubId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_EmailAddress",
@@ -207,9 +219,9 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserSessions_UserDbId",
+                name: "IX_UserSessions_UserId",
                 table: "UserSessions",
-                column: "UserDbId");
+                column: "UserId");
         }
 
         /// <inheritdoc />

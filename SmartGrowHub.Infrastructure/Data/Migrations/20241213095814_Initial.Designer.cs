@@ -11,7 +11,7 @@ using SmartGrowHub.Infrastructure.Data;
 namespace SmartGrowHub.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20241212214803_Initial")]
+    [Migration("20241213095814_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<byte[]>("Id")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("SettingDbId")
+                    b.Property<byte[]>("SettingId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -41,7 +41,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SettingDbId");
+                    b.HasIndex("SettingId");
 
                     b.ToTable("Components");
                 });
@@ -54,7 +54,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<byte[]>("PlantId")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("UserDbId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -62,7 +62,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.HasIndex("PlantId");
 
-                    b.HasIndex("UserDbId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("GrowHubs");
                 });
@@ -75,7 +75,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<DateTime>("Expires")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserDbId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -83,6 +83,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("Value");
 
@@ -92,6 +94,10 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.PlantDb", b =>
                 {
                     b.Property<byte[]>("Id")
+                        .HasColumnType("BLOB");
+
+                    b.Property<byte[]>("GrowHubId")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.Property<string>("Name")
@@ -111,7 +117,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GrowHubDbId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -128,7 +134,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrowHubDbId");
+                    b.HasIndex("GrowHubId");
 
                     b.ToTable("SensorReading");
                 });
@@ -138,7 +144,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<byte[]>("Id")
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("GrowHubDbId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -150,7 +156,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GrowHubDbId");
+                    b.HasIndex("GrowHubId");
 
                     b.ToTable("Settings");
                 });
@@ -195,7 +201,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
-                    b.Property<byte[]>("UserDbId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("BLOB");
 
@@ -204,18 +210,20 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.HasIndex("RefreshToken")
                         .IsUnique();
 
-                    b.HasIndex("UserDbId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserSessions");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ComponentDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.SettingDb", null)
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.SettingDb", "Setting")
                         .WithMany("Components")
-                        .HasForeignKey("SettingDbId")
+                        .HasForeignKey("SettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Setting");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
@@ -224,40 +232,59 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         .WithMany()
                         .HasForeignKey("PlantId");
 
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", null)
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", "User")
                         .WithMany("GrowHubs")
-                        .HasForeignKey("UserDbId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Plant");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
+                {
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", "User")
+                        .WithMany("OneTimePasswords")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", null)
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("SensorReadings")
-                        .HasForeignKey("GrowHubDbId")
+                        .HasForeignKey("GrowHubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("GrowHub");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SettingDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", null)
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("Settings")
-                        .HasForeignKey("GrowHubDbId")
+                        .HasForeignKey("GrowHubId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("GrowHub");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserSessionDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", null)
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", "User")
                         .WithMany("Sessions")
-                        .HasForeignKey("UserDbId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
@@ -275,6 +302,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>
                 {
                     b.Navigation("GrowHubs");
+
+                    b.Navigation("OneTimePasswords");
 
                     b.Navigation("Sessions");
                 });

@@ -24,7 +24,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 typeof(SettingDb),
                 baseEntityType,
                 propertyCount: 4,
-                navigationCount: 1,
+                navigationCount: 2,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
                 keyCount: 1);
@@ -38,13 +38,13 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 valueConverter: new UlidConverter());
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
-            var growHubDbId = runtimeEntityType.AddProperty(
-                "GrowHubDbId",
+            var growHubId = runtimeEntityType.AddProperty(
+                "GrowHubId",
                 typeof(Ulid),
-                propertyInfo: typeof(SettingDb).GetProperty("GrowHubDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SettingDb).GetField("<GrowHubDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(SettingDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(SettingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            growHubDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var mode = runtimeEntityType.AddProperty(
                 "Mode",
@@ -65,18 +65,25 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { growHubDbId });
+                new[] { growHubId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubDbId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
+
+            var growHub = declaringEntityType.AddNavigation("GrowHub",
+                runtimeForeignKey,
+                onDependent: true,
+                typeof(GrowHubDb),
+                propertyInfo: typeof(SettingDb).GetProperty("GrowHub", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(SettingDb).GetField("<GrowHub>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var settings = principalEntityType.AddNavigation("Settings",
                 runtimeForeignKey,

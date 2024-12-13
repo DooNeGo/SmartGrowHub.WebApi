@@ -19,9 +19,7 @@ public sealed class OtpLoginUseCase(
         from user in GetOrCreateUserByEmail(emailAddress, cancellationToken)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from subject in NonEmptyString.From(Subject).ToEff()
-        from body in emailTemplateService
-            .GetOtpEmailBody(oneTimePassword.Value, otpIssuer.OneTimePasswordLifetime)
-            .ToEff()
+        from body in emailTemplateService.GetOtpEmailBody(oneTimePassword.Value, otpIssuer.OtpLifetime)
         from _ in emailService
             .To(emailAddress)
             .Subject(subject)

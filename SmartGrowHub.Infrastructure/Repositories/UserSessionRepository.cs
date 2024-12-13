@@ -24,7 +24,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
 
     public Eff<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions
-            .Where(session => session.UserDbId == id)
+            .Where(session => session.UserId == id)
             .ToListAsync(cancellationToken))
             .Bind(list => list
                 .Select(session => session.TryToDomain())

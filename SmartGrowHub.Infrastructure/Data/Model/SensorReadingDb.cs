@@ -16,5 +16,7 @@ internal sealed class SensorReadingDb
 
     public required DateOnly CreatedAt { get; set; }
 
-    public required Ulid GrowHubDbId { get; set; }
+    public required Ulid GrowHubId { get; set; }
+    
+    public GrowHubDb? GrowHub { get; set; }
 }

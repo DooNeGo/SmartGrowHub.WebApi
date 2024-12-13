@@ -14,5 +14,7 @@ internal sealed class ComponentDb
 
     public required string Unit { get; set; }
 
-    public required Ulid SettingDbId { get; set; }
+    public required Ulid SettingId { get; set; }
+    
+    public SettingDb? Setting { get; set; }
 }

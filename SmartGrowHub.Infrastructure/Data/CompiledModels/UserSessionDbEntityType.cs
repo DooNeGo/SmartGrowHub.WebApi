@@ -23,6 +23,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 typeof(UserSessionDb),
                 baseEntityType,
                 propertyCount: 5,
+                navigationCount: 1,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 2,
                 keyCount: 1);
@@ -57,13 +58,13 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 valueConverter: new UlidConverter());
             refreshToken.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
-            var userDbId = runtimeEntityType.AddProperty(
-                "UserDbId",
+            var userId = runtimeEntityType.AddProperty(
+                "UserId",
                 typeof(Ulid),
-                propertyInfo: typeof(UserSessionDb).GetProperty("UserDbId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(UserSessionDb).GetField("<UserDbId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(UserSessionDb).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(UserSessionDb).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
-            userDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            userId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -74,18 +75,25 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 unique: true);
 
             var index0 = runtimeEntityType.AddIndex(
-                new[] { userDbId });
+                new[] { userId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserDbId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 required: true);
+
+            var user = declaringEntityType.AddNavigation("User",
+                runtimeForeignKey,
+                onDependent: true,
+                typeof(UserDb),
+                propertyInfo: typeof(UserSessionDb).GetProperty("User", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(UserSessionDb).GetField("<User>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var sessions = principalEntityType.AddNavigation("Sessions",
                 runtimeForeignKey,

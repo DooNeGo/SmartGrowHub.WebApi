@@ -8,4 +8,6 @@ internal sealed class PlantDb
     public required Ulid Id { get; set; }
 
     public required string Name { get; set; } = string.Empty;
+    
+    public Ulid GrowHubId { get; set; }
 }
