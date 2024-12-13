@@ -22,7 +22,16 @@ internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
                 .Traverse(otp => otp.ToDomain())
                 .Map(iterable => iterable.ToImmutableArray())
                 .As().ToEff());
-    
+
+    public Eff<OneTimePassword> GetByValue(int otpValue, CancellationToken cancellationToken) =>
+        liftEff(() => context.OneTimePasswords
+                .Where(otp => otp.Value == otpValue)
+                .FirstOrDefaultAsync(cancellationToken))
+            .Map(Optional)
+            .Bind(option => option.Match(
+                Some: otp => otp.ToDomain().ToEff(),
+                None: () => Error.New("There is no one-time password with such a code")));
+
     public Eff<Unit> Remove(Id<OneTimePassword> id, CancellationToken cancellationToken) =>
         liftEff(() => context.OneTimePasswords
             .Where(otp => otp.Id == id)

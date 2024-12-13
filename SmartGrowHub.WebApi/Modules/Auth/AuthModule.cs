@@ -8,8 +8,9 @@ public sealed class AuthModule : IEndpointModule
     {
         routeBuilder.MapPost("/auth/login/email", LogInByEmailEndpoint.LogIn);
         routeBuilder.MapPost("/auth/login/phone", LogInByPhoneEndpoint.LogIn);
+        routeBuilder.MapPost("/auth/login/check", CheckOtpEndpoint.CheckOtp);
         //routeBuilder.MapPost("/auth/logout", LogOutEndpoint.LogOut);
-        //routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
+        routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
 
         return routeBuilder;
     }

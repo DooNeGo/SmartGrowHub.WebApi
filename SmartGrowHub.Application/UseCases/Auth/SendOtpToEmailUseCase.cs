@@ -5,9 +5,8 @@ using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Application.UseCases.Auth;
 
-public sealed class OtpLoginUseCase(
+public sealed class SendOtpToEmailUseCase(
     IEmailService emailService,
-    ISmsService smsService,
     IOtpIssuer otpIssuer,
     IOtpRepository otpRepository,
     IUserRepository userRepository,
@@ -33,18 +32,4 @@ public sealed class OtpLoginUseCase(
         | @catch(_ => userRepository
             .Add(User.NewFromEmailAddress(emailAddress), cancellationToken)
             .Bind(_ => userRepository.GetByEmailAddress(emailAddress, cancellationToken)));
-
-    public Eff<Unit> SendCodeToPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
-        from user in GetOrCreateUserByPhone(phoneNumber, cancellationToken)
-        from oneTimePassword in otpIssuer.Create(user.Id)
-        from payload in NonEmptyString.From($"Your one time password: {oneTimePassword.Value}").ToEff()
-        from _ in smsService.Send(phoneNumber, payload, cancellationToken)
-        from __ in otpRepository.Add(oneTimePassword, cancellationToken)
-        select unit;
-    
-    private Eff<User> GetOrCreateUserByPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
-        userRepository.GetByPhoneNumber(phoneNumber, cancellationToken)
-        | @catch(_ => userRepository
-            .Add(User.NewFromPhoneNumber(phoneNumber), cancellationToken)
-            .Bind(_ => userRepository.GetByPhoneNumber(phoneNumber, cancellationToken)));
 }

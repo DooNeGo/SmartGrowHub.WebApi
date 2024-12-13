@@ -19,8 +19,8 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
     public Eff<UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken) =>
         GetByPredicate(session => session.Id == id, cancellationToken);
 
-    public Eff<UserSession> GetByRefreshToken(RefreshToken refreshToken, CancellationToken cancellationToken) =>
-        GetByPredicate(session => session.RefreshToken == refreshToken.Ulid, cancellationToken);
+    public Eff<UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken) =>
+        GetByPredicate(session => session.RefreshToken == value, cancellationToken);
 
     public Eff<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
         liftEff(() => context.UserSessions

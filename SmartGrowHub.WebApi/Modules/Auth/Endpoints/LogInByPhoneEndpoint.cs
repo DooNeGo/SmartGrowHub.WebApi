@@ -8,9 +8,9 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
 public sealed class LogInByPhoneEndpoint
 {
-    public static Task<IResult> LogIn(LogInByPhoneRequestDto requestDto, OtpLoginUseCase useCase,
-        ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) =>
-        (from phone in PhoneNumber.From(requestDto.PhoneNumber).ToEff()
+    public static Task<IResult> LogIn(LogInByPhoneRequest request, SendOtpToPhoneUseCase useCase,
+        ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (
+            from phone in PhoneNumber.From(request.PhoneNumber).ToEff()
             from _ in useCase.SendCodeToPhone(phone, cancellationToken)
             select unit)
         .RunAsync()
