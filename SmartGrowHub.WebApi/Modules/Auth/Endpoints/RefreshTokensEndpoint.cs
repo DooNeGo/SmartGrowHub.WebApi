@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.Application.UseCases.Auth;
+using SmartGrowHub.Shared.Results;
 using SmartGrowHub.Shared.Tokens;
 using SmartGrowHub.WebApi.Modules.Extensions;
 using static Microsoft.AspNetCore.Http.Results;
@@ -18,7 +19,7 @@ public sealed class RefreshTokensEndpoint
             select response)
         .RunAsync()
         .Map(effect => effect.Match(
-            Succ: response => Ok(response.ToDto()),
+            Succ: response => Ok(Result<AuthTokensDto>.Success(response.ToDto())),
             Fail: error => HandleError(logger, error)));
 }
 

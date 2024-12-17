@@ -18,4 +18,6 @@ public sealed class OneTimePassword(
     
     public static OneTimePassword New(Id<User> userId, int value, DateTime expires) =>
         new(new Id<OneTimePassword>(Ulid.NewUlid()), userId, value, expires);
+
+    public bool IsExpired(DateTime now) => now > Expires;
 }

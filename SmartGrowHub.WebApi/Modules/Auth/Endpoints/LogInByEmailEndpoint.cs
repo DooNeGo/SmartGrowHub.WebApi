@@ -1,6 +1,7 @@
 using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Shared.Auth;
+using SmartGrowHub.Shared.Results;
 using static Microsoft.AspNetCore.Http.Results;
 using static SmartGrowHub.WebApi.Modules.ErrorHandler;
 
@@ -15,6 +16,6 @@ public sealed class LogInByEmailEndpoint
             select unit)
         .RunAsync()
         .Map(fin => fin.Match(
-            Succ: _ => Ok(),
+            Succ: _ => Ok(new Result(true, null, null)),
             Fail: error => HandleError(logger, error)));
 }

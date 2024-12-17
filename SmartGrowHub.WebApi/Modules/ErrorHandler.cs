@@ -24,7 +24,7 @@ internal static partial class ErrorHandler
             HandleInternalError(logger, error);
         }
         
-        return BadRequest(error);
+        return BadRequest(Result.Fail(error.Message, error.Code));
     }
 
     [LoggerMessage(LogLevel.Error, Message = "{message}")]
