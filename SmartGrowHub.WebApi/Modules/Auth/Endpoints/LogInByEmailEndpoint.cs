@@ -12,7 +12,7 @@ public sealed class LogInByEmailEndpoint
     public static Task<IResult> LogIn(LogInByEmailRequest request, SendOtpToEmailUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from email in EmailAddress.From(request.EmailAddress).ToEff()
-            from _ in useCase.SendCodeToEmail(email, cancellationToken)
+            from _ in useCase.SendOtpToEmail(email, cancellationToken)
             select unit)
         .RunAsync()
         .Map(fin => fin.Match(

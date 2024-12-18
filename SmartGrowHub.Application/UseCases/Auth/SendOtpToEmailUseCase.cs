@@ -14,7 +14,7 @@ public sealed class SendOtpToEmailUseCase(
 {
     private const string Subject = "One Time Password for Smart Grow Hub";
     
-    public Eff<Unit> SendCodeToEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
+    public Eff<Unit> SendOtpToEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
         from user in GetOrCreateUserByEmail(emailAddress, cancellationToken)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from subject in NonEmptyString.From(Subject).ToEff()
@@ -28,8 +28,9 @@ public sealed class SendOtpToEmailUseCase(
         select unit;
 
     private Eff<User> GetOrCreateUserByEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
-        userRepository.GetByEmailAddress(emailAddress, cancellationToken)
-        | @catch(_ => userRepository
-            .Add(User.NewFromEmailAddress(emailAddress), cancellationToken)
-            .Bind(_ => userRepository.GetByEmailAddress(emailAddress, cancellationToken)));
+        userRepository
+            .GetByEmailAddress(emailAddress, cancellationToken)
+            .IfFailEff(_ => userRepository
+                .Add(User.NewFromEmailAddress(emailAddress), cancellationToken)
+                .Bind(_ => userRepository.GetByEmailAddress(emailAddress, cancellationToken)));
 }

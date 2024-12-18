@@ -10,7 +10,7 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 public sealed class RefreshTokensEndpoint
 {
     public static Task<IResult> RefreshTokens(
-        RefreshTokensRequestDto requestDto, RefreshTokensUseCase useCase,
+        RefreshTokensRequest requestDto, RefreshTokensUseCase useCase,
         ILogger<RefreshTokensEndpoint> logger, CancellationToken cancellationToken) => (
             from oldToken in UlidFp.From(requestDto.RefreshToken)
                 .MapFail(error => Error.New("Invalid refresh token format", error))
