@@ -5,7 +5,6 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data.Convertors;
 using SmartGrowHub.Infrastructure.Data.Model;
 
@@ -23,8 +22,8 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 "SmartGrowHub.Infrastructure.Data.Model.SettingDb",
                 typeof(SettingDb),
                 baseEntityType,
-                propertyCount: 4,
-                navigationCount: 2,
+                propertyCount: 2,
+                navigationCount: 1,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
                 keyCount: 1);
@@ -45,20 +44,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(SettingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueConverter: new UlidConverter());
             growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-
-            var mode = runtimeEntityType.AddProperty(
-                "Mode",
-                typeof(SettingMode),
-                propertyInfo: typeof(SettingDb).GetProperty("Mode", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SettingDb).GetField("<Mode>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            mode.SetSentinelFromProviderValue(0);
-
-            var type = runtimeEntityType.AddProperty(
-                "Type",
-                typeof(SettingType),
-                propertyInfo: typeof(SettingDb).GetProperty("Type", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SettingDb).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            type.SetSentinelFromProviderValue(0);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });

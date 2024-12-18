@@ -1,13 +1,10 @@
-﻿using System.Net;
-using System.Net.Mail;
-using EntityFramework.Exceptions.Sqlite;
+﻿using EntityFramework.Exceptions.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Infrastructure.Data;
-using SmartGrowHub.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.Infrastructure.Repositories;
 using SmartGrowHub.Infrastructure.Services;
 using SmartGrowHub.Infrastructure.Tokens;
@@ -35,7 +32,6 @@ public static class DependencyInjection
     private static IServiceCollection AddDbContext(this IServiceCollection services) =>
         services.AddDbContextPool<ApplicationContext>(options => options
             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-            .UseModel(ApplicationContextModel.Instance)
             .UseSqlite("DataSource=SmartGrowHubLocalDb", sqliteOptions => sqliteOptions
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
             .UseExceptionProcessor());

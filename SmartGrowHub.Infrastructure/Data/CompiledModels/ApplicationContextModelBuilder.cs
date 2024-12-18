@@ -11,13 +11,12 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("3999d3e9-0479-4dcb-9e9b-5a721a3a1e6a"), entityTypeCount: 8)
+            : base(skipDetectChanges: false, modelId: new Guid("d5ad24be-31e8-47b3-bf5e-8abba9e494bd"), entityTypeCount: 7)
         {
         }
 
         partial void Initialize()
         {
-            var componentDb = ComponentDbEntityType.Create(this);
             var growHubDb = GrowHubDbEntityType.Create(this);
             var oneTimePasswordDb = OneTimePasswordDbEntityType.Create(this);
             var plantDb = PlantDbEntityType.Create(this);
@@ -26,7 +25,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             var userDb = UserDbEntityType.Create(this);
             var userSessionDb = UserSessionDbEntityType.Create(this);
 
-            ComponentDbEntityType.CreateForeignKey1(componentDb, settingDb);
             GrowHubDbEntityType.CreateForeignKey1(growHubDb, plantDb);
             GrowHubDbEntityType.CreateForeignKey2(growHubDb, userDb);
             OneTimePasswordDbEntityType.CreateForeignKey1(oneTimePasswordDb, userDb);
@@ -34,7 +32,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             SettingDbEntityType.CreateForeignKey1(settingDb, growHubDb);
             UserSessionDbEntityType.CreateForeignKey1(userSessionDb, userDb);
 
-            ComponentDbEntityType.CreateAnnotations(componentDb);
             GrowHubDbEntityType.CreateAnnotations(growHubDb);
             OneTimePasswordDbEntityType.CreateAnnotations(oneTimePasswordDb);
             PlantDbEntityType.CreateAnnotations(plantDb);

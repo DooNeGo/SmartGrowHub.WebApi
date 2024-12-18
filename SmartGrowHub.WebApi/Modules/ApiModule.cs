@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.WebApi.Modules.Auth;
+using SmartGrowHub.WebApi.Modules.GrowHubs;
 using SmartGrowHub.WebApi.Modules.Users;
 using SmartGrowHub.WebApi.Modules.UserSessions;
 
@@ -12,5 +13,6 @@ public sealed class ApiModule : IEndpointModule
                 .Map(AuthModule.AddEndpointsTo)
                 .Map(UsersModule.AddEndpointsTo)
                 .Map(UserSessionsModule.AddEndpointsTo)
+                .Map(GrowHubModule.AddEndpointsTo)
                 .Value;
 }

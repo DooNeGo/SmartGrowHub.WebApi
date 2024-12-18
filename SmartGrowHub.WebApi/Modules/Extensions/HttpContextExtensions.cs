@@ -10,10 +10,8 @@ public static class HttpContextExtensions
         new("There is no access token in the headers");
     
     public static Eff<AccessToken> GetAccessToken(this HttpContext context) =>
-        from rawToken in liftEff(() => context
-                .GetTokenAsync("access_token")
-                .Map(Optional))
-            .Bind(option => option.ToEff(NoTokenError))
+        from rawToken in liftEff(() => context.GetTokenAsync("access_token"))
+            .Bind(value => value is null ? NoTokenError : SuccessEff(value))
         from accessToken in AccessToken.From(rawToken).ToEff()
         select accessToken;
 }

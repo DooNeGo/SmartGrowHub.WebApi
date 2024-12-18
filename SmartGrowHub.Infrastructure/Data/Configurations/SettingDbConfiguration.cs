@@ -9,9 +9,5 @@ internal sealed class SettingDbConfiguration : IEntityTypeConfiguration<SettingD
     public void Configure(EntityTypeBuilder<SettingDb> builder)
     {
         builder.HasKey(x => x.Id);
-        
-        builder.HasMany(x => x.Components)
-            .WithOne(x => x.Setting)
-            .HasForeignKey(x => x.SettingId);
     }
 }

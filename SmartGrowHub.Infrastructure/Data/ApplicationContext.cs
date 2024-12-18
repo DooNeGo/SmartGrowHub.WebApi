@@ -1,6 +1,5 @@
 ﻿using EntityFramework.Exceptions.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using SmartGrowHub.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.Infrastructure.Data.Convertors;
 using SmartGrowHub.Infrastructure.Data.Model;
 
@@ -22,8 +21,6 @@ internal sealed class ApplicationContext : DbContext
 
     public DbSet<SensorReadingDb> SensorReading => Set<SensorReadingDb>();
 
-    public DbSet<ComponentDb> Components => Set<ComponentDb>();
-
     public DbSet<UserSessionDb> UserSessions => Set<UserSessionDb>();
     
     public DbSet<OneTimePasswordDb> OneTimePasswords => Set<OneTimePasswordDb>();
@@ -44,16 +41,16 @@ internal sealed class ApplicationContext : DbContext
         modelBuilder.Entity<GrowHubDb>();
     }
 
-    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
+    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    //{
+    //    base.OnConfiguring(optionsBuilder);
 
-        optionsBuilder
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-            .UseSqlite("DataSource=SmartGrowHubLocalDb")
-            .UseModel(ApplicationContextModel.Instance)
-            .UseExceptionProcessor()
-            .EnableSensitiveDataLogging()
-            .EnableDetailedErrors();
-    }*/
+    //    optionsBuilder
+    //        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+    //        .UseSqlite("DataSource=SmartGrowHubLocalDb")
+    //        //.UseModel(ApplicationContextModel.Instance)
+    //        .UseExceptionProcessor()
+    //        .EnableSensitiveDataLogging()
+    //        .EnableDetailedErrors();
+    //}
 }
