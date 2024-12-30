@@ -21,6 +21,7 @@ public sealed class GrowHub(
     public NonEmptyString Name { get; init; } = name;
 
     public NonEmptyString Model { get; } = model;
+
     public ImmutableArray<IGrowHubComponent> Components { get; init; } = components;
 
     public Option<Plant> Plant { get; init; } = plant;

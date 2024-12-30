@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
     <PackageReference Include="Otp.NET" Version="1.4.0" />
-    <PackageReference Include="Vonage" Version="7.13.0" />
+    <PackageReference Include="Vonage" Version="7.14.0" />
   </ItemGroup>
 
 </Project>
