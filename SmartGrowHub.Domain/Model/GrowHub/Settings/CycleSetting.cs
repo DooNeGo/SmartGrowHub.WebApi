@@ -1,22 +1,17 @@
 ﻿namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
 
-public sealed record CycleSetting : ISetting
+public sealed record CycleSetting<TTime> : Setting
+    where TTime : IOperations<TTime, TimeSpan>
 {
-    private CycleSetting(DateTime startTime, TimeSpan onDuration, int value)
-    {
-        StartTime = startTime;
-        OnDuration = onDuration;
-        Value = value;
-    }
+    private CycleSetting(TimePeriod<TTime> period, SettingValue value) =>
+        (TimePeriod, Value) = (period, value);
 
-    public DateTime StartTime { get; }
+    public SettingValue Value { get; }
+    
+    public TimePeriod<TTime> TimePeriod { get; }
 
-    public TimeSpan OnDuration { get; }
-
-    public int Value { get; }
-
-    public static Fin<CycleSetting> From(DateTime startTime, TimeSpan onDuration, int value) =>
-        onDuration > TimeSpan.FromHours(TimeSpan.HoursPerDay)
-            ? Error.New("On duration must be less than 24 hours")
-            : new CycleSetting(startTime, onDuration, value);
+    public static Fin<CycleSetting<TTime>> New(SettingValue value, TimePeriod<TTime> period) =>
+        period.Duration < TimeSpan.FromMinutes(1)
+            ? Error.New("Duration must be at least 1 minute")
+            : new CycleSetting<TTime>(period, value);
 }

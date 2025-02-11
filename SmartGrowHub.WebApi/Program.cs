@@ -32,7 +32,8 @@ internal sealed class Program
             .AddApplication()
             .AddInfrastructure(builder.Configuration)
             .AddAuthentication(configuration)
-            .AddAuthorization();
+            .AddAuthorization()
+            .AddSignalR();
 
         WebApplication app = builder.Build();
         
@@ -47,7 +48,7 @@ internal sealed class Program
 
         app.MapOpenApi();
 
-        ApiModule.AddEndpointsTo(app);
+        app.AddApiEndpoints();
         
         app.Run();
     }

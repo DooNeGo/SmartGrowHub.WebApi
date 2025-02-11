@@ -2,9 +2,9 @@
 
 namespace SmartGrowHub.WebApi.Modules.Users;
 
-public sealed class UsersModule : IEndpointModule
+public static class UsersModuleExtensions
 {
-    public static IEndpointRouteBuilder AddEndpointsTo(IEndpointRouteBuilder routeBuilder)
+    public static IEndpointRouteBuilder AddUserEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
         routeBuilder.MapGet("/user", GetUserEndpoint.GetUser).RequireAuthorization();
 

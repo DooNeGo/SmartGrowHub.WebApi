@@ -4,10 +4,10 @@ using SmartGrowHub.Domain.Model.GrowHub.Settings;
 
 namespace SmartGrowHub.Domain.Model.GrowHub.Components;
 
-public sealed class HeaterComponent(
-    Id<HeaterComponent> id,
+public sealed class UvLightComponent(
+    Id<UvLightComponent> id,
     Setting setting)
-    : Entity<HeaterComponent>(id)
+    : Entity<UvLightComponent>(id)
 {
     public Setting Setting { get; } = setting;
 }

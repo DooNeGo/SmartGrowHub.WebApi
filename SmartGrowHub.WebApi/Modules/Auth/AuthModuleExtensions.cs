@@ -2,9 +2,9 @@
 
 namespace SmartGrowHub.WebApi.Modules.Auth;
 
-public sealed class AuthModule : IEndpointModule
+public static class AuthModuleExtensions
 {
-    public static IEndpointRouteBuilder AddEndpointsTo(IEndpointRouteBuilder routeBuilder)
+    public static IEndpointRouteBuilder AddAuthEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
         routeBuilder.MapPost("/auth/login/email", LogInByEmailEndpoint.LogIn);
         routeBuilder.MapPost("/auth/login/phone", LogInByPhoneEndpoint.LogIn);

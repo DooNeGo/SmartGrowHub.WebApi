@@ -14,7 +14,12 @@ public readonly record struct Id<T>(Ulid Value) : DomainType<Id<T>, Ulid>, Domai
             ? From(id)
             : Error.New("This is an invalid ulid");
 
-    string DomainType<Id<T>, string>.To() => Value.ToString();
+    string DomainType<Id<T>, string>.To() => ToString();
 
     public override string ToString() => Value.ToString();
+}
+
+public static class Id
+{
+    public static Id<T> New<T>() => new(Ulid.NewUlid());
 }

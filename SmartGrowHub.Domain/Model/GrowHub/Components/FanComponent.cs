@@ -6,8 +6,8 @@ namespace SmartGrowHub.Domain.Model.GrowHub.Components;
 
 public sealed class FanComponent(
     Id<FanComponent> id,
-    ISetting setting)
-    : Entity<FanComponent>(id), IGrowHubComponent
+    Setting setting)
+    : Entity<FanComponent>(id)
 {
-    public ISetting Setting { get; } = setting;
+    public Setting Setting { get; } = setting;
 }

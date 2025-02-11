@@ -22,14 +22,14 @@ internal sealed partial class OtpIssuer(
         .Map(Some)
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
     
+    public TimeSpan OtpLifetime { get; } = configuration.GetOtpLifeTime();
+    
     public Eff<OneTimePassword> Create(Id<User> id) =>
         from utcNow in timeProvider.GetUtcNow()
         from otpConfiguration in _otpConfiguration.ToEff()
         let otpValue = GenerateOtpValue(otpConfiguration.Length)
         let expires = utcNow + otpConfiguration.Expiration
         select OneTimePassword.New(id, otpValue, expires);
-
-    public TimeSpan OtpLifetime { get; } = configuration.GetOtpLifeTime();
 
     private static int GenerateOtpValue(int length)
     {
