@@ -1,17 +1,10 @@
-﻿namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+﻿using SmartGrowHub.Domain.Common;
 
-public sealed record CycleSetting<TTime> : Setting
-    where TTime : IOperations<TTime, TimeSpan>
+namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+
+public sealed class CycleSetting(Id<Setting> id, ValueWithInterval<TimeOnlyWrapper> interval) : Setting(id)
 {
-    private CycleSetting(TimePeriod<TTime> period, SettingValue value) =>
-        (TimePeriod, Value) = (period, value);
-
-    public SettingValue Value { get; }
+    public ValueWithInterval<TimeOnlyWrapper> Interval { get; } = interval;
     
-    public TimePeriod<TTime> TimePeriod { get; }
-
-    public static Fin<CycleSetting<TTime>> New(SettingValue value, TimePeriod<TTime> period) =>
-        period.Duration < TimeSpan.FromMinutes(1)
-            ? Error.New("Duration must be at least 1 minute")
-            : new CycleSetting<TTime>(period, value);
+    public static CycleSetting New(ValueWithInterval<TimeOnlyWrapper> interval) => new(new Id<Setting>(), interval);
 }

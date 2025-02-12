@@ -19,7 +19,7 @@ public sealed class UserSession(
     public AuthTokens AuthTokens { get; init; } = authTokens;
 
     public static UserSession New(Id<User> userId, AuthTokens tokens) =>
-        new(new Id<UserSession>(Ulid.NewUlid()), userId, tokens);
+        new(new Id<UserSession>(), userId, tokens);
 
     public Fin<UserSession> UpdateTokens(AuthTokens tokens, DateTime now) =>
         AuthTokens.RefreshToken.Expires <= now

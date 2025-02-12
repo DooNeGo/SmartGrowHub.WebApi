@@ -1,18 +1,21 @@
-﻿namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+﻿using SmartGrowHub.Domain.Abstractions;
+using SmartGrowHub.Domain.Common;
 
-public abstract record Setting
+namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+
+public abstract class Setting(Id<Setting> id) : Entity<Setting>(id)
 {
     public T Match<T>(
         Func<ManualSetting, T> mapManual,
-        Func<CycleSetting<TimeOnlyWrapper>, T> mapCycle,
-        Func<DayScheduleSetting, T> mapDaySchedule,
-        Func<WeekScheduleSetting, T> mapWeekSchedule) =>
+        Func<CycleSetting, T> mapCycle,
+        Func<DailySetting, T> mapDaily,
+        Func<WeeklySetting, T> mapWeekly) =>
         this switch
         {
-            ManualSetting manual => mapManual(manual),
-            CycleSetting<TimeOnlyWrapper> cycle => mapCycle(cycle),
-            DayScheduleSetting daySchedule => mapDaySchedule(daySchedule),
-            WeekScheduleSetting weekSchedule => mapWeekSchedule(weekSchedule),
+            ManualSetting setting => mapManual(setting),
+            CycleSetting setting => mapCycle(setting),
+            DailySetting setting => mapDaily(setting),
+            WeeklySetting setting => mapWeekly(setting),
             _ => throw new InvalidOperationException()
         };
 }

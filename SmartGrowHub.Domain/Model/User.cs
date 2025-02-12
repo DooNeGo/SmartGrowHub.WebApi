@@ -33,5 +33,5 @@ public sealed class User : Entity<User>
     public static User NewFromPhoneNumber(PhoneNumber phoneNumber) => New(None, phoneNumber);
     
     private static User New(Option<EmailAddress> email, Option<PhoneNumber> phoneNumber) =>
-        new(new Id<User>(Ulid.NewUlid()), email, phoneNumber);
+        new(new Id<User>(), email, phoneNumber);
 }

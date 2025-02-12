@@ -2,6 +2,8 @@
 
 public readonly record struct Id<T>(Ulid Value) : DomainType<Id<T>, Ulid>, DomainType<Id<T>, string>
 {
+    public Id() : this(Ulid.NewUlid()) { }
+    
     public static implicit operator Ulid(Id<T> id) => id.Value;
     public static explicit operator Id<T>(Ulid ulid) => new(ulid);
 

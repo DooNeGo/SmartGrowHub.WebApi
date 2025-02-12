@@ -9,9 +9,10 @@ using SmartGrowHub.Shared.GrowHubs.Components;
 using SmartGrowHub.Shared.GrowHubs.Settings;
 using SmartGrowHub.Shared.Results;
 using System.Collections.Immutable;
+using SmartGrowHub.Domain.Model.GrowHub.Schedules;
+using SmartGrowHub.Shared.GrowHubs.Schedules;
 using static Microsoft.AspNetCore.Http.Results;
 using static SmartGrowHub.WebApi.Modules.ErrorHandler;
-using Unit = SmartGrowHub.Domain.Model.GrowHub.Settings.Unit;
 
 namespace SmartGrowHub.WebApi.Modules.GrowHubs.Endpoints;
 
@@ -22,68 +23,61 @@ public sealed class GetGrowHubsEndpoint
         Task.FromResult((
             from name in NonEmptyString.From("Home")
             from model in NonEmptyString.From("Smart Grow Hub v2")
-            from cycleSetting in CycleSetting<TimeOnlyWrapper>.New(
-                new SettingValue(55, Unit.Percent),
-                new TimePeriod<TimeOnlyWrapper>(
-                    new TimeOnlyWrapper(new TimeOnly(8, 0)),
-                    new TimeOnlyWrapper(new TimeOnly(20, 0))))
-            from dayCycles in ImmutableArray
-                .Create(
-                [
-                    CycleSetting<TimeOnlyWrapper>.New(
-                        new SettingValue(29.7f, Unit.Celsius),
-                        new TimePeriod<TimeOnlyWrapper>(
-                            new TimeOnlyWrapper(new TimeOnly(8, 0)),
-                            new TimeOnlyWrapper(new TimeOnly(10, 10)))),
-                    
-                    CycleSetting<TimeOnlyWrapper>.New(
-                        new SettingValue(31.2f, Unit.Celsius),
-                        new TimePeriod<TimeOnlyWrapper>(
-                            new TimeOnlyWrapper(new TimeOnly(10, 11)),
-                            new TimeOnlyWrapper(new TimeOnly(12, 30)))),
-                    
-                    CycleSetting<TimeOnlyWrapper>.New(
-                        new SettingValue(90, Unit.Percent),
-                        new TimePeriod<TimeOnlyWrapper>(
-                            new TimeOnlyWrapper(new TimeOnly(13, 0)),
-                            new TimeOnlyWrapper(new TimeOnly(20, 0)))),
-                ])
-                .AsIterable()
-                .Traverse(s => s)
-            from daySchedule in DayScheduleSetting.New([.. dayCycles])
-            from weekCycles in ImmutableArray
-                .Create(
-                [
-                    CycleSetting<WeekTimeOnly>.New(
-                        new SettingValue(10, Unit.Percent),
-                        new TimePeriod<WeekTimeOnly>(
-                            new WeekTimeOnly(DayOfWeek.Monday, new TimeOnly(5, 0)),
-                            new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(10, 0)))),
-                    
-                    CycleSetting<WeekTimeOnly>.New(
-                        new SettingValue(55, Unit.Percent),
-                        new TimePeriod<WeekTimeOnly>(
-                            new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(11, 0)),
-                            new WeekTimeOnly(DayOfWeek.Wednesday, new TimeOnly(10, 0)))),
-                    
-                    CycleSetting<WeekTimeOnly>.New(
-                        new SettingValue(41.2f, Unit.Celsius),
-                        new TimePeriod<WeekTimeOnly>(
-                            new WeekTimeOnly(DayOfWeek.Wednesday, new TimeOnly(19, 10)),
-                            new WeekTimeOnly(DayOfWeek.Friday, new TimeOnly(10, 0)))),
-                ])
-                .AsIterable()
-                .Traverse(s => s)
-            from weekSchedule in WeekScheduleSetting.New([.. weekCycles])
-            select ToDto(GrowHub.New(name, model,
-                new HeaterComponent(new Id<HeaterComponent>(Ulid.NewUlid()), cycleSetting),
-                new FanComponent(new Id<FanComponent>(Ulid.NewUlid()), daySchedule),
-                new DayLightComponent(new Id<DayLightComponent>(Ulid.NewUlid()), weekSchedule),
-                new UvLightComponent(new Id<UvLightComponent>(Ulid.NewUlid()), daySchedule),
-                None)))
-            .Match(
-                Succ: growHub => Ok(Result.Success(new[] { growHub } )),
-                Fail: error => HandleError(logger, error)));
+            from cycleInterval in ValueWithInterval<TimeOnlyWrapper>.New(
+                new SettingValue(10, MeasurementUnit.Percent),
+                new TimeInterval<TimeOnlyWrapper>(
+                    new TimeOnlyWrapper(new TimeOnly(20, 0)),
+                    new TimeOnlyWrapper(new TimeOnly(9, 0))))
+            from dayIntervals in ImmutableArray.Create(
+                ValueWithInterval<TimeOnlyWrapper>.New(
+                    new SettingValue(10, MeasurementUnit.Percent),
+                    new TimeInterval<TimeOnlyWrapper>(
+                        new TimeOnlyWrapper(new TimeOnly(8, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(12, 0)))),
+                ValueWithInterval<TimeOnlyWrapper>.New(
+                    new SettingValue(20, MeasurementUnit.Celsius),
+                    new TimeInterval<TimeOnlyWrapper>(
+                        new TimeOnlyWrapper(new TimeOnly(12, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(16, 0)))),
+                ValueWithInterval<TimeOnlyWrapper>.New(
+                    new SettingValue(30, MeasurementUnit.Percent),
+                    new TimeInterval<TimeOnlyWrapper>(
+                        new TimeOnlyWrapper(new TimeOnly(23, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(8, 0))))
+            ).AsIterable().Traverse(x => x)
+            from weekIntervals in ImmutableArray.Create(
+                ValueWithInterval<WeekTimeOnly>.New(
+                    new SettingValue(15, MeasurementUnit.Percent),
+                    new TimeInterval<WeekTimeOnly>(
+                        new WeekTimeOnly(DayOfWeek.Monday, new TimeOnly(8, 0)),
+                        new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(12, 0)))),
+                ValueWithInterval<WeekTimeOnly>.New(
+                    new SettingValue(26.8f, MeasurementUnit.Celsius),
+                    new TimeInterval<WeekTimeOnly>(
+                        new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(12, 0)),
+                        new WeekTimeOnly(DayOfWeek.Thursday, new TimeOnly(19, 0)))),
+                ValueWithInterval<WeekTimeOnly>.New(
+                    new SettingValue(10, MeasurementUnit.Percent),
+                    new TimeInterval<WeekTimeOnly>(
+                        new WeekTimeOnly(DayOfWeek.Thursday, new TimeOnly(19, 0)),
+                        new WeekTimeOnly(DayOfWeek.Sunday, new TimeOnly(9, 0))))
+            ).AsIterable().Traverse(x => x)
+            from dailySchedule in DailySchedule.New([..dayIntervals])
+            from weeklySchedule in WeeklySchedule.New([..weekIntervals])
+            let cycleSetting = CycleSetting.New(cycleInterval)
+            let dailySetting = DailySetting.New(dailySchedule)
+            let weeklySetting = WeeklySetting.New(weeklySchedule)
+            let manualSetting = ManualSetting.New(new SettingValue(100, MeasurementUnit.Percent))
+            select ToDto(
+                GrowHub.New(name, model,
+                    new HeaterComponent(new Id<HeaterComponent>(Ulid.NewUlid()), cycleSetting),
+                    new FanComponent(new Id<FanComponent>(Ulid.NewUlid()), dailySetting),
+                    new DayLightComponent(new Id<DayLightComponent>(Ulid.NewUlid()), weeklySetting),
+                    new UvLightComponent(new Id<UvLightComponent>(Ulid.NewUlid()), manualSetting),
+                    None))
+        ).Match(
+            Succ: growHub => Ok(Result.Success(new[] { growHub })),
+            Fail: error => HandleError(logger, error)));
 
     private static GrowHubDto ToDto(GrowHub growHub) =>
         new(growHub.Id, growHub.Name, growHub.Model,
@@ -108,36 +102,45 @@ public sealed class GetGrowHubsEndpoint
     private static SettingDto ToDto(Setting setting) =>
         setting.Match<SettingDto>(ToDto, ToDto, ToDto, ToDto);
 
-    private static WeekScheduleSettingDto ToDto(WeekScheduleSetting setting) =>
-        new([..setting.Schedules.Select(ToDto)]);
+    private static WeeklySettingDto ToDto(WeeklySetting setting) =>
+        new(setting.Id, ToDto(setting.Schedule));
     
-    private static DayScheduleSettingDto ToDto(DayScheduleSetting setting) =>
-        new([..setting.Schedules.Select(ToDto)]);
+    private static DailySettingDto ToDto(DailySetting setting) =>
+        new(setting.Id, ToDto(setting.Schedule));
     
-    private static CycleSettingDto<TimeOnly> ToDto(CycleSetting<TimeOnlyWrapper> setting) =>
-        new(ToDto(setting.Value), ToDto(setting.TimePeriod));
+    private static WeeklyScheduleDto ToDto(WeeklySchedule schedule) =>
+        new(schedule.Id, [..schedule.Intervals.Select(ToDto)]);
     
-    private static CycleSettingDto<WeekTimeOnlyDto> ToDto(CycleSetting<WeekTimeOnly> setting) =>
-        new(ToDto(setting.Value), ToDto(setting.TimePeriod));
+    private static DailyScheduleDto ToDto(DailySchedule schedule) =>
+        new(schedule.Id, [..schedule.Intervals.Select(ToDto)]);
     
-    private static ManualSettingDto ToDto(ManualSetting setting) => new(ToDto(setting.Value));
+    private static CycleSettingDto ToDto(CycleSetting setting) =>
+        new(setting.Id, ToDto(setting.Interval));
     
-    private static TimePeriodDto<TimeOnly> ToDto(TimePeriod<TimeOnlyWrapper> period) =>
-        new(ToDto(period.Start), ToDto(period.End));
+    private static ManualSettingDto ToDto(ManualSetting setting) => new(setting.Id, ToDto(setting.Value));
+
+    private static ValueWithIntervalDto<WeekTimeOnlyDto> ToDto(ValueWithInterval<WeekTimeOnly> interval) =>
+        new(interval.Id, ToDto(interval.Value), ToDto(interval.TimeInterval));
     
-    private static TimePeriodDto<WeekTimeOnlyDto> ToDto(TimePeriod<WeekTimeOnly> period) =>
-        new(ToDto(period.Start), ToDto(period.End));
+    private static ValueWithIntervalDto<TimeOnly> ToDto(ValueWithInterval<TimeOnlyWrapper> interval) =>
+        new(interval.Id, ToDto(interval.Value), ToDto(interval.TimeInterval));
     
-    private static TimeOnly ToDto(TimeOnlyWrapper time) => time.InnerTimeOnly;
+    private static TimeIntervalDto<TimeOnly> ToDto(TimeInterval<TimeOnlyWrapper> interval) =>
+        new(ToDto(interval.Start), ToDto(interval.End));
+    
+    private static TimeIntervalDto<WeekTimeOnlyDto> ToDto(TimeInterval<WeekTimeOnly> interval) =>
+        new(ToDto(interval.Start), ToDto(interval.End));
+    
+    private static TimeOnly ToDto(TimeOnlyWrapper time) => time.Inner;
     
     private static WeekTimeOnlyDto ToDto(WeekTimeOnly time) => new(time.DayOfWeek, time.TimeOnly);
     
-    private static SettingValueDto ToDto(SettingValue value) => new(value.Value, ToDto(value.Unit));
+    private static SettingValueDto ToDto(SettingValue value) => new(value.Magnitude, ToDto(value.Unit));
 
-    private static UnitDto ToDto(Unit unit) => unit switch
+    private static string ToDto(MeasurementUnit unit) => unit switch
     {
-        Unit.Celsius => UnitDto.Celsius,
-        Unit.Percent => UnitDto.Percent,
+        MeasurementUnit.Celsius => "\u00b0C",
+        MeasurementUnit.Percent => "%",
         _ => throw new ArgumentOutOfRangeException(nameof(unit), unit, null)
     };
 }

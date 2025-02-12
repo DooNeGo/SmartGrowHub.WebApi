@@ -1,3 +1,10 @@
-﻿namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+﻿using SmartGrowHub.Domain.Common;
 
-public sealed record ManualSetting(SettingValue Value) : Setting;
+namespace SmartGrowHub.Domain.Model.GrowHub.Settings;
+
+public sealed class ManualSetting(Id<Setting> id, SettingValue value) : Setting(id)
+{
+    public SettingValue Value { get; } = value;
+    
+    public static ManualSetting New(SettingValue value) => new(new Id<Setting>(), value);
+}

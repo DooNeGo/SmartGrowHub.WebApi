@@ -41,7 +41,7 @@ public sealed class GrowHub(
         HeaterComponent heaterComponent, FanComponent fanComponent,
         DayLightComponent dayLightComponent, UvLightComponent uvLightComponent,
         Option<Plant> plant) =>
-        new(new Id<GrowHub>(Ulid.NewUlid()), name, model, heaterComponent, fanComponent, dayLightComponent, uvLightComponent, plant);
+        new(new Id<GrowHub>(), name, model, heaterComponent, fanComponent, dayLightComponent, uvLightComponent, plant);
 
     public GrowHub UpdatePlant(Option<Plant> plant) =>
         new(this) { Plant = plant };
