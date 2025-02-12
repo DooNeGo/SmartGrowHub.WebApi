@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SmartGrowHub.Domain.Model.GrowHub.Settings;
 using SmartGrowHub.Infrastructure.Data.Configurations;
 
 namespace SmartGrowHub.Infrastructure.Data.Model;

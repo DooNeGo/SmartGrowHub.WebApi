@@ -1,4 +1,4 @@
-﻿namespace SmartGrowHub.Domain.Model.GrowHub.Components;
+﻿namespace SmartGrowHub.Domain.Common;
 
 public enum LightTypes
 {

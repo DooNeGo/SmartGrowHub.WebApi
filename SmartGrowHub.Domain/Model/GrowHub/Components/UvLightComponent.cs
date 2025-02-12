@@ -1,13 +1,13 @@
 ﻿using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Model.GrowHub.Settings;
+using SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms;
 
 namespace SmartGrowHub.Domain.Model.GrowHub.Components;
 
 public sealed class UvLightComponent(
     Id<UvLightComponent> id,
-    Setting setting)
+    ComponentProgram program)
     : Entity<UvLightComponent>(id)
 {
-    public Setting Setting { get; } = setting;
+    public ComponentProgram Program { get; } = program;
 }
