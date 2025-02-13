@@ -1,6 +1,6 @@
 ﻿namespace SmartGrowHub.Domain.Errors;
 
-public sealed record UnexpectedError(string Message) : Error
+public sealed record BusinessError(string Message) : Error
 {
     public override string Message { get; } = Message;
 
@@ -8,5 +8,5 @@ public sealed record UnexpectedError(string Message) : Error
 
     public override bool IsExpected => false;
 
-    public override ErrorException ToErrorException() => new UnexpectedException(Message);
+    public override ErrorException ToErrorException() => new BusinessException(Message, Code);
 }

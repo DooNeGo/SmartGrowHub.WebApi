@@ -99,10 +99,10 @@ public sealed class GetGrowHubsEndpoint
         program.Match<ComponentProgramDto>(ToDto, ToDto, ToDto, ToDto);
 
     private static WeeklyProgramDto ToDto(WeeklyProgram program) =>
-        new(program.Id, [..program.Entries.Select(ToDto)]);
+        new(program.Id, program.Entries.Select(ToDto));
     
     private static DailyProgramDto ToDto(DailyProgram program) =>
-        new(program.Id, [..program.Entries.Select(ToDto)]);
+        new(program.Id, program.Entries.Select(ToDto));
     
     private static CycleProgramDto ToDto(CycleProgram program) =>
         new(program.Id, ToDto(program.CycleParameters));
