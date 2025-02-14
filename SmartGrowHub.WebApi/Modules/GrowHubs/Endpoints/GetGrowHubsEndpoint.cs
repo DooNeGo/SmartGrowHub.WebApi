@@ -25,7 +25,7 @@ public sealed class GetGrowHubsEndpoint
                 new Quantity(10, MeasurementUnit.Percent),
                 new TimeInterval<TimeOnlyWrapper>(
                     new TimeOnlyWrapper(new TimeOnly(20, 0)),
-                    new TimeOnlyWrapper(new TimeOnly(9, 0))))
+                    new TimeOnlyWrapper(new TimeOnly(15, 0))))
             from dayIntervals in ImmutableArray.Create(
                 TimedQuantity<TimeOnlyWrapper>.New(
                     new Quantity(10, MeasurementUnit.Percent),
@@ -35,41 +35,46 @@ public sealed class GetGrowHubsEndpoint
                 TimedQuantity<TimeOnlyWrapper>.New(
                     new Quantity(20, MeasurementUnit.Celsius),
                     new TimeInterval<TimeOnlyWrapper>(
-                        new TimeOnlyWrapper(new TimeOnly(12, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(14, 0)),
                         new TimeOnlyWrapper(new TimeOnly(16, 0)))),
                 TimedQuantity<TimeOnlyWrapper>.New(
                     new Quantity(30, MeasurementUnit.Percent),
                     new TimeInterval<TimeOnlyWrapper>(
-                        new TimeOnlyWrapper(new TimeOnly(23, 0)),
-                        new TimeOnlyWrapper(new TimeOnly(8, 0))))
+                        new TimeOnlyWrapper(new TimeOnly(18, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(20, 0)))),
+                TimedQuantity<TimeOnlyWrapper>.New(
+                    new Quantity(27.3f, MeasurementUnit.Celsius),
+                    new TimeInterval<TimeOnlyWrapper>(
+                        new TimeOnlyWrapper(new TimeOnly(21, 0)),
+                        new TimeOnlyWrapper(new TimeOnly(23, 59))))
             ).AsIterable().Traverse(x => x)
             from weekIntervals in ImmutableArray.Create(
                 TimedQuantity<WeekTimeOnly>.New(
                     new Quantity(15, MeasurementUnit.Percent),
                     new TimeInterval<WeekTimeOnly>(
                         new WeekTimeOnly(DayOfWeek.Monday, new TimeOnly(8, 0)),
-                        new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(12, 0)))),
+                        new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(19, 0)))),
                 TimedQuantity<WeekTimeOnly>.New(
                     new Quantity(26.8f, MeasurementUnit.Celsius),
                     new TimeInterval<WeekTimeOnly>(
-                        new WeekTimeOnly(DayOfWeek.Tuesday, new TimeOnly(12, 0)),
+                        new WeekTimeOnly(DayOfWeek.Wednesday, new TimeOnly(12, 0)),
                         new WeekTimeOnly(DayOfWeek.Thursday, new TimeOnly(19, 0)))),
                 TimedQuantity<WeekTimeOnly>.New(
                     new Quantity(10, MeasurementUnit.Percent),
                     new TimeInterval<WeekTimeOnly>(
-                        new WeekTimeOnly(DayOfWeek.Thursday, new TimeOnly(19, 0)),
-                        new WeekTimeOnly(DayOfWeek.Sunday, new TimeOnly(9, 0))))
+                        new WeekTimeOnly(DayOfWeek.Friday, new TimeOnly(19, 0)),
+                        new WeekTimeOnly(DayOfWeek.Sunday, new TimeOnly(14, 0))))
             ).AsIterable().Traverse(x => x)
-            let cycleSetting = CycleProgram.New(cycleInterval)
-            from dailySetting in DailyProgram.New([..dayIntervals])
-            from weeklySetting in WeeklyProgram.New([..weekIntervals])
-            let manualSetting = ManualProgram.New(new Quantity(100, MeasurementUnit.Percent))
+            let cycleProgram = CycleProgram.New(cycleInterval)
+            from dailyProgram in DailyProgram.New([..dayIntervals])
+            from weeklyProgram in WeeklyProgram.New([..weekIntervals])
+            let manualProgram = ManualProgram.New(new Quantity(100, MeasurementUnit.Percent))
             select ToDto(
                 GrowHub.New(name, model,
-                    new HeaterComponent(new Id<HeaterComponent>(Ulid.NewUlid()), cycleSetting),
-                    new FanComponent(new Id<FanComponent>(Ulid.NewUlid()), dailySetting),
-                    new DayLightComponent(new Id<DayLightComponent>(Ulid.NewUlid()), weeklySetting),
-                    new UvLightComponent(new Id<UvLightComponent>(Ulid.NewUlid()), manualSetting),
+                    new HeaterComponent(new Id<HeaterComponent>(Ulid.NewUlid()), dailyProgram),
+                    new FanComponent(new Id<FanComponent>(Ulid.NewUlid()), cycleProgram),
+                    new DayLightComponent(new Id<DayLightComponent>(Ulid.NewUlid()), weeklyProgram),
+                    new UvLightComponent(new Id<UvLightComponent>(Ulid.NewUlid()), manualProgram),
                     None))
         ).Match(
             Succ: growHub => Ok(Result.Success(new[] { growHub })),
@@ -77,9 +82,13 @@ public sealed class GetGrowHubsEndpoint
 
     private static GrowHubDto ToDto(GrowHub growHub) =>
         new(growHub.Id, growHub.Name, growHub.Model,
-            growHub.Plant.Map(ToDto).ValueUnsafe(), ToDto(growHub.HeaterComponent),
-            ToDto(growHub.FanComponent), ToDto(growHub.DayLightComponent),
-            ToDto(growHub.UvLightComponent));
+            growHub.Plant.Map(ToDto).ValueUnsafe(),
+            [
+                ToDto(growHub.HeaterComponent),
+                ToDto(growHub.FanComponent),
+                ToDto(growHub.DayLightComponent),
+                ToDto(growHub.UvLightComponent)
+            ]);
 
     private static PlantDto ToDto(Plant plant) => new(plant.Id, plant.Name, plant.PlantedAt);
 
