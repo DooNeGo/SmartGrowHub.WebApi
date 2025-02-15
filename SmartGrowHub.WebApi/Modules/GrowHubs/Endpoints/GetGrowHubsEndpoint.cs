@@ -71,10 +71,10 @@ public sealed class GetGrowHubsEndpoint
             let manualProgram = ManualProgram.New(new Quantity(100, MeasurementUnit.Percent))
             select ToDto(
                 GrowHub.New(name, model,
-                    new HeaterComponent(new Id<HeaterComponent>(Ulid.NewUlid()), dailyProgram),
-                    new FanComponent(new Id<FanComponent>(Ulid.NewUlid()), cycleProgram),
-                    new DayLightComponent(new Id<DayLightComponent>(Ulid.NewUlid()), weeklyProgram),
-                    new UvLightComponent(new Id<UvLightComponent>(Ulid.NewUlid()), manualProgram),
+                    new HeaterComponent(new Id<GrowHubComponent>(), dailyProgram),
+                    new FanComponent(new Id<GrowHubComponent>(), cycleProgram),
+                    new DayLightComponent(new Id<GrowHubComponent>(), weeklyProgram),
+                    new UvLightComponent(new Id<GrowHubComponent>(), manualProgram),
                     None))
         ).Match(
             Succ: growHub => Ok(Result.Success(new[] { growHub })),
