@@ -25,18 +25,18 @@ internal sealed partial class OtpIssuer(
     public TimeSpan OtpLifetime { get; } = configuration.GetOtpLifeTime();
     
     public Eff<OneTimePassword> Create(Id<User> id) =>
-        from utcNow in timeProvider.GetUtcNow()
+        from utcNow in timeProvider.UtcNow
         from otpConfiguration in _otpConfiguration.ToEff()
-        let otpValue = GenerateOtpValue(otpConfiguration.Length)
+        from otpValue in NonEmptyString.From(GenerateOtpValue(otpConfiguration.Length)).ToEff()
         let expires = utcNow + otpConfiguration.Expiration
         select OneTimePassword.New(id, otpValue, expires);
 
-    private static int GenerateOtpValue(int length)
+    private static string GenerateOtpValue(int length)
     {
-        Span<byte> randomNumber = stackalloc byte[sizeof(int) * length];
+        Span<byte> randomNumber = stackalloc byte[sizeof(int)];
         RandomNumberGenerator.GetBytes(randomNumber);
         int otp = BitConverter.ToInt32(randomNumber) % (int)Math.Pow(10, length);
-        return Math.Abs(otp);
+        return Math.Abs(otp).ToString().PadLeft(6, '0');
     }
     
     private static IO<Unit> LogErrorIO(ILogger logger, string error) =>

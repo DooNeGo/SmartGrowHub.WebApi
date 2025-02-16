@@ -17,8 +17,9 @@ namespace SmartGrowHub.WebApi.Modules.GrowHubs.Endpoints;
 public sealed class GetGrowHubsEndpoint
 {
     public static Task<IResult> GetGrowHubs(HttpContext context, ILogger<GetGrowHubsEndpoint> logger,
-        CancellationToken cancellationToken) =>
-        Task.FromResult((
+        CancellationToken cancellationToken)
+    {
+        return Task.FromResult((
             from name in NonEmptyString.From("Home")
             from model in NonEmptyString.From("Smart Grow Hub v2")
             from cycleInterval in TimedQuantity<TimeOnlyWrapper>.New(
@@ -71,26 +72,27 @@ public sealed class GetGrowHubsEndpoint
             let manualProgram = ManualProgram.New(new Quantity(100, MeasurementUnit.Percent))
             select ToDto(
                 GrowHub.New(name, model,
-                    new HeaterComponent(new Id<GrowHubComponent>(), dailyProgram),
-                    new FanComponent(new Id<GrowHubComponent>(), cycleProgram),
-                    new DayLightComponent(new Id<GrowHubComponent>(), weeklyProgram),
-                    new UvLightComponent(new Id<GrowHubComponent>(), manualProgram),
+                    [
+                        new HeaterComponent(new Id<GrowHubComponent>(), dailyProgram),
+                        new FanComponent(new Id<GrowHubComponent>(), cycleProgram),
+                        new DayLightComponent(new Id<GrowHubComponent>(), weeklyProgram),
+                        new UvLightComponent(new Id<GrowHubComponent>(), manualProgram)
+                    ],
                     None))
         ).Match(
-            Succ: growHub => Ok(Result.Success(new[] { growHub })),
-            Fail: error => HandleError(logger, error)));
+            growHub => Ok(Result.Success(new[] { growHub })),
+            error => HandleError(logger, error)));
+    }
 
     private static GrowHubDto ToDto(GrowHub growHub) =>
         new(growHub.Id, growHub.Name, growHub.Model,
             growHub.Plant.Map(ToDto).ValueUnsafe(),
-            [
-                ToDto(growHub.HeaterComponent),
-                ToDto(growHub.FanComponent),
-                ToDto(growHub.DayLightComponent),
-                ToDto(growHub.UvLightComponent)
-            ]);
+            growHub.Components.Select(ToDto));
 
     private static PlantDto ToDto(Plant plant) => new(plant.Id, plant.Name, plant.PlantedAt);
+
+    private static GrowHubComponentDto ToDto(GrowHubComponent component) =>
+        component.Match<GrowHubComponentDto>(ToDto, ToDto, ToDto, ToDto);
 
     private static HeaterComponentDto ToDto(HeaterComponent component) =>
         new(component.Id, ToDto(component.Program));

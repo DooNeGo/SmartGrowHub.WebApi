@@ -14,7 +14,7 @@ internal static class OtpExtensions
     };
     
     public static Fin<OneTimePassword> ToDomain(this OneTimePasswordDb oneTimePassword) =>
-        from value in NonNegativeInteger.From(oneTimePassword.Value)
+        from value in NonEmptyString.From(oneTimePassword.Value)
         let id = new Id<OneTimePassword>(oneTimePassword.Id)
         let userId = new Id<User>(oneTimePassword.UserId)
         let expires = oneTimePassword.Expires

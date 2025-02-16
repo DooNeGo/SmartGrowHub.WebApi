@@ -24,7 +24,7 @@ internal sealed partial class TokensIssuer(
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
 
     public Eff<AuthTokens> CreateTokens(User user) =>
-        from utcNow in timeProvider.GetUtcNow()
+        from utcNow in timeProvider.UtcNow
         from configurations in _tokensConfiguration.ToEff()
         from accessToken in CreateAccessToken(user, configurations.AccessTokenConfiguration, utcNow).ToEff()
         let refreshToken = CreateRefreshToken(configurations.RefreshTokenConfiguration, utcNow)

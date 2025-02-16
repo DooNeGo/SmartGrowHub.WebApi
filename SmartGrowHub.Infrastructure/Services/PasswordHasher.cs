@@ -32,13 +32,13 @@ internal sealed class PasswordHasher : IPasswordHasher
     public Fin<bool> Verify(Password password1, Password password2) =>
         password2
             .Match(
-                plainText: _ => HashedPasswordMustBeHashedError,
-                hash: bytes => FinSucc(bytes.To()),
-                empty: () => HashedPasswordMustNotBeEmptyError)
+                mapPlainText: _ => HashedPasswordMustBeHashedError,
+                mapHash: bytes => FinSucc(bytes.To()),
+                mapEmpty: () => HashedPasswordMustNotBeEmptyError)
             .Bind(hash => password1.Match<Fin<bool>>(
-                plainText: password => VerifyPlainText(password, hash.AsSpan()),
-                hash: bytes => AreHashesEqual(bytes.To().AsSpan(), hash.AsSpan()),
-                empty: () => PasswordMustNotBeEmptyError));
+                mapPlainText: password => VerifyPlainText(password, hash.AsSpan()),
+                mapHash: bytes => AreHashesEqual(bytes.To().AsSpan(), hash.AsSpan()),
+                mapEmpty: () => PasswordMustNotBeEmptyError));
 
     private static bool VerifyPlainText(string password, ReadOnlySpan<byte> hash)
     {

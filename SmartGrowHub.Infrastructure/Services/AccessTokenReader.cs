@@ -10,5 +10,7 @@ internal sealed class AccessTokenReader : IAccessTokenReader
     private static readonly JsonWebTokenHandler TokenHandler = new();
 
     public Fin<Id<User>> GetUserId(AccessToken accessToken) =>
-        Domain.Common.Id<User>.From(TokenHandler.ReadJsonWebToken(accessToken).Subject);
+        Domain.Common.Id<User>
+            .From(TokenHandler.ReadJsonWebToken(accessToken).Subject)
+            .MapFail(error => Error.New("Invalid access token", error));
 }

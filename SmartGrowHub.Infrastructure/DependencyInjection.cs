@@ -44,9 +44,13 @@ public static class DependencyInjection
     
     private static IServiceCollection AddFluentEmail(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
-            .AddSmtpSender(configuration["Email:Host"], configuration.GetValue<int>("Email:Port"),
-                configuration["Email:Username"], configuration["Email:Password"]);
+        services
+            .AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
+            .AddSmtpSender(
+                configuration["Email:Host"],
+                configuration.GetValue<int>("Email:Port"),
+                configuration["Email:Username"],
+                configuration["Email:Password"]);
         
         return services;
     }

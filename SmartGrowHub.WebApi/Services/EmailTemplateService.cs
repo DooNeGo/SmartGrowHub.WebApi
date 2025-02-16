@@ -5,10 +5,10 @@ namespace SmartGrowHub.WebApi.Services;
 
 internal sealed class EmailTemplateService(IWebHostEnvironment environment) : IEmailTemplateService
 {
-    public Eff<NonEmptyString> GetOtpEmailBody(int otpValue, TimeSpan expiration) =>
+    public Eff<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration) =>
         GetEmailBody("OtpEmailTemplate.html",
         [
-            ("OTP", otpValue.ToString()),
+            ("OTP", otpValue),
             ("Expiration", expiration.Minutes.ToString())
         ]);
 

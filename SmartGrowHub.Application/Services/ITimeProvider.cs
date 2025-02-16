@@ -2,5 +2,5 @@
 
 public interface ITimeProvider
 {
-    IO<DateTime> GetUtcNow();
+    IO<DateTime> UtcNow { get; }
 }

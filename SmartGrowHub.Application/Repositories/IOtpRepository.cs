@@ -9,5 +9,5 @@ public interface IOtpRepository
     Eff<Unit> Add(OneTimePassword oneTimePassword, CancellationToken cancellationToken);
     Eff<Unit> Remove(Id<OneTimePassword> id, CancellationToken cancellationToken);
     Eff<ImmutableArray<OneTimePassword>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
-    Eff<OneTimePassword> GetByValue(int otpValue, CancellationToken cancellationToken);
+    Eff<OneTimePassword> GetByValue(NonEmptyString value, CancellationToken cancellationToken);
 }

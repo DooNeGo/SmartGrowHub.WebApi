@@ -23,9 +23,9 @@ internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
                 .Map(iterable => iterable.ToImmutableArray())
                 .As().ToEff());
 
-    public Eff<OneTimePassword> GetByValue(int otpValue, CancellationToken cancellationToken) =>
+    public Eff<OneTimePassword> GetByValue(NonEmptyString value, CancellationToken cancellationToken) =>
         liftEff(() => context.OneTimePasswords
-                .Where(otp => otp.Value == otpValue)
+                .Where(otp => otp.Value == value)
                 .FirstOrDefaultAsync(cancellationToken))
             .Map(Optional)
             .Bind(option => option.Match(

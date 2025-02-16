@@ -13,7 +13,8 @@ internal sealed class OneTimePasswordDb
     
     public UserDb? User { get; set; }
     
-    public required int Value { get; set; }
+    [MaxLength(6)]
+    public required string Value { get; set; }
     
     public required DateTime Expires { get; set; }
 }
