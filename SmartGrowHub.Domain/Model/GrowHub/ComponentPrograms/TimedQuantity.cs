@@ -1,10 +1,11 @@
-﻿using SmartGrowHub.Domain.Abstractions;
+﻿using System.Numerics;
+using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
 
 namespace SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms;
 
 public sealed class TimedQuantity<TTime> : Entity<TimedQuantity<TTime>>
-    where TTime : IComparable<TTime>, IArithmetic<TTime, TimeSpan>
+    where TTime : IComparisonOperators<TTime, TTime, bool>, ISubtractionOperators<TTime, TTime, TimeSpan>
 {
     private TimedQuantity(Id<TimedQuantity<TTime>> id, TimeInterval<TTime> interval, Quantity quantity)
         : base(id) => (TimeInterval, Quantity) = (interval, quantity);

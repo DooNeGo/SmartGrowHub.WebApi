@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 using WeekTimedQuantityCollection = System.Collections.Immutable.ImmutableArray<SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms.TimedQuantity<SmartGrowHub.Domain.Common.WeekTimeOnly>>;
 
 namespace SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms;
@@ -13,7 +14,7 @@ public sealed class WeeklyProgram(Id<ComponentProgram> id, WeekTimedQuantityColl
     public static Fin<WeeklyProgram> New(WeekTimedQuantityCollection entries, Id<ComponentProgram>? id = null)
     {
         if (entries.HasOverlappingIntervals()) return Error.New("Intervals must not overlap");
-        if (entries.ToTimeInterval().Duration > TimeSpan.FromDays(DaysInWeek))
+        if (entries.CalculateTimeInterval().Duration > TimeSpan.FromDays(DaysInWeek))
             return Error.New($"Duration must be less than or equal {DaysInWeek} days");
         
         return new WeeklyProgram(id ?? new Id<ComponentProgram>(), entries);
