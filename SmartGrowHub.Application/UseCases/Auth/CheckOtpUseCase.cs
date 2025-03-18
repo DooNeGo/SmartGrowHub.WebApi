@@ -9,8 +9,9 @@ namespace SmartGrowHub.Application.UseCases.Auth;
 
 public sealed class CheckOtpUseCase(
     IOtpRepository otpRepository,
+    ITokensIssuer tokensIssuer,
+    IUserSessionRepository sessionRepository,
     IUserRepository userRepository,
-    IUserService userService,
     ITimeProvider timeProvider)
 {
     public IO<AuthTokens> CheckOtp(NonEmptyString otpValue, CancellationToken cancellationToken) =>
@@ -23,6 +24,12 @@ public sealed class CheckOtpUseCase(
         from utcNow in timeProvider.UtcNow
         from tokens in otp.IsExpired(utcNow)
             ? IO<UserSession>.Fail(Error.New("The one-time password has expired"))
-            : userService.AddNewSessionToUser(user, cancellationToken)
+            : AddNewSessionToUser(user, cancellationToken)
         select tokens.AuthTokens;
+    
+    public IO<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>
+        from tokens in tokensIssuer.CreateTokens(user)
+        let session = UserSession.New(user.Id, tokens)
+        from _ in sessionRepository.Add(session, cancellationToken)
+        select session;
 }

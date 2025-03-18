@@ -27,7 +27,6 @@ public static class DependencyInjection
             .AddSingleton<ISmsService, SmsService>()
             .AddSingleton<IOtpIssuer, OtpIssuer>()
             .AddTransient<IEmailService, EmailService>()
-            .AddTransient<IUserService, UserService>()
             .AddSingleton<IFileService, FileService>()
             .AddFluentEmail(configuration);
 

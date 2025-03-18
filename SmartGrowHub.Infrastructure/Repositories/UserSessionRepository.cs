@@ -28,8 +28,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
             .ToListAsync(cancellationToken))
             .Bind(list => list
                 .AsIterable()
-                .Map(session => session.TryToDomain())
-                .Traverse(Prelude.identity)
+                .Traverse(session => session.TryToDomain())
                 .Map(iterable => iterable.ToImmutableArray())
                 .As().ToIO());
 
