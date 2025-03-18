@@ -24,6 +24,6 @@ internal sealed class EmailService(IFluentEmail fluentEmail) : IEmailService
         return this;
     }
 
-    public Eff<Unit> Send(CancellationToken cancellationToken) =>
-        liftEff(() => fluentEmail.SendAsync(cancellationToken).ToUnit());
+    public IO<Unit> Send(CancellationToken cancellationToken) =>
+        IO.liftAsync(() => fluentEmail.SendAsync(cancellationToken).ToUnit());
 }

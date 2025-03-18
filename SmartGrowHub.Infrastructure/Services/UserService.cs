@@ -9,7 +9,7 @@ public sealed class UserService(
     ITokensIssuer tokenService)
     : IUserService
 {
-    public Eff<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>
+    public IO<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>
         from tokens in tokenService.CreateTokens(user)
         let session = UserSession.New(user.Id, tokens)
         from _ in sessionRepository.Add(session, cancellationToken)

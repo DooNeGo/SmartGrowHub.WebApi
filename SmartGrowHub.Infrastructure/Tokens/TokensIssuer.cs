@@ -4,7 +4,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SmartGrowHub.Application.Services;
+using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Infrastructure.Tokens;
@@ -20,13 +22,13 @@ internal sealed partial class TokensIssuer(
     private readonly Option<TokensConfiguration> _tokensConfiguration = configuration
         .CreateTokensConfiguration()
         .MapFail(error => Error.New("The jwt tokens configuration could not be created", error))
-        .Map(Some)
+        .Map(Option<TokensConfiguration>.Some)
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
 
-    public Eff<AuthTokens> CreateTokens(User user) =>
+    public IO<AuthTokens> CreateTokens(User user) =>
         from utcNow in timeProvider.UtcNow
-        from configurations in _tokensConfiguration.ToEff()
-        from accessToken in CreateAccessToken(user, configurations.AccessTokenConfiguration, utcNow).ToEff()
+        from configurations in _tokensConfiguration.Match(IO.pure, IO.fail<TokensConfiguration>(Error.Empty))
+        from accessToken in CreateAccessToken(user, configurations.AccessTokenConfiguration, utcNow).ToIO()
         let refreshToken = CreateRefreshToken(configurations.RefreshTokenConfiguration, utcNow)
         select new AuthTokens(accessToken, refreshToken);
 
@@ -59,7 +61,7 @@ internal sealed partial class TokensIssuer(
     }
     
     private static IO<Unit> LogErrorIO(ILogger logger, string error) =>
-        lift(() => LogError(logger, error));
+        IO.lift(() => LogError(logger, error));
 
     [LoggerMessage(Level = LogLevel.Error, Message = "{error}")]
     static partial void LogError(ILogger logger, string error);

@@ -4,5 +4,6 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IEmailTemplateService
 {
-    Eff<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration);
+    IO<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration,
+        CancellationToken cancellationToken);
 }

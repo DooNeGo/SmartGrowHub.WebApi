@@ -1,4 +1,5 @@
-﻿using SmartGrowHub.Application.Services;
+﻿using System.Collections.Immutable;
+using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common.Password;
 using SmartGrowHub.Domain.Errors;
 using System.Security.Cryptography;
@@ -33,7 +34,7 @@ internal sealed class PasswordHasher : IPasswordHasher
         password2
             .Match(
                 mapPlainText: _ => HashedPasswordMustBeHashedError,
-                mapHash: bytes => FinSucc(bytes.To()),
+                mapHash: bytes => Fin<ImmutableArray<byte>>.Succ(bytes.To()),
                 mapEmpty: () => HashedPasswordMustNotBeEmptyError)
             .Bind(hash => password1.Match<Fin<bool>>(
                 mapPlainText: password => VerifyPlainText(password, hash.AsSpan()),

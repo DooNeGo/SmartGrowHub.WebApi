@@ -25,7 +25,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 propertyCount: 4,
                 navigationCount: 1,
                 foreignKeyCount: 1,
-                unnamedIndexCount: 2,
+                unnamedIndexCount: 1,
                 keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
@@ -54,10 +54,10 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var value = runtimeEntityType.AddProperty(
                 "Value",
-                typeof(int),
+                typeof(string),
                 propertyInfo: typeof(OneTimePasswordDb).GetProperty("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(OneTimePasswordDb).GetField("<Value>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                sentinel: 0);
+                maxLength: 6);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -65,9 +65,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var index = runtimeEntityType.AddIndex(
                 new[] { userId });
-
-            var index0 = runtimeEntityType.AddIndex(
-                new[] { value });
 
             return runtimeEntityType;
         }

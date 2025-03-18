@@ -6,11 +6,11 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IUserSessionRepository
 {
-    Eff<Unit> Add(UserSession userSession, CancellationToken cancellationToken);
-    Eff<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken);
-    Eff<Unit> Remove(UserSession session, CancellationToken cancellationToken);
-    Eff<UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken);
-    Eff<UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken);
-    Eff<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
-    Eff<Unit> Update(UserSession session, CancellationToken cancellationToken);
+    IO<Unit> Add(UserSession userSession, CancellationToken cancellationToken);
+    IO<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken);
+    IO<Unit> Remove(UserSession session, CancellationToken cancellationToken);
+    OptionT<IO, UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken);
+    OptionT<IO, UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken);
+    IO<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
+    IO<Unit> Update(UserSession session, CancellationToken cancellationToken);
 }

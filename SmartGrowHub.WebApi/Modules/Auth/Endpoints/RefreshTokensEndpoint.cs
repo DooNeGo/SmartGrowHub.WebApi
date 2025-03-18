@@ -1,4 +1,5 @@
 ﻿using SmartGrowHub.Application.UseCases.Auth;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Shared.Results;
 using SmartGrowHub.Shared.Tokens;
 using SmartGrowHub.WebApi.Modules.Extensions;
@@ -14,13 +15,14 @@ public sealed class RefreshTokensEndpoint
         ILogger<RefreshTokensEndpoint> logger, CancellationToken cancellationToken) => (
             from oldToken in UlidFp.From(requestDto.RefreshToken)
                 .MapFail(error => Error.New("Invalid refresh token format", error))
-                .ToEff()
+                .ToIO()
             from response in useCase.RefreshTokens(oldToken, cancellationToken)
             select response)
-        .RunAsync()
+        .RunSafeAsync()
         .Map(effect => effect.Match(
             Succ: response => Ok(Result<AuthTokensDto>.Success(response.ToDto())),
-            Fail: error => HandleError(logger, error)));
+            Fail: error => HandleError(logger, error)))
+        .AsTask();
 }
 
 public static class UlidFp

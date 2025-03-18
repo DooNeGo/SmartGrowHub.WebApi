@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
-[Index(nameof(Value))]
 internal sealed class OneTimePasswordDb
 {
     [Key]

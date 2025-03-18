@@ -7,9 +7,13 @@ namespace SmartGrowHub.Infrastructure.Data;
 
 internal sealed class ApplicationContext : DbContext
 {
-    //public ApplicationContext() { }
+    // public ApplicationContext()
+    // {
+    // }
 
-    public ApplicationContext(DbContextOptions options) : base(options) { }
+    public ApplicationContext(DbContextOptions options) : base(options)
+    {
+    }
 
     public DbSet<UserDb> Users => Set<UserDb>();
 
@@ -41,16 +45,15 @@ internal sealed class ApplicationContext : DbContext
         modelBuilder.Entity<GrowHubDb>();
     }
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    base.OnConfiguring(optionsBuilder);
-
-    //    optionsBuilder
-    //        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-    //        .UseSqlite("DataSource=SmartGrowHubLocalDb")
-    //        //.UseModel(ApplicationContextModel.Instance)
-    //        .UseExceptionProcessor()
-    //        .EnableSensitiveDataLogging()
-    //        .EnableDetailedErrors();
-    //}
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //     base.OnConfiguring(optionsBuilder);
+    //
+    //     optionsBuilder
+    //         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+    //         .UseSqlite("DataSource=SmartGrowHubLocalDb")
+    //         .UseExceptionProcessor()
+    //         .EnableSensitiveDataLogging()
+    //         .EnableDetailedErrors();
+    // }
 }

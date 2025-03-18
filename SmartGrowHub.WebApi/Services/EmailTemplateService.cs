@@ -1,25 +1,36 @@
+using System.Text;
 using SmartGrowHub.Application.Services;
+using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 
 namespace SmartGrowHub.WebApi.Services;
 
-internal sealed class EmailTemplateService(IWebHostEnvironment environment) : IEmailTemplateService
+internal sealed class EmailTemplateService(
+    IWebHostEnvironment environment,
+    IFileService fileService)
+    : IEmailTemplateService
 {
-    public Eff<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration) =>
+    public IO<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration,
+        CancellationToken cancellationToken) =>
         GetEmailBody("OtpEmailTemplate.html",
         [
             ("OTP", otpValue),
             ("Expiration", expiration.Minutes.ToString())
-        ]);
+        ], cancellationToken);
 
-    private Eff<NonEmptyString> GetEmailBody(string templateName, (string, string)[] placeholders) =>
-        from template in GetTemplate(templateName)
+    private IO<NonEmptyString> GetEmailBody(string templateName, (string, string)[] placeholders,
+        CancellationToken cancellationToken) =>
+        from template in GetTemplate(templateName, cancellationToken)
         let otpEmailBody = ReplacePlaceholders(template, placeholders)
-        from result in NonEmptyString.From(otpEmailBody).ToEff()
+        from result in NonEmptyString.From(otpEmailBody).ToIO()
         select result;
 
-    private Eff<string> GetTemplate(string templateName) =>
-        liftEff(() => File.ReadAllTextAsync(Path.Combine(environment.WebRootPath, "templates", templateName)));
+    private IO<string> GetTemplate(string templateName, CancellationToken cancellationToken)
+    {
+        string path = Path.Combine(environment.WebRootPath, "templates", templateName);
+        return fileService.ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+    }
 
     private static string ReplacePlaceholders(string template, (string, string)[] placeholders)
     {
@@ -27,7 +38,7 @@ internal sealed class EmailTemplateService(IWebHostEnvironment environment) : IE
         {
             template = template.Replace($"{{{key}}}", value);
         }
-        
+
         return template;
     }
 }

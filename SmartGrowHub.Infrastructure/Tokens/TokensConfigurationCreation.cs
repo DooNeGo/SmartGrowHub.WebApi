@@ -15,14 +15,14 @@ public static class TokensConfigurationCreation
     public static Fin<AccessTokenConfiguration> CreateAccessTokenConfiguration(this IConfiguration configuration) =>
         from issuer in NonEmptyString.From(configuration["Jwt:Issuer"]!)
         from audience in NonEmptyString.From(configuration["Jwt:Audience"]!)
-        from accessTokenExpirationInMinutes in parseInt(configuration["Jwt:AccessTokenExpirationInMinutes"]!).ToFin()
+        from accessTokenExpirationInMinutes in Prelude.parseInt(configuration["Jwt:AccessTokenExpirationInMinutes"]!).ToFin()
         from secret in NonEmptyString.From(configuration["Jwt:Secret"]!)
         let signingCredentials = CreateSigningCredentials(secret)
         let accessTokenExpiration = TimeSpan.FromMinutes(accessTokenExpirationInMinutes)
         select new AccessTokenConfiguration(issuer, audience, signingCredentials, accessTokenExpiration);
 
     public static Fin<RefreshTokenConfiguration> CreateRefreshTokenConfiguration(this IConfiguration configuration) =>
-        from refreshTokenExpirationInDays in parseInt(configuration["Jwt:RefreshTokenExpirationInDays"]!).ToFin()
+        from refreshTokenExpirationInDays in Prelude.parseInt(configuration["Jwt:RefreshTokenExpirationInDays"]!).ToFin()
         let refreshTokenExpiration = TimeSpan.FromDays(refreshTokenExpirationInDays)
         select new RefreshTokenConfiguration(refreshTokenExpiration);
 

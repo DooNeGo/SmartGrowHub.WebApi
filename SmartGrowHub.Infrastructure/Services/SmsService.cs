@@ -15,22 +15,22 @@ internal sealed partial class SmsService(
     private readonly Option<SmsClient> _smsClient = configuration
         .CreateSmsCredentials()
         .MapFail(error => Error.New("Failed to create sms service", error))
-        .Map(credentials => Some(new SmsClient(credentials)))
+        .Map(credentials => Option<SmsClient>.Some(new SmsClient(credentials)))
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
     
-    public Eff<Unit> Send(PhoneNumber phoneNumber, NonEmptyString payload, CancellationToken cancellationToken) =>
-        from smsClient in _smsClient.ToEff()
+    public IO<Unit> Send(PhoneNumber phoneNumber, NonEmptyString payload, CancellationToken cancellationToken) =>
+        from smsClient in _smsClient.Match(IO.pure, IO.fail<SmsClient>(Error.Empty))
         let request = new SendSmsRequest
         {
             To = phoneNumber,
             From = "Test",
             Text = payload
         }
-        from _ in liftEff(() => smsClient.SendAnSmsAsync(request).WaitAsync(cancellationToken))
-        select unit;
+        from _ in IO.liftAsync(() => smsClient.SendAnSmsAsync(request).WaitAsync(cancellationToken))
+        select Unit.Default;
 
     private static IO<Unit> LogErrorIO(ILogger logger, string error) =>
-        lift(() => LogError(logger, error));
+        IO.lift(() => LogError(logger, error));
 
     [LoggerMessage(Level = LogLevel.Error, Message = "{error}")]
     static partial void LogError(ILogger logger, string error);

@@ -1,10 +1,12 @@
-﻿namespace SmartGrowHub.Domain.Extensions;
+﻿using System.Collections.Immutable;
+
+namespace SmartGrowHub.Domain.Extensions;
 
 public static class IEnumerableExtensions
 {
     public static IEnumerable<(T First, T Second)> GetUniquePairs<T>(this IEnumerable<T> enumerable)
     {
-        T[] array = [.. enumerable];
+        ImmutableArray<T> array = [.. enumerable];
         
         for (var i = 0; i < array.Length - 1; i++)
         {

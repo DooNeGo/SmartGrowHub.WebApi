@@ -5,7 +5,7 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IOtpIssuer
 {
-    Eff<OneTimePassword> Create(Id<User> id);
+    IO<OneTimePassword> Create(Id<User> id);
     
     TimeSpan OtpLifetime { get; }
 }

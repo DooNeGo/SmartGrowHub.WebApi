@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Infrastructure.Data;
+using SmartGrowHub.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.Infrastructure.Repositories;
 using SmartGrowHub.Infrastructure.Services;
 using SmartGrowHub.Infrastructure.Tokens;
@@ -27,11 +28,13 @@ public static class DependencyInjection
             .AddSingleton<IOtpIssuer, OtpIssuer>()
             .AddTransient<IEmailService, EmailService>()
             .AddTransient<IUserService, UserService>()
+            .AddSingleton<IFileService, FileService>()
             .AddFluentEmail(configuration);
 
     private static IServiceCollection AddDbContext(this IServiceCollection services) =>
         services.AddDbContextPool<ApplicationContext>(options => options
             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+            .UseModel(ApplicationContextModel.Instance)
             .UseSqlite("DataSource=SmartGrowHubLocalDb", sqliteOptions => sqliteOptions
                 .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
             .UseExceptionProcessor());

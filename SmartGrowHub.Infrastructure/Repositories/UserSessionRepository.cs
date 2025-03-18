@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
 
@@ -13,59 +13,60 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class UserSessionRepository(ApplicationContext context) : IUserSessionRepository
 {
-    public Eff<Unit> Add(UserSession session, CancellationToken cancellationToken) =>
+    public IO<Unit> Add(UserSession session, CancellationToken cancellationToken) =>
         Add(session) >> SaveChanges(cancellationToken);
 
-    public Eff<UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken) =>
+    public OptionT<IO, UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken) =>
         GetByPredicate(session => session.Id == id, cancellationToken);
 
-    public Eff<UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken) =>
+    public OptionT<IO, UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken) =>
         GetByPredicate(session => session.RefreshToken == value, cancellationToken);
 
-    public Eff<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
-        liftEff(() => context.UserSessions
+    public IO<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
+        IO.liftAsync(() => context.UserSessions
             .Where(session => session.UserId == id)
             .ToListAsync(cancellationToken))
             .Bind(list => list
-                .Select(session => session.TryToDomain())
                 .AsIterable()
-                .Traverse(fin => fin)
+                .Map(session => session.TryToDomain())
+                .Traverse(Prelude.identity)
                 .Map(iterable => iterable.ToImmutableArray())
-                .As().ToEff());
+                .As().ToIO());
 
-    public Eff<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken) =>
-        liftEff(() => context.UserSessions
+    public IO<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken) =>
+        IO.liftAsync(() => context.UserSessions
             .Where(session => session.Id == id)
             .ExecuteDeleteAsync(cancellationToken)
             .ToUnit());
 
-    public Eff<Unit> Remove(UserSession session, CancellationToken cancellationToken) =>
+    public IO<Unit> Remove(UserSession session, CancellationToken cancellationToken) =>
         Remove(session) >> SaveChanges(cancellationToken);
 
-    public Eff<Unit> Update(UserSession session, CancellationToken cancellationToken) =>
+    public IO<Unit> Update(UserSession session, CancellationToken cancellationToken) =>
         Update(session) >> SaveChanges(cancellationToken);
 
-    private Eff<Unit> Add(UserSession session) =>
-        liftEff(() => context.UserSessions.Add(session.ToDb()))
-            .Map(_ => unit);
+    private IO<Unit> Add(UserSession session) =>
+        IO.lift(() => context.UserSessions.Add(session.ToDb()))
+            .ToUnit();
 
-    private Eff<Unit> Remove(UserSession session) =>
-        liftEff(() => context.UserSessions.Remove(session.ToDb()))
-            .Map(_ => unit);
+    private IO<Unit> Remove(UserSession session) =>
+        IO.lift(() => context.UserSessions.Remove(session.ToDb()))
+            .ToUnit();
 
-    private Eff<Unit> Update(UserSession session) =>
-        liftEff(() => context.UserSessions.Update(session.ToDb()))
-            .Map(_ => unit);
+    private IO<Unit> Update(UserSession session) =>
+        IO.lift(() => context.UserSessions.Update(session.ToDb()))
+            .ToUnit();
 
-    private Eff<Unit> SaveChanges(CancellationToken cancellationToken) =>
-        liftEff(() => context.SaveChangesAsync(cancellationToken))
-            .Map(_ => unit);
+    private IO<Unit> SaveChanges(CancellationToken cancellationToken) =>
+        IO.liftAsync(() => context.SaveChangesAsync(cancellationToken))
+            .ToUnit();
 
-    private Eff<UserSession> GetByPredicate(Expression<Func<UserSessionDb, bool>> predicate, CancellationToken cancellationToken) =>
-        liftEff(() => context.UserSessions
-            .FirstOrDefaultAsync(predicate, cancellationToken)
-            .Map(Optional))
-        .Bind(option => option.Match(
-            Some: session => session.TryToDomain().ToEff(),
-            None: DomainErrors.SessionNotFoundError));
+    private OptionT<IO, UserSession> GetByPredicate(Expression<Func<UserSessionDb, bool>> predicate,
+        CancellationToken cancellationToken) =>
+        from value in OptionT<IO, UserSessionDb>.LiftIO(
+            IO.liftAsync(() => context.UserSessions
+                .FirstOrDefaultAsync(predicate, cancellationToken)
+                .Map(Prelude.Optional)))
+        from domainValue in value.TryToDomain().ToIO()
+        select domainValue;
 }

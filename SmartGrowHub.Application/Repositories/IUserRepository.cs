@@ -5,10 +5,10 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IUserRepository
 {
-    Eff<User> GetByPhoneNumber(PhoneNumber phoneNumber, CancellationToken cancellationToken);
-    Eff<User> GetByEmailAddress(EmailAddress email, CancellationToken cancellationToken);
-    Eff<User> GetById(Id<User> id, CancellationToken cancellationToken);
-    Eff<Unit> Add(User user, CancellationToken cancellationToken);
-    Eff<Unit> Remove(Id<User> id, CancellationToken cancellationToken);
-    Eff<Unit> Update(User user, CancellationToken cancellationToken);
+    OptionT<IO, User> GetByPhoneNumber(PhoneNumber phoneNumber, CancellationToken cancellationToken);
+    OptionT<IO, User> GetByEmailAddress(EmailAddress email, CancellationToken cancellationToken);
+    OptionT<IO, User> GetById(Id<User> id, CancellationToken cancellationToken);
+    IO<Unit> Add(User user, CancellationToken cancellationToken);
+    IO<Unit> Remove(Id<User> id, CancellationToken cancellationToken);
+    IO<Unit> Update(User user, CancellationToken cancellationToken);
 }

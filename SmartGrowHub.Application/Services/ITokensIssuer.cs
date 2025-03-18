@@ -5,5 +5,5 @@ namespace SmartGrowHub.Application.Services;
 
 public interface ITokensIssuer
 {
-    Eff<AuthTokens> CreateTokens(User user);
+    IO<AuthTokens> CreateTokens(User user);
 }
