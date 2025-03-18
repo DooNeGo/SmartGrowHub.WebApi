@@ -1,6 +1,5 @@
 using System.Text;
 using SmartGrowHub.Application.Services;
-using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 
@@ -34,11 +33,13 @@ internal sealed class EmailTemplateService(
 
     private static string ReplacePlaceholders(string template, (string, string)[] placeholders)
     {
+        var stringBuilder = new StringBuilder(template);
+        
         foreach ((string key, string value) in placeholders.AsSpan())
         {
-            template = template.Replace($"{{{key}}}", value);
+            stringBuilder.Replace($"{{{key}}}", value);
         }
 
-        return template;
+        return stringBuilder.ToString();
     }
 }
