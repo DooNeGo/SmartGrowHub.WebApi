@@ -12,7 +12,7 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
 public sealed class CheckOtpEndpoint
 {
-    public static Task<IResult> CheckOtp(CheckOtpRequest request, CheckOtpUseCase useCase,
+    public static ValueTask<IResult> CheckOtp(CheckOtpRequest request, CheckOtpUseCase useCase,
         ILogger<CheckOtpEndpoint> logger,
         CancellationToken cancellationToken) => (
             from otp in NonEmptyString.From(request.OtpValue).ToIO()
@@ -21,6 +21,5 @@ public sealed class CheckOtpEndpoint
         .RunSafeAsync()
         .Map(fin => fin.Match(
             Succ: tokens => Ok(Result<AuthTokensDto>.Success(tokens.ToDto())),
-            Fail: error => HandleError(logger, error)))
-        .AsTask();
+            Fail: error => HandleError(logger, error)));
 }

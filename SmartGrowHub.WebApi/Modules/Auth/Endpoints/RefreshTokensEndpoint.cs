@@ -10,7 +10,7 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
 public sealed class RefreshTokensEndpoint
 {
-    public static Task<IResult> RefreshTokens(
+    public static ValueTask<IResult> RefreshTokens(
         RefreshTokensRequest requestDto, RefreshTokensUseCase useCase,
         ILogger<RefreshTokensEndpoint> logger, CancellationToken cancellationToken) => (
             from oldToken in UlidFp.From(requestDto.RefreshToken)
@@ -21,8 +21,7 @@ public sealed class RefreshTokensEndpoint
         .RunSafeAsync()
         .Map(effect => effect.Match(
             Succ: response => Ok(Result<AuthTokensDto>.Success(response.ToDto())),
-            Fail: error => HandleError(logger, error)))
-        .AsTask();
+            Fail: error => HandleError(logger, error)));
 }
 
 public static class UlidFp

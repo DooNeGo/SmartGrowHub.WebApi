@@ -10,7 +10,7 @@ namespace SmartGrowHub.WebApi.Modules.Auth.Endpoints;
 
 public sealed class LogInByEmailEndpoint
 {
-    public static Task<IResult> LogIn(LogInByEmailRequest request, SendOtpToEmailUseCase useCase,
+    public static ValueTask<IResult> LogIn(LogInByEmailRequest request, SendOtpToEmailUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from email in EmailAddress.From(request.EmailAddress).ToIO()
             from _ in useCase.SendOtpToEmail(email, cancellationToken)
@@ -18,6 +18,5 @@ public sealed class LogInByEmailEndpoint
         .RunSafeAsync()
         .Map(fin => fin.Match(
             Succ: _ => Ok(new Result(true, null, null)),
-            Fail: error => HandleError(logger, error)))
-        .AsTask();
+            Fail: error => HandleError(logger, error)));
 }
