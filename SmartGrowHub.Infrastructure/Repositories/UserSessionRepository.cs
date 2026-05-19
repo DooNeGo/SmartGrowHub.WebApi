@@ -24,8 +24,8 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
 
     public IO<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
         IO.liftAsync(() => context.UserSessions
-            .Where(session => session.UserId == id)
-            .ToListAsync(cancellationToken))
+                .Where(session => session.UserId == id)
+                .ToListAsync(cancellationToken))
             .Bind(list => list
                 .AsIterable()
                 .Traverse(session => session.TryToDomain())

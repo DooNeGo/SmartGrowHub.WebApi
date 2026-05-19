@@ -32,7 +32,7 @@ public sealed class SendOtpToEmailUseCase(
     private IO<User> GetOrCreateUserByEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
         userRepository
             .GetByEmailAddress(emailAddress, cancellationToken)
-            .ReduceTransformer(() =>
+            .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromEmailAddress(emailAddress))
                 from _1 in userRepository.Add(user, cancellationToken)
                 select user);

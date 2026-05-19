@@ -16,10 +16,10 @@ public sealed class RefreshTokensUseCase(
     public IO<AuthTokens> RefreshTokens(Ulid oldToken, CancellationToken cancellationToken) =>
         from session in sessionRepository
             .GetByRefreshTokenValue(oldToken, cancellationToken)
-            .ReduceTransformer(DomainErrors.SessionNotFoundError)
+            .ToIOOrFail(DomainErrors.SessionNotFoundError)
         from user in userRepository
             .GetById(session.UserId, cancellationToken)
-            .ReduceTransformer(DomainErrors.UserNotFoundError)
+            .ToIOOrFail(DomainErrors.UserNotFoundError)
         from newTokens in tokensIssuer.CreateTokens(user)
         from utcNow in timeProvider.UtcNow
         from updatedSession in session.UpdateTokens(newTokens, utcNow).ToIO()

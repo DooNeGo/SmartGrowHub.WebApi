@@ -23,7 +23,7 @@ public sealed class SendOtpToPhoneUseCase(
     private IO<User> GetOrCreateUserByPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
         userRepository
             .GetByPhoneNumber(phoneNumber, cancellationToken)
-            .ReduceTransformer(() =>
+            .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromPhoneNumber(phoneNumber))
                 from _1 in userRepository.Add(user, cancellationToken)
                 select user);
