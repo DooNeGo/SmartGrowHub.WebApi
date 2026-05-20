@@ -26,7 +26,7 @@ internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
                 .As().ToIO());
 
     public OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value, CancellationToken cancellationToken) =>
-        from otp in OptionT<IO, OneTimePasswordDb>.LiftIO(
+        from otp in OptionT.liftIO<IO, OneTimePasswordDb>(
             IO.liftAsync(() =>
                 context.OneTimePasswords
                     .Where(otp => otp.Value == value)

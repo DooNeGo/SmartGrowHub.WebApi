@@ -23,7 +23,7 @@ public sealed class CheckOtpUseCase(
             .ToIOOrFail(DomainErrors.UserNotFoundError)
         from utcNow in timeProvider.UtcNow
         from tokens in otp.IsExpired(utcNow)
-            ? IO<UserSession>.Fail(Error.New("The one-time password has expired"))
+            ? IO.fail<UserSession>(Error.New("The one-time password has expired"))
             : AddNewSessionToUser(user, cancellationToken)
         select tokens.AuthTokens;
     

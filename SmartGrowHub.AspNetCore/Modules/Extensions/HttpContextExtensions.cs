@@ -11,8 +11,8 @@ public static class HttpContextExtensions
         new("There is no access token in the headers");
     
     public static OptionT<IO, AccessToken> GetAccessToken(this HttpContext context) =>
-        from rawToken in OptionT<IO, string>.LiftIO(
-            IO.liftAsync(() => context.GetTokenAsync("access_token").Map(Prelude.Optional)))
+        from rawToken in OptionT.liftIO<IO, string>(
+            IO.liftAsync(() => context.GetTokenAsync("access_token").Map(Optional)))
         from accessToken in AccessToken.From(rawToken).ToIO()
         select accessToken;
 }

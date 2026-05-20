@@ -22,7 +22,7 @@ internal sealed partial class TokensIssuer(
     private readonly Option<TokensConfiguration> _tokensConfiguration = configuration
         .CreateTokensConfiguration()
         .MapFail(error => Error.New("The jwt tokens configuration could not be created", error))
-        .Map(Option<TokensConfiguration>.Some)
+        .Map(Option.Some)
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
 
     public IO<AuthTokens> CreateTokens(User user) =>

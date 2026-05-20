@@ -14,7 +14,7 @@ internal static partial class ErrorHandler
 
     public static IResult HandleError(ILogger logger, Error error)
     {
-        if (error.Code is Errors.CancelledCode)
+        if (error.Code is 444)
         {
             return Results.Empty;
         }

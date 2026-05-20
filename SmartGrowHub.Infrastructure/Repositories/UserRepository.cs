@@ -46,7 +46,7 @@ internal sealed class UserRepository(ApplicationContext context) : IUserReposito
 
     private OptionT<IO, User> GetByPredicate(Expression<Func<UserDb, bool>> predicate,
         CancellationToken cancellationToken) =>
-        from value in OptionT<IO, UserDb>.LiftIO(
+        from value in OptionT.liftIO<IO, UserDb>(
             IO.liftAsync(() => context.Users
                 .FirstOrDefaultAsync(predicate, cancellationToken)
                 .Map(Prelude.Optional)))

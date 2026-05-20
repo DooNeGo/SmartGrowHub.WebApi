@@ -11,7 +11,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("790a7b64-db29-41f5-bcc8-585450587a6d"), entityTypeCount: 7)
+            : base(skipDetectChanges: false, modelId: new Guid("76ba3e30-26f5-48b4-83fc-e70e4f296896"), entityTypeCount: 7)
         {
         }
 
@@ -40,7 +40,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             UserDbEntityType.CreateAnnotations(userDb);
             UserSessionDbEntityType.CreateAnnotations(userSessionDb);
 
-            AddAnnotation("ProductVersion", "9.0.3");
+            AddAnnotation("ProductVersion", "10.0.8");
         }
     }
 }

@@ -2,7 +2,6 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SmartGrowHub.Application.Services;
-using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
@@ -21,7 +20,7 @@ internal sealed partial class OtpIssuer(
     private readonly Option<OtpConfiguration> _otpConfiguration = configuration
         .CreateOtpConfiguration()
         .MapFail(error => Error.New("The otp configuration could not be created", error))
-        .Map(Option<OtpConfiguration>.Some)
+        .Map(Option.Some)
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
     
     public TimeSpan OtpLifetime { get; } = configuration.GetOtpLifeTime();

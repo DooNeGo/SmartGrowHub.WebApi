@@ -62,7 +62,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
 
     private OptionT<IO, UserSession> GetByPredicate(Expression<Func<UserSessionDb, bool>> predicate,
         CancellationToken cancellationToken) =>
-        from value in OptionT<IO, UserSessionDb>.LiftIO(
+        from value in OptionT.liftIO<IO, UserSessionDb>(
             IO.liftAsync(() => context.UserSessions
                 .FirstOrDefaultAsync(predicate, cancellationToken)
                 .Map(Prelude.Optional)))

@@ -15,7 +15,7 @@ internal sealed partial class SmsService(
     private readonly Option<SmsClient> _smsClient = configuration
         .CreateSmsCredentials()
         .MapFail(error => Error.New("Failed to create sms service", error))
-        .Map(credentials => Option<SmsClient>.Some(new SmsClient(credentials)))
+        .Map(credentials => Option.Some(new SmsClient(credentials)))
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
     
     public IO<Unit> Send(PhoneNumber phoneNumber, NonEmptyString payload, CancellationToken cancellationToken) =>
