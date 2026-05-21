@@ -1,6 +1,0 @@
-﻿services:
-  smartgrowhub.entrypoint:
-    image: smartgrowhub.entrypoint
-    build:
-      context: .
-      dockerfile: SmartGrowHub.EntryPoint/Dockerfile

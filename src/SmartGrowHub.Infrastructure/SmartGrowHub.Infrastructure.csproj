@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartGrowHub.Application\SmartGrowHub.Application.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Domain\SmartGrowHub.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFrameworkCore.Exceptions.PostgreSQL" Version="10.0.0" />
+    <PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
+    <PackageReference Include="MQTTnet" Version="5.1.0.1559" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+    <PackageReference Include="Vonage" Version="8.32.0" />
+  </ItemGroup>
+
+</Project>

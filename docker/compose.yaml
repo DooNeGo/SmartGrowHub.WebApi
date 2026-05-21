@@ -1,0 +1,59 @@
+﻿services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./data/mosquitto:/mosquitto
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    networks:
+      - backend
+
+  postgres:
+    image: postgres:18.4
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: SmartGrowHub
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgresql:/var/lib/postgresql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartgrowhub -d SmartGrowHub"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: smartgrowhub-api
+    build:
+      context: ../src
+      dockerfile: SmartGrowHub.AspNetCore/Dockerfile
+    container_name: smartgrowhub-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DatabaseConnection=Host=postgres;Port=5432;Database=SmartGrowHub;Username=${DB_USERNAME};Password=${DB_PASSWORD}
+      - Mqtt__Host=mosquitto
+      - Mqtt__Port=1883
+      - Email__Username=${EMAIL_USERNAME}
+      - Email__Password=${EMAIL_PASSWORD}
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
