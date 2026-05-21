@@ -16,7 +16,9 @@ internal sealed class PasswordHasher : IPasswordHasher
 
     private static readonly UnexpectedError PasswordMustNotBeEmptyError = new("The password must not be empty");
     private static readonly UnexpectedError HashedPasswordMustBeHashedError = new("The hashed password must be hashed");
-    private static readonly UnexpectedError HashedPasswordMustNotBeEmptyError = new("The hashed password must not be empty");
+
+    private static readonly UnexpectedError HashedPasswordMustNotBeEmptyError =
+        new("The hashed password must not be empty");
 
     public Fin<HashedPassword> Hash(PlainTextPassword password)
     {
@@ -26,7 +28,7 @@ internal sealed class PasswordHasher : IPasswordHasher
         Span<byte> passwordHash = stackalloc byte[HashSize];
         Rfc2898DeriveBytes.Pbkdf2(password.To(), salt, passwordHash, Iterations, AlgorithmName);
 
-        return HashedPassword.From([.. passwordHash, .. salt]);
+        return HashedPassword.From([..passwordHash, ..salt]);
     }
 
     public Fin<bool> Verify(Password password1, Password password2) =>

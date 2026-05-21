@@ -37,7 +37,7 @@ internal sealed class EmailService(ISmtpClient smtpClient, IConfiguration config
         IO.liftAsync(async () =>
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(configuration["Email:Sender"], configuration["Email:SenderEmail"]));
+            message.From.Add(new MailboxAddress(configuration["Email:SenderName"], configuration["Email:SenderEmail"]));
             message.To.Add(new MailboxAddress(string.Empty, _to));
             message.Subject = _subject;
             message.Body = new TextPart(_isHtmlBody ? "html" : "plain") { Text = _body };
@@ -45,7 +45,8 @@ internal sealed class EmailService(ISmtpClient smtpClient, IConfiguration config
             await smtpClient.ConnectAsync(
                 configuration["Email:Host"],
                 configuration.GetValue<int>("Email:Port"),
-                true, cancellationToken);
+                configuration.GetValue<bool>("Email:UseSsl"),
+                cancellationToken);
             
             await smtpClient.AuthenticateAsync(
                 configuration["Email:Username"],

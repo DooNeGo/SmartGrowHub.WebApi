@@ -51,6 +51,7 @@
       - Mqtt__Port=1883
       - Email__Username=${EMAIL_USERNAME}
       - Email__Password=${EMAIL_PASSWORD}
+      - Jwt__Secret=${JWT_SECRET}
     networks:
       - backend
 
