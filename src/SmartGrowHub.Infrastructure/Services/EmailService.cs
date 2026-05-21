@@ -1,29 +1,60 @@
-using FluentEmail.Core;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
 
 namespace SmartGrowHub.Infrastructure.Services;
 
-internal sealed class EmailService(IFluentEmail fluentEmail) : IEmailService
+internal sealed class EmailService(ISmtpClient smtpClient, IConfiguration configuration)
+    : IEmailService
 {
+    private EmailAddress? _to;
+    private NonEmptyString? _subject;
+    private NonEmptyString? _body;
+    private bool _isHtmlBody;
+
     public IEmailService To(EmailAddress emailAddress)
     {
-        fluentEmail.To(emailAddress);
+        _to = emailAddress;
         return this;
     }
 
     public IEmailService Subject(NonEmptyString subject)
     {
-        fluentEmail.Subject(subject);
+        _subject = subject;
         return this;
     }
 
     public IEmailService Body(NonEmptyString body, bool isHtml = false)
     {
-        fluentEmail.Body(body, isHtml);
+        _body = body;
+        _isHtmlBody = isHtml;
         return this;
     }
 
     public IO<Unit> Send(CancellationToken cancellationToken) =>
-        IO.liftAsync(() => fluentEmail.SendAsync(cancellationToken).ToUnit());
+        IO.liftAsync(async () =>
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(configuration["Email:Sender"], configuration["Email:SenderEmail"]));
+            message.To.Add(new MailboxAddress(string.Empty, _to));
+            message.Subject = _subject;
+            message.Body = new TextPart(_isHtmlBody ? "html" : "plain") { Text = _body };
+            
+            await smtpClient.ConnectAsync(
+                configuration["Email:Host"],
+                configuration.GetValue<int>("Email:Port"),
+                true, cancellationToken);
+            
+            await smtpClient.AuthenticateAsync(
+                configuration["Email:Username"],
+                configuration["Email:Password"],
+                cancellationToken);
+
+            await smtpClient.SendAsync(message, cancellationToken);
+            await smtpClient.DisconnectAsync(true, cancellationToken);
+            
+            return Unit.Default;
+        });
 }

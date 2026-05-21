@@ -1,4 +1,5 @@
 ﻿using EntityFramework.Exceptions.PostgreSQL;
+using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ public static class DependencyInjection
                 .AddSingleton<IOtpIssuer, OtpIssuer>()
                 .AddTransient<IEmailService, EmailService>()
                 .AddSingleton<IFileService, FileService>()
-                .AddFluentEmail(configuration);
+                .AddTransient<ISmtpClient, SmtpClient>();
 
         private IServiceCollection AddDbContext(IConfiguration configuration) =>
             services.AddDbContextPool<ApplicationContext>(options => options
@@ -45,18 +46,5 @@ public static class DependencyInjection
                 .AddTransient<IUserRepository, UserRepository>()
                 .AddTransient<IUserSessionRepository, UserSessionRepository>()
                 .AddTransient<IOtpRepository, OtpRepository>();
-
-        private IServiceCollection AddFluentEmail(IConfiguration configuration)
-        {
-            services
-                .AddFluentEmail(configuration["Email:SenderEmail"], configuration["Email:Sender"])
-                .AddSmtpSender(
-                    configuration["Email:Host"],
-                    configuration.GetValue<int>("Email:Port"),
-                    configuration["Email:Username"],
-                    configuration["Email:Password"]);
-        
-            return services;
-        }
     }
 }
