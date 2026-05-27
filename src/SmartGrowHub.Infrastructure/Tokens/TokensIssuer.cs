@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SmartGrowHub.Application.Services;
-using SmartGrowHub.Application.UseCases.Auth;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;

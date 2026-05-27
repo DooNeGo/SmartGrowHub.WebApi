@@ -1,5 +1,3 @@
-using SmartGrowHub.Shared.GrowHubs.Components;
-
 namespace SmartGrowHub.Shared.GrowHubs;
 
 public sealed record GrowHubDto(
@@ -7,4 +5,4 @@ public sealed record GrowHubDto(
     string Name,
     string Model,
     PlantDto? Plant,
-    IEnumerable<GrowHubComponentDto> Components);
+    IEnumerable<GrowHubModuleDto> Components);

@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms;
+using SmartGrowHub.Domain.Model.GrowHub.Programs;
 
 namespace SmartGrowHub.Domain.Extensions;
 

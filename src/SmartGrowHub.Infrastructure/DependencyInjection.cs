@@ -3,10 +3,10 @@ using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.Infrastructure.Data;
-using SmartGrowHub.Infrastructure.Data.CompiledModels;
 using SmartGrowHub.Infrastructure.Repositories;
 using SmartGrowHub.Infrastructure.Services;
 using SmartGrowHub.Infrastructure.Tokens;
@@ -22,6 +22,7 @@ public static class DependencyInjection
             services
                 .AddDbContext(configuration)
                 .AddRepositories()
+                .AddMqttClient()
                 .AddSingleton<ITokensIssuer, TokensIssuer>()
                 .AddSingleton<IAccessTokenReader, AccessTokenReader>()
                 .AddSingleton<ITimeProvider, TimeProvider>()
@@ -35,7 +36,7 @@ public static class DependencyInjection
         private IServiceCollection AddDbContext(IConfiguration configuration) =>
             services.AddDbContextPool<ApplicationContext>(options => options
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .UseModel(ApplicationContextModel.Instance)
+                //.UseModel(ApplicationContextModel.Instance)
                 .UseNpgsql(
                     configuration.GetConnectionString("DatabaseConnection"),
                     sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
@@ -46,5 +47,22 @@ public static class DependencyInjection
                 .AddTransient<IUserRepository, UserRepository>()
                 .AddTransient<IUserSessionRepository, UserSessionRepository>()
                 .AddTransient<IOtpRepository, OtpRepository>();
+
+        private IServiceCollection AddMqttClient() =>
+            services
+                .AddSingleton<IMqttClient>(_ => new MqttClientFactory().CreateMqttClient())
+                .AddSingleton<MqttClientOptions>(provider =>
+                {
+                    IConfigurationSection mqttSection = provider
+                        .GetRequiredService<IConfiguration>()
+                        .GetSection("Mqtt");
+
+                    return new MqttClientOptionsBuilder()
+                        .WithTcpServer(mqttSection["Host"], mqttSection.GetValue<int>("Port"))
+                        .Build();
+                })
+                .AddSingleton<MqttClientDisconnectOptions>(_ => new MqttClientDisconnectOptionsBuilder()
+                    .WithReason(MqttClientDisconnectOptionsReason.NormalDisconnection)
+                    .Build());
     }
 }

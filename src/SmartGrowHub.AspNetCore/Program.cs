@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SmartGrowHub.Application;
 using SmartGrowHub.Application.Services;
+using SmartGrowHub.AspNetCore.HostedServices;
 using SmartGrowHub.AspNetCore.Services;
 using SmartGrowHub.Infrastructure;
 using SmartGrowHub.Infrastructure.Tokens;
@@ -29,14 +30,13 @@ internal sealed class Program
         builder.Services
             .AddOpenApi()
             .AddSingleton<IEmailTemplateService, EmailTemplateService>()
+            .AddHostedService<MqttHostedService>()
             .AddApplication()
             .AddInfrastructure(builder.Configuration)
             .AddAuthentication(configuration)
             .AddAuthorization();
 
         WebApplication app = builder.Build();
-        
-        //app.UseHttpsRedirection();
         
         app.UseAuthentication();
         app.UseAuthorization();

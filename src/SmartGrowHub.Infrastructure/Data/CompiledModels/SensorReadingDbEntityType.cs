@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Domain.Model;
-using SmartGrowHub.Infrastructure.Data.Convertors;
+using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -57,9 +56,17 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             growHubId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
+            var magnitude = runtimeEntityType.AddProperty(
+                "Magnitude",
+                typeof(float),
+                propertyInfo: typeof(SensorReadingDb).GetProperty("Magnitude", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(SensorReadingDb).GetField("<Magnitude>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                sentinel: 0f);
+            magnitude.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
             var type = runtimeEntityType.AddProperty(
                 "Type",
-                typeof(SensorType),
+                typeof(SensorTypeDb),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("Type", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             type.SetSentinelFromProviderValue(0);
@@ -67,17 +74,11 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var unit = runtimeEntityType.AddProperty(
                 "Unit",
-                typeof(string),
+                typeof(UnitDb),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("Unit", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<Unit>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+            unit.SetSentinelFromProviderValue(0);
             unit.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var value = runtimeEntityType.AddProperty(
-                "Value",
-                typeof(string),
-                propertyInfo: typeof(SensorReadingDb).GetProperty("Value", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SensorReadingDb).GetField("<Value>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            value.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });

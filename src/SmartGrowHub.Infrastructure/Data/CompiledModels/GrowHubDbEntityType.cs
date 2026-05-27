@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Convertors;
+using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -23,10 +23,10 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 "SmartGrowHub.Infrastructure.Data.Model.GrowHubDb",
                 typeof(GrowHubDb),
                 baseEntityType,
-                propertyCount: 3,
+                propertyCount: 2,
                 navigationCount: 4,
-                foreignKeyCount: 2,
-                unnamedIndexCount: 2,
+                foreignKeyCount: 1,
+                unnamedIndexCount: 1,
                 keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
@@ -38,13 +38,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 valueConverter: new UlidConverter());
             id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var plantId = runtimeEntityType.AddProperty(
-                "PlantId",
-                typeof(Ulid?),
-                nullable: true,
-                valueConverter: new UlidConverter());
-            plantId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var userId = runtimeEntityType.AddProperty(
                 "UserId",
@@ -60,31 +53,12 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { plantId });
-
-            var index0 = runtimeEntityType.AddIndex(
                 new[] { userId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
-        {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("PlantId") },
-                principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
-                principalEntityType);
-
-            var plant = declaringEntityType.AddNavigation("Plant",
-                runtimeForeignKey,
-                onDependent: true,
-                typeof(PlantDb),
-                propertyInfo: typeof(GrowHubDb).GetProperty("Plant", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(GrowHubDb).GetField("<Plant>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-
-            return runtimeForeignKey;
-        }
-
-        public static RuntimeForeignKey CreateForeignKey2(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),

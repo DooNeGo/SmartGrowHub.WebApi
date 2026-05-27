@@ -1,16 +1,11 @@
-﻿using EntityFramework.Exceptions.PostgreSQL;
-using Microsoft.EntityFrameworkCore;
-using SmartGrowHub.Infrastructure.Data.Convertors;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 namespace SmartGrowHub.Infrastructure.Data;
 
 internal sealed class ApplicationContext : DbContext
 {
-    // public ApplicationContext()
-    // {
-    // }
-
     public ApplicationContext(DbContextOptions options) : base(options)
     {
     }
@@ -21,7 +16,9 @@ internal sealed class ApplicationContext : DbContext
 
     public DbSet<PlantDb> Plants => Set<PlantDb>();
 
-    public DbSet<SettingDb> Settings => Set<SettingDb>();
+    public DbSet<GrowHubModuleDb> Modules => Set<GrowHubModuleDb>();
+    
+    //public DbSet<ModuleProgramDb> Programs => Set<ModuleProgramDb>();
 
     public DbSet<SensorReadingDb> SensorReading => Set<SensorReadingDb>();
 
@@ -40,20 +37,12 @@ internal sealed class ApplicationContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         
-        modelBuilder.Entity<UserDb>();
-        modelBuilder.Entity<SettingDb>();
         modelBuilder.Entity<GrowHubDb>();
+        modelBuilder.Entity<GrowHubModuleDb>();
+        modelBuilder.Entity<OneTimePasswordDb>();
+        modelBuilder.Entity<PlantDb>();
+        modelBuilder.Entity<SensorReadingDb>();
+        modelBuilder.Entity<UserDb>();
+        modelBuilder.Entity<UserSessionDb>();
     }
-
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    //     base.OnConfiguring(optionsBuilder);
-    //
-    //     optionsBuilder
-    //         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-    //         .UseNpgsql("")
-    //         .UseExceptionProcessor()
-    //         .EnableSensitiveDataLogging()
-    //         .EnableDetailedErrors();
-    // }
 }

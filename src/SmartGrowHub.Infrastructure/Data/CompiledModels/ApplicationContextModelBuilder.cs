@@ -12,32 +12,38 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("4f903ef9-9a9d-48cb-bd0a-8872ead2d76a"), entityTypeCount: 7)
+            : base(skipDetectChanges: false, modelId: new Guid("fed9d810-eb22-40dd-bbf2-a308e6e3ed6f"), entityTypeCount: 9)
         {
         }
 
         partial void Initialize()
         {
             var growHubDb = GrowHubDbEntityType.Create(this);
+            var growHubModuleDb = GrowHubModuleDbEntityType.Create(this);
+            var moduleProgramDb = ModuleProgramDbEntityType.Create(this);
             var oneTimePasswordDb = OneTimePasswordDbEntityType.Create(this);
             var plantDb = PlantDbEntityType.Create(this);
             var sensorReadingDb = SensorReadingDbEntityType.Create(this);
-            var settingDb = SettingDbEntityType.Create(this);
+            var timedQuantityDb = TimedQuantityDbEntityType.Create(this);
             var userDb = UserDbEntityType.Create(this);
             var userSessionDb = UserSessionDbEntityType.Create(this);
 
-            GrowHubDbEntityType.CreateForeignKey1(growHubDb, plantDb);
-            GrowHubDbEntityType.CreateForeignKey2(growHubDb, userDb);
+            GrowHubDbEntityType.CreateForeignKey1(growHubDb, userDb);
+            GrowHubModuleDbEntityType.CreateForeignKey1(growHubModuleDb, growHubDb);
+            ModuleProgramDbEntityType.CreateForeignKey1(moduleProgramDb, growHubModuleDb);
             OneTimePasswordDbEntityType.CreateForeignKey1(oneTimePasswordDb, userDb);
+            PlantDbEntityType.CreateForeignKey1(plantDb, growHubDb);
             SensorReadingDbEntityType.CreateForeignKey1(sensorReadingDb, growHubDb);
-            SettingDbEntityType.CreateForeignKey1(settingDb, growHubDb);
+            TimedQuantityDbEntityType.CreateForeignKey1(timedQuantityDb, moduleProgramDb);
             UserSessionDbEntityType.CreateForeignKey1(userSessionDb, userDb);
 
             GrowHubDbEntityType.CreateAnnotations(growHubDb);
+            GrowHubModuleDbEntityType.CreateAnnotations(growHubModuleDb);
+            ModuleProgramDbEntityType.CreateAnnotations(moduleProgramDb);
             OneTimePasswordDbEntityType.CreateAnnotations(oneTimePasswordDb);
             PlantDbEntityType.CreateAnnotations(plantDb);
             SensorReadingDbEntityType.CreateAnnotations(sensorReadingDb);
-            SettingDbEntityType.CreateAnnotations(settingDb);
+            TimedQuantityDbEntityType.CreateAnnotations(timedQuantityDb);
             UserDbEntityType.CreateAnnotations(userDb);
             UserSessionDbEntityType.CreateAnnotations(userSessionDb);
 

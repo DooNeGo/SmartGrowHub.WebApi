@@ -1,18 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
-using SmartGrowHub.Domain.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using SmartGrowHub.Infrastructure.Data.Configurations;
 
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
+[EntityTypeConfiguration(typeof(SensorReadingConfiguration))]
 internal sealed class SensorReadingDb
 {
-    [Key]
     public required Ulid Id { get; set; }
 
-    public required SensorType Type { get; set; }
+    public required SensorTypeDb Type { get; set; }
 
-    public required string Value { get; set; } = string.Empty;
+    public required float Magnitude { get; set; }
 
-    public required string Unit { get; set; } = string.Empty;
+    public required UnitDb Unit { get; set; }
 
     public required DateOnly CreatedAt { get; set; }
 

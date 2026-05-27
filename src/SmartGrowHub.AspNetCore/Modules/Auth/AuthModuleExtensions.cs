@@ -6,11 +6,14 @@ public static class AuthModuleExtensions
 {
     public static IEndpointRouteBuilder AddAuthEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
-        routeBuilder.MapPost("/auth/login/email", LogInByEmailEndpoint.LogIn);
-        routeBuilder.MapPost("/auth/login/phone", LogInByPhoneEndpoint.LogIn);
-        routeBuilder.MapPost("/auth/login/check", CheckOtpEndpoint.CheckOtp);
+        RouteGroupBuilder authGroup = routeBuilder.MapGroup("/auth");
+        RouteGroupBuilder loginGroup = authGroup.MapGroup("/login");
+
+        loginGroup.MapPost("/email", LogInByEmailEndpoint.LogIn);
+        loginGroup.MapPost("/phone", LogInByPhoneEndpoint.LogIn);
+        loginGroup.MapPost("/check", CheckOtpEndpoint.CheckOtp);
         //routeBuilder.MapPost("/auth/logout", LogOutEndpoint.LogOut);
-        routeBuilder.MapPost("/auth/refresh", RefreshTokensEndpoint.RefreshTokens);
+        authGroup.MapPost("/refresh", RefreshTokensEndpoint.RefreshTokens);
 
         return routeBuilder;
     }

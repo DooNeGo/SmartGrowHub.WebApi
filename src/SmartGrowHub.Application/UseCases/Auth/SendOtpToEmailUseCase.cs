@@ -21,11 +21,7 @@ public sealed class SendOtpToEmailUseCase(
         from subject in NonEmptyString.From(Subject).ToIO()
         from body in emailTemplateService.GetOtpEmailBody(
             oneTimePassword.Value, otpIssuer.OtpLifetime, cancellationToken)
-        from _ in emailService
-            .To(emailAddress)
-            .Subject(subject)
-            .Body(body, isHtml: true)
-            .Send(cancellationToken)
+        from _ in emailService.Send(emailAddress, subject, body, isHtmlBody: true, cancellationToken)
         from __ in otpRepository.Add(oneTimePassword, cancellationToken)
         select unit;
 

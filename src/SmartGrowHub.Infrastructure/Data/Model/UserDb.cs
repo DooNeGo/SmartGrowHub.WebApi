@@ -3,7 +3,7 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
-[EntityTypeConfiguration(typeof(UserDbConfiguration))]
+[EntityTypeConfiguration(typeof(UserConfiguration))]
 internal sealed class UserDb
 {
     public required Ulid Id { get; set; }

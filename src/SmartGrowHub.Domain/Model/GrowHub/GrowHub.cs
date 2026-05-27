@@ -1,6 +1,5 @@
 ﻿using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Model.GrowHub.Components;
 using System.Collections.Immutable;
 
 namespace SmartGrowHub.Domain.Model.GrowHub;
@@ -9,13 +8,13 @@ public sealed class GrowHub(
     Id<GrowHub> id,
     NonEmptyString name,
     NonEmptyString model,
-    ImmutableArray<GrowHubComponent> components,
+    ImmutableArray<GrowHubModule> modules,
     Option<Plant> plant)
     : Entity<GrowHub>(id)
 {
     private GrowHub(GrowHub original) : this(
         original.Id, original.Name,
-        original.Model, original.Components,
+        original.Model, original.Modules,
         original.Plant)
     { }
 
@@ -23,12 +22,12 @@ public sealed class GrowHub(
 
     public NonEmptyString Model { get; private init; } = model;
 
-    public ImmutableArray<GrowHubComponent> Components { get; private init; } = components;
+    public ImmutableArray<GrowHubModule> Modules { get; private init; } = modules;
 
     public Option<Plant> Plant { get; private init; } = plant;
 
     public static GrowHub New(NonEmptyString name, NonEmptyString model,
-        ImmutableArray<GrowHubComponent> components, Option<Plant> plant) =>
+        ImmutableArray<GrowHubModule> components, Option<Plant> plant) =>
         new(new Id<GrowHub>(), name, model, components, plant);
 
     public GrowHub UpdatePlant(Option<Plant> plant) =>

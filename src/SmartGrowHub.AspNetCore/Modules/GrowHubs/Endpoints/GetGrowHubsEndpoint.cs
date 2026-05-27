@@ -2,13 +2,11 @@
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Domain.Model.GrowHub;
-using SmartGrowHub.Domain.Model.GrowHub.Components;
 using SmartGrowHub.Shared.GrowHubs;
-using SmartGrowHub.Shared.GrowHubs.Components;
 using SmartGrowHub.Shared.Results;
 using System.Collections.Immutable;
-using SmartGrowHub.Domain.Model.GrowHub.ComponentPrograms;
-using SmartGrowHub.Shared.GrowHubs.ComponentPrograms;
+using SmartGrowHub.Domain.Model.GrowHub.Programs;
+using SmartGrowHub.Shared.GrowHubs.ModulePrograms;
 using static Microsoft.AspNetCore.Http.Results;
 using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
@@ -16,7 +14,7 @@ namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Endpoints;
 
 public sealed class GetGrowHubsEndpoint
 {
-    public static Task<IResult> GetGrowHubs(HttpContext context, ILogger<GetGrowHubsEndpoint> logger,
+    public static Task<IResult> GetGrowHubs(ILogger<GetGrowHubsEndpoint> logger,
         CancellationToken cancellationToken)
     {
         return Task.FromResult((
@@ -73,10 +71,10 @@ public sealed class GetGrowHubsEndpoint
             select ToDto(
                 GrowHub.New(name, model,
                     [
-                        new HeaterComponent(new Id<GrowHubComponent>(), dailyProgram),
-                        new FanComponent(new Id<GrowHubComponent>(), cycleProgram),
-                        new DayLightComponent(new Id<GrowHubComponent>(), weeklyProgram),
-                        new UvLightComponent(new Id<GrowHubComponent>(), manualProgram)
+                        new GrowHubModule(new Id<GrowHubModule>(), dailyProgram, ModuleType.Heater),
+                        new GrowHubModule(new Id<GrowHubModule>(), cycleProgram, ModuleType.Fan),
+                        new GrowHubModule(new Id<GrowHubModule>(), weeklyProgram, ModuleType.DayLight),
+                        new GrowHubModule(new Id<GrowHubModule>(), manualProgram, ModuleType.UvLight)
                     ],
                     None))
         ).Match(
@@ -87,27 +85,28 @@ public sealed class GetGrowHubsEndpoint
     private static GrowHubDto ToDto(GrowHub growHub) =>
         new(growHub.Id, growHub.Name, growHub.Model,
             growHub.Plant.Map(ToDto).ValueUnsafe(),
-            growHub.Components.Select(ToDto));
+            growHub.Modules.Select(ToDto));
 
     private static PlantDto ToDto(Plant plant) => new(plant.Id, plant.Name, plant.PlantedAt);
 
-    private static GrowHubComponentDto ToDto(GrowHubComponent component) =>
-        component.Match<GrowHubComponentDto>(ToDto, ToDto, ToDto, ToDto);
-
-    private static HeaterComponentDto ToDto(HeaterComponent component) =>
-        new(component.Id, ToDto(component.Program));
+    private static GrowHubModuleDto ToDto(GrowHubModule module) =>
+        new(module.Id, ToDto(module.Program), ToDto(module.Type));
     
-    private static FanComponentDto ToDto(FanComponent component) =>
-        new(component.Id, ToDto(component.Program));
+    private static ModuleTypeDto ToDto(ModuleType type) => type switch
+    {
+        ModuleType.Led => ModuleTypeDto.Led,
+        ModuleType.DayLight => ModuleTypeDto.DayLight,
+        ModuleType.UvLight => ModuleTypeDto.UvLight,
+        ModuleType.Heater => ModuleTypeDto.Heater,
+        ModuleType.Humidifier => ModuleTypeDto.Humidifier,
+        ModuleType.Fan => ModuleTypeDto.Fan,
+        ModuleType.WaterPump => ModuleTypeDto.WaterPump,
+        ModuleType.AirFlap => ModuleTypeDto.AirFlap,
+        _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+    };
 
-    private static DayLightComponentDto ToDto(DayLightComponent component) =>
-        new(component.Id, ToDto(component.Program));
-
-    private static UvLightComponentDto ToDto(UvLightComponent component) =>
-        new(component.Id, ToDto(component.Program));
-
-    private static ComponentProgramDto ToDto(ComponentProgram program) =>
-        program.Match<ComponentProgramDto>(ToDto, ToDto, ToDto, ToDto);
+    private static ModuleProgramDto ToDto(ModuleProgram program) =>
+        program.Match<ModuleProgramDto>(ToDto, ToDto, ToDto, ToDto);
 
     private static WeeklyProgramDto ToDto(WeeklyProgram program) =>
         new(program.Id, program.Entries.Select(ToDto));

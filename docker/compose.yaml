@@ -49,8 +49,9 @@
       - ConnectionStrings__DatabaseConnection=Host=postgres;Port=5432;Database=SmartGrowHub;Username=${DB_USERNAME};Password=${DB_PASSWORD}
       - Mqtt__Host=mosquitto
       - Mqtt__Port=1883
-      - Email__Username=${EMAIL_USERNAME}
-      - Email__Password=${EMAIL_PASSWORD}
+      - Smtp__Sender__Email=${SMTP_SENDER}
+      - Smtp__Username=${SMTP_USERNAME}
+      - Smtp__Password=${SMTP_PASSWORD}
       - Jwt__Secret=${JWT_SECRET}
     networks:
       - backend

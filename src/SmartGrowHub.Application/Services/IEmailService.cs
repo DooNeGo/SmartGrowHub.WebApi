@@ -4,8 +4,6 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IEmailService
 {
-    IEmailService To(EmailAddress emailAddress);
-    IEmailService Subject(NonEmptyString subject);
-    IEmailService Body(NonEmptyString body, bool isHtml = false);
-    IO<Unit> Send(CancellationToken cancellationToken);
+    IO<Unit> Send(EmailAddress to, NonEmptyString subject, NonEmptyString body, bool isHtmlBody,
+        CancellationToken cancellationToken);
 }

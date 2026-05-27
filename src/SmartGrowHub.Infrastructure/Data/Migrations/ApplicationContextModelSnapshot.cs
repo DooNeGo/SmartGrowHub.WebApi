@@ -27,20 +27,54 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<byte[]>("Id")
                         .HasColumnType("bytea");
 
-                    b.Property<byte[]>("PlantId")
-                        .HasColumnType("bytea");
-
                     b.Property<byte[]>("UserId")
                         .IsRequired()
                         .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PlantId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("GrowHubs");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", b =>
+                {
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("GrowHubId")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrowHubId");
+
+                    b.ToTable("Modules");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", b =>
+                {
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("GrowHubModuleId")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrowHubModuleId")
+                        .IsUnique();
+
+                    b.ToTable("ModuleProgramDb");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
@@ -82,6 +116,9 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GrowHubId")
+                        .IsUnique();
+
                     b.ToTable("Plants");
                 });
 
@@ -97,16 +134,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("bytea");
 
+                    b.Property<float>("Magnitude")
+                        .HasColumnType("real");
+
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Unit")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -115,20 +150,34 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.ToTable("SensorReading");
                 });
 
-            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SettingDb", b =>
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb", b =>
                 {
                     b.Property<byte[]>("Id")
                         .HasColumnType("bytea");
 
-                    b.Property<byte[]>("GrowHubId")
+                    b.Property<string>("EndTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<float>("Magnitude")
+                        .HasColumnType("real");
+
+                    b.Property<byte[]>("ModuleProgramId")
                         .IsRequired()
                         .HasColumnType("bytea");
 
+                    b.Property<string>("StartTime")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("GrowHubId");
+                    b.HasIndex("ModuleProgramId");
 
-                    b.ToTable("Settings");
+                    b.ToTable("TimedQuantityDb");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>
@@ -187,19 +236,35 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.PlantDb", "Plant")
-                        .WithMany()
-                        .HasForeignKey("PlantId");
-
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.UserDb", "User")
                         .WithMany("GrowHubs")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Plant");
-
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", b =>
+                {
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
+                        .WithMany("Modules")
+                        .HasForeignKey("GrowHubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrowHub");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", b =>
+                {
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", "GrowHubModule")
+                        .WithOne("Program")
+                        .HasForeignKey("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", "GrowHubModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrowHubModule");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
@@ -213,6 +278,17 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.PlantDb", b =>
+                {
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
+                        .WithOne("Plant")
+                        .HasForeignKey("SmartGrowHub.Infrastructure.Data.Model.PlantDb", "GrowHubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrowHub");
+                });
+
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
@@ -224,15 +300,15 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Navigation("GrowHub");
                 });
 
-            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SettingDb", b =>
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb", b =>
                 {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
-                        .WithMany("Settings")
-                        .HasForeignKey("GrowHubId")
+                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", "ModuleProgram")
+                        .WithMany("Entries")
+                        .HasForeignKey("ModuleProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GrowHub");
+                    b.Navigation("ModuleProgram");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserSessionDb", b =>
@@ -248,9 +324,22 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
                 {
-                    b.Navigation("SensorReadings");
+                    b.Navigation("Modules");
 
-                    b.Navigation("Settings");
+                    b.Navigation("Plant");
+
+                    b.Navigation("SensorReadings");
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", b =>
+                {
+                    b.Navigation("Program")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", b =>
+                {
+                    b.Navigation("Entries");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>
