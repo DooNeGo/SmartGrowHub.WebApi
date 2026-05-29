@@ -10,7 +10,7 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
-public sealed class CheckOtpEndpoint
+internal sealed class CheckOtpEndpoint
 {
     public static ValueTask<IResult> CheckOtp(CheckOtpRequest request, CheckOtpUseCase useCase,
         ILogger<CheckOtpEndpoint> logger,

@@ -12,7 +12,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("fed9d810-eb22-40dd-bbf2-a308e6e3ed6f"), entityTypeCount: 9)
+            : base(skipDetectChanges: false, modelId: new Guid("7388e711-9d1a-48de-bcbd-4c6f05a02cef"), entityTypeCount: 18)
         {
         }
 
@@ -20,30 +20,57 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
         {
             var growHubDb = GrowHubDbEntityType.Create(this);
             var growHubModuleDb = GrowHubModuleDbEntityType.Create(this);
+            var intervalDb = IntervalDbEntityType.Create(this);
+            var weekTimeOnlyDb = WeekTimeOnlyDbEntityType.Create(this);
+            var weekTimeOnlyDb0 = WeekTimeOnlyDb0EntityType.Create(this);
+            var intervalDb0 = IntervalDb0EntityType.Create(this);
             var moduleProgramDb = ModuleProgramDbEntityType.Create(this);
+            var quantityDb = QuantityDbEntityType.Create(this);
             var oneTimePasswordDb = OneTimePasswordDbEntityType.Create(this);
             var plantDb = PlantDbEntityType.Create(this);
             var sensorReadingDb = SensorReadingDbEntityType.Create(this);
+            var quantityDb0 = QuantityDb0EntityType.Create(this);
             var timedQuantityDb = TimedQuantityDbEntityType.Create(this);
+            var quantityDb1 = QuantityDb1EntityType.Create(this);
+            var timedQuantityDb0 = TimedQuantityDb0EntityType.Create(this);
+            var quantityDb2 = QuantityDb2EntityType.Create(this);
             var userDb = UserDbEntityType.Create(this);
             var userSessionDb = UserSessionDbEntityType.Create(this);
 
             GrowHubDbEntityType.CreateForeignKey1(growHubDb, userDb);
             GrowHubModuleDbEntityType.CreateForeignKey1(growHubModuleDb, growHubDb);
+            IntervalDbEntityType.CreateForeignKey1(intervalDb, timedQuantityDb);
+            WeekTimeOnlyDbEntityType.CreateForeignKey1(weekTimeOnlyDb, intervalDb);
+            WeekTimeOnlyDb0EntityType.CreateForeignKey1(weekTimeOnlyDb0, intervalDb);
+            IntervalDb0EntityType.CreateForeignKey1(intervalDb0, timedQuantityDb0);
             ModuleProgramDbEntityType.CreateForeignKey1(moduleProgramDb, growHubModuleDb);
+            QuantityDbEntityType.CreateForeignKey1(quantityDb, moduleProgramDb);
             OneTimePasswordDbEntityType.CreateForeignKey1(oneTimePasswordDb, userDb);
             PlantDbEntityType.CreateForeignKey1(plantDb, growHubDb);
             SensorReadingDbEntityType.CreateForeignKey1(sensorReadingDb, growHubDb);
+            QuantityDb0EntityType.CreateForeignKey1(quantityDb0, sensorReadingDb);
             TimedQuantityDbEntityType.CreateForeignKey1(timedQuantityDb, moduleProgramDb);
+            QuantityDb1EntityType.CreateForeignKey1(quantityDb1, timedQuantityDb);
+            TimedQuantityDb0EntityType.CreateForeignKey1(timedQuantityDb0, moduleProgramDb);
+            QuantityDb2EntityType.CreateForeignKey1(quantityDb2, timedQuantityDb0);
             UserSessionDbEntityType.CreateForeignKey1(userSessionDb, userDb);
 
             GrowHubDbEntityType.CreateAnnotations(growHubDb);
             GrowHubModuleDbEntityType.CreateAnnotations(growHubModuleDb);
+            IntervalDbEntityType.CreateAnnotations(intervalDb);
+            WeekTimeOnlyDbEntityType.CreateAnnotations(weekTimeOnlyDb);
+            WeekTimeOnlyDb0EntityType.CreateAnnotations(weekTimeOnlyDb0);
+            IntervalDb0EntityType.CreateAnnotations(intervalDb0);
             ModuleProgramDbEntityType.CreateAnnotations(moduleProgramDb);
+            QuantityDbEntityType.CreateAnnotations(quantityDb);
             OneTimePasswordDbEntityType.CreateAnnotations(oneTimePasswordDb);
             PlantDbEntityType.CreateAnnotations(plantDb);
             SensorReadingDbEntityType.CreateAnnotations(sensorReadingDb);
+            QuantityDb0EntityType.CreateAnnotations(quantityDb0);
             TimedQuantityDbEntityType.CreateAnnotations(timedQuantityDb);
+            QuantityDb1EntityType.CreateAnnotations(quantityDb1);
+            TimedQuantityDb0EntityType.CreateAnnotations(timedQuantityDb0);
+            QuantityDb2EntityType.CreateAnnotations(quantityDb2);
             UserDbEntityType.CreateAnnotations(userDb);
             UserSessionDbEntityType.CreateAnnotations(userSessionDb);
 

@@ -1,12 +1,14 @@
+using SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules.Endpoints;
+
 namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules;
 
-public static class ModulesModuleExtensions
+internal static class ModulesModuleExtensions
 {
     public static IEndpointRouteBuilder AddModulesEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
-        RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/growHubs/modules/{id}");
+        RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/modules/{moduleId}");
 
-        //modulesGroup.MapPut();
+        modulesGroup.MapPost("/set-program", SetModuleProgramEndpoint.SetModuleProgram);
         
         return routeBuilder;
     }

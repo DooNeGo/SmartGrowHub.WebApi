@@ -13,5 +13,11 @@ internal sealed class SensorReadingConfiguration : IEntityTypeConfiguration<Sens
         builder.HasOne(x => x.GrowHub)
             .WithMany(x => x.SensorReadings)
             .HasForeignKey(x => x.GrowHubId);
+
+        builder.OwnsOne(x => x.Quantity, x =>
+        {
+            x.Property(p => p.Magnitude).HasColumnName("Value");
+            x.Property(p => p.Unit).HasColumnName("Unit");;
+        });
     }
 }

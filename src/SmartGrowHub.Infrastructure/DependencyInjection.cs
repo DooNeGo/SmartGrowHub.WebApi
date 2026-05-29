@@ -37,6 +37,8 @@ public static class DependencyInjection
             services.AddDbContextPool<ApplicationContext>(options => options
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 //.UseModel(ApplicationContextModel.Instance)
+                .EnableDetailedErrors()
+                .EnableSensitiveDataLogging()
                 .UseNpgsql(
                     configuration.GetConnectionString("DatabaseConnection"),
                     sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
@@ -46,7 +48,9 @@ public static class DependencyInjection
             services
                 .AddTransient<IUserRepository, UserRepository>()
                 .AddTransient<IUserSessionRepository, UserSessionRepository>()
-                .AddTransient<IOtpRepository, OtpRepository>();
+                .AddTransient<IOtpRepository, OtpRepository>()
+                .AddTransient<IGrowHubRepository, GrowHubRepository>()
+                .AddTransient<IGrowHubModulesRepository, GrowHubModulesRepository>();
 
         private IServiceCollection AddMqttClient() =>
             services

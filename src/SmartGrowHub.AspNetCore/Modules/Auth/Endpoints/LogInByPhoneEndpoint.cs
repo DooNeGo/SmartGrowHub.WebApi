@@ -7,7 +7,7 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
-public sealed class LogInByPhoneEndpoint
+internal sealed class LogInByPhoneEndpoint
 {
     public static ValueTask<IResult> LogIn(LogInByPhoneRequest request, SendOtpToPhoneUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (

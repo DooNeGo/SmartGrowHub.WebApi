@@ -15,10 +15,7 @@ public sealed class GetUserEndpoint
         IUserRepository userRepository, IAccessTokenReader tokenReader,
         HttpContext context, ILogger<GetUserEndpoint> logger,
         CancellationToken cancellationToken) => (
-            from accessToken in context
-                .GetAccessToken()
-                .ToIOOrFail(Error.New("There is no access token in the headers"))
-            from userId in tokenReader.GetUserId(accessToken).ToIO()
+            from userId in tokenReader.GetUserId(context)
             from user in userRepository
                 .GetById(userId, cancellationToken)
                 .ToIOOrFail(DomainErrors.UserNotFoundError)

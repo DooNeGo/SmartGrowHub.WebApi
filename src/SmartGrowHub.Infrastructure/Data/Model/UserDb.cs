@@ -6,7 +6,7 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 [EntityTypeConfiguration(typeof(UserConfiguration))]
 internal sealed class UserDb
 {
-    public required Ulid Id { get; set; }
+    public required string Id { get; set; }
     
     public required string EmailAddress { get; set; } = string.Empty;
     

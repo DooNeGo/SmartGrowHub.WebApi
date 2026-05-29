@@ -6,13 +6,13 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 [EntityTypeConfiguration(typeof(OneTimePasswordConfiguration))]
 internal sealed class OneTimePasswordDb
 {
-    public required Ulid Id { get; set; }
+    public required string Id { get; set; }
     
     public required string Value { get; set; }
     
     public required DateTime Expires { get; set; }
     
-    public required Ulid UserId { get; set; }
+    public required string UserId { get; set; }
     
     public UserDb? User { get; set; }
 }

@@ -8,7 +8,7 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
-public sealed class LogInByEmailEndpoint
+internal sealed class LogInByEmailEndpoint
 {
     public static ValueTask<IResult> LogIn(LogInByEmailRequest request, SendOtpToEmailUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (

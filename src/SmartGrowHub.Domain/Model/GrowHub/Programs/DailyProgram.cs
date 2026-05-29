@@ -1,22 +1,27 @@
-﻿using SmartGrowHub.Domain.Common;
+﻿using System.Collections.Immutable;
+using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
-using TimedQuantityCollection = System.Collections.Immutable.ImmutableArray<SmartGrowHub.Domain.Model.GrowHub.Programs.TimedQuantity<SmartGrowHub.Domain.Common.TimeOnlyWrapper>>;
 
 namespace SmartGrowHub.Domain.Model.GrowHub.Programs;
 
 public sealed class DailyProgram : ModuleProgram
 {
-    private DailyProgram(Id<ModuleProgram> id, TimedQuantityCollection entries) : base(id) =>
+    private DailyProgram(Id<ModuleProgram> id, ImmutableList<TimedQuantity<TimeOnlyWrapper>> entries) : base(id) =>
         Entries = entries;
 
-    public TimedQuantityCollection Entries { get; }
+    public ImmutableList<TimedQuantity<TimeOnlyWrapper>> Entries { get; }
 
-    public static Fin<DailyProgram> New(TimedQuantityCollection entries, Id<ModuleProgram>? id = null)
+    public static Fin<DailyProgram> New(ImmutableList<TimedQuantity<TimeOnlyWrapper>> entries,
+        Id<ModuleProgram>? id = null)
     {
         if (entries.HasOverlappingIntervals()) return Error.New("Intervals must not overlap");
         if (entries.CalculateTimeInterval().Duration > TimeSpan.FromHours(TimeSpan.HoursPerDay))
             return Error.New($"Duration must be less than or equal {TimeSpan.HoursPerDay} hours");
 
-        return new DailyProgram(id ?? new Id<ModuleProgram>(), entries);
+        return entries
+            .AsIterable()
+            .Traverse(entry => QuantityDefaults.ValidatePowerPercentRange(entry.Quantity))
+            .Map(_ => new DailyProgram(id ?? new Id<ModuleProgram>(), entries))
+            .As();
     }
 }

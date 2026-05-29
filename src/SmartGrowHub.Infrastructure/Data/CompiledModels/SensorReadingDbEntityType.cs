@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -23,20 +21,18 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 "SmartGrowHub.Infrastructure.Data.Model.SensorReadingDb",
                 typeof(SensorReadingDb),
                 baseEntityType,
-                propertyCount: 6,
-                navigationCount: 1,
+                propertyCount: 4,
+                navigationCount: 2,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
                 keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
                 "Id",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueConverter: new UlidConverter());
-            id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                afterSaveBehavior: PropertySaveBehavior.Throw);
             id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var createdAt = runtimeEntityType.AddProperty(
@@ -49,20 +45,11 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var growHubId = runtimeEntityType.AddProperty(
                 "GrowHubId",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(SensorReadingDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(SensorReadingDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                valueConverter: new UlidConverter());
-            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                nullable: true);
             growHubId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var magnitude = runtimeEntityType.AddProperty(
-                "Magnitude",
-                typeof(float),
-                propertyInfo: typeof(SensorReadingDb).GetProperty("Magnitude", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SensorReadingDb).GetField("<Magnitude>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                sentinel: 0f);
-            magnitude.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var type = runtimeEntityType.AddProperty(
                 "Type",
@@ -71,14 +58,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 fieldInfo: typeof(SensorReadingDb).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             type.SetSentinelFromProviderValue(0);
             type.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var unit = runtimeEntityType.AddProperty(
-                "Unit",
-                typeof(UnitDb),
-                propertyInfo: typeof(SensorReadingDb).GetProperty("Unit", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(SensorReadingDb).GetField("<Unit>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            unit.SetSentinelFromProviderValue(0);
-            unit.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -94,9 +73,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
         {
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
-                principalEntityType,
-                deleteBehavior: DeleteBehavior.Cascade,
-                required: true);
+                principalEntityType);
 
             var growHub = declaringEntityType.AddNavigation("GrowHub",
                 runtimeForeignKey,

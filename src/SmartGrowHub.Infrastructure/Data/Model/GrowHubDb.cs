@@ -6,11 +6,15 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 [EntityTypeConfiguration(typeof(GrowHubConfiguration))]
 internal sealed class GrowHubDb
 {
-    public required Ulid Id { get; set; }
+    public required string Id { get; set; }
+    
+    public required string Name { get; set; } = string.Empty;
+    
+    public required string Model { get; set; } = string.Empty;
     
     public PlantDb? Plant { get; set; }
 
-    public required Ulid UserId { get; set; }
+    public required string UserId { get; set; }
     
     public UserDb? User { get; set; }
 

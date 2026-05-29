@@ -11,7 +11,7 @@ internal static class UserSessionExtensions
         Id = session.Id,
         UserId = session.UserId,
         AccessToken = session.AuthTokens.AccessToken,
-        RefreshToken = session.AuthTokens.RefreshToken.Ulid,
+        RefreshToken = session.AuthTokens.RefreshToken.Value,
         Expires = session.AuthTokens.RefreshToken.Expires
     };
 
@@ -20,9 +20,8 @@ internal static class UserSessionExtensions
 
     public static Fin<UserSession> TryToDomain(this UserSessionDb session) =>
         from accessToken in AccessToken.From(session.AccessToken)
-        let refreshToken = new RefreshToken(session.RefreshToken, session.Expires)
-        select new UserSession(
-            new Id<UserSession>(session.Id),
-            new Id<User>(session.UserId),
-            new AuthTokens(accessToken, refreshToken));
+        from refreshToken in RefreshToken.From((session.RefreshToken, session.Expires))
+        from sessionId in Id<UserSession>.From(session.Id)
+        from userId in Id<User>.From(session.UserId)
+        select new UserSession(sessionId, userId, new AuthTokens(accessToken, refreshToken));
 }

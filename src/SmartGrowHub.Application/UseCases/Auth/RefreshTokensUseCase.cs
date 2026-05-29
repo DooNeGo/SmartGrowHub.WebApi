@@ -3,7 +3,6 @@ using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Errors;
 using SmartGrowHub.Domain.Extensions;
-using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Application.UseCases.Auth;
 
@@ -13,7 +12,7 @@ public sealed class RefreshTokensUseCase(
     ITokensIssuer tokensIssuer,
     ITimeProvider timeProvider)
 {
-    public IO<AuthTokens> RefreshTokens(Ulid oldToken, CancellationToken cancellationToken) =>
+    public IO<AuthTokens> RefreshTokens(NonEmptyString oldToken, CancellationToken cancellationToken) =>
         from session in sessionRepository
             .GetByRefreshTokenValue(oldToken, cancellationToken)
             .ToIOOrFail(DomainErrors.SessionNotFoundError)

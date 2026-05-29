@@ -1,4 +1,6 @@
-﻿namespace SmartGrowHub.Domain.Errors;
+﻿using SmartGrowHub.Domain.Common;
+
+namespace SmartGrowHub.Domain.Errors;
 
 public enum DomainErrorCode
 {
@@ -9,7 +11,8 @@ public enum DomainErrorCode
     SessionExpired,
     SettingNotFound,
     UserNotFound,
-    InvalidEmailAddress
+    InvalidEmailAddress,
+    QuantityOutOfRange
 }
 
 public static class DomainErrors
@@ -34,4 +37,8 @@ public static class DomainErrors
 
     public static readonly Error InvalidEmailAddressError =
         Error.New((int)DomainErrorCode.InvalidEmailAddress, "Invalid email address");
+
+    public static Error CreateQuantityOutOfRangeError(Quantity quantity, float min, float max) =>
+        Error.New((int)DomainErrorCode.QuantityOutOfRange,
+            $"The value {quantity.Magnitude}{quantity.Unit} is out of allowed range [{min} - {max}]");
 }

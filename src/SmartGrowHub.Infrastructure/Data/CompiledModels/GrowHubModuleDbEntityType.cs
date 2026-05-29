@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -31,21 +30,18 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var id = runtimeEntityType.AddProperty(
                 "Id",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(GrowHubModuleDb).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubModuleDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueConverter: new UlidConverter());
-            id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                afterSaveBehavior: PropertySaveBehavior.Throw);
             id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var growHubId = runtimeEntityType.AddProperty(
                 "GrowHubId",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(GrowHubModuleDb).GetProperty("GrowHubId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubModuleDb).GetField("<GrowHubId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                valueConverter: new UlidConverter());
-            growHubId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                nullable: true);
             growHubId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var type = runtimeEntityType.AddProperty(
@@ -71,8 +67,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("GrowHubId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
-                deleteBehavior: DeleteBehavior.Cascade,
-                required: true);
+                deleteBehavior: DeleteBehavior.Cascade);
 
             var growHub = declaringEntityType.AddNavigation("GrowHub",
                 runtimeForeignKey,

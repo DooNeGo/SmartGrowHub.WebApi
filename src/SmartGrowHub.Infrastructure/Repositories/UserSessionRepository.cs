@@ -19,7 +19,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
     public OptionT<IO, UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken) =>
         GetByPredicate(session => session.Id == id, cancellationToken);
 
-    public OptionT<IO, UserSession> GetByRefreshTokenValue(Ulid value, CancellationToken cancellationToken) =>
+    public OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value, CancellationToken cancellationToken) =>
         GetByPredicate(session => session.RefreshToken == value, cancellationToken);
 
     public IO<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>

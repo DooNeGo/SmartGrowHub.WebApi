@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -23,28 +22,25 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 typeof(ModuleProgramDb),
                 baseEntityType,
                 propertyCount: 3,
-                navigationCount: 2,
+                navigationCount: 4,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
                 keyCount: 1);
 
             var id = runtimeEntityType.AddProperty(
                 "Id",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(ModuleProgramDb).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(ModuleProgramDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueConverter: new UlidConverter());
-            id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                afterSaveBehavior: PropertySaveBehavior.Throw);
             id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var growHubModuleId = runtimeEntityType.AddProperty(
                 "GrowHubModuleId",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(ModuleProgramDb).GetProperty("GrowHubModuleId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(ModuleProgramDb).GetField("<GrowHubModuleId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                valueConverter: new UlidConverter());
-            growHubModuleId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                nullable: true);
             growHubModuleId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var type = runtimeEntityType.AddProperty(
@@ -73,7 +69,6 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
                 unique: true,
-                required: true,
                 requiredDependent: true);
 
             var growHubModule = declaringEntityType.AddNavigation("GrowHubModule",
@@ -98,7 +93,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
             runtimeEntityType.AddAnnotation("Relational:FunctionName", null);
             runtimeEntityType.AddAnnotation("Relational:Schema", null);
             runtimeEntityType.AddAnnotation("Relational:SqlQuery", null);
-            runtimeEntityType.AddAnnotation("Relational:TableName", "ModuleProgramDb");
+            runtimeEntityType.AddAnnotation("Relational:TableName", "Programs");
             runtimeEntityType.AddAnnotation("Relational:ViewName", null);
             runtimeEntityType.AddAnnotation("Relational:ViewSchema", null);
 

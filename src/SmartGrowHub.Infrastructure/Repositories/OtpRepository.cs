@@ -12,9 +12,6 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
 {
-    public IO<Unit> Add(OneTimePassword oneTimePassword, CancellationToken cancellationToken) =>
-        Add(oneTimePassword) >> SaveChanges(cancellationToken);
-
     public IO<ImmutableArray<OneTimePassword>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
         IO.liftAsync(() => context.OneTimePasswords
                 .Where(otp => otp.UserId == id.Value)
@@ -41,6 +38,9 @@ internal sealed class OtpRepository(ApplicationContext context) : IOtpRepository
             .ExecuteDeleteAsync(cancellationToken)
             .ToUnit());
 
+    public IO<Unit> Add(OneTimePassword oneTimePassword, CancellationToken cancellationToken) =>
+        Add(oneTimePassword) >> SaveChanges(cancellationToken);
+    
     public IO<Unit> Remove(OneTimePassword oneTimePassword, CancellationToken cancellationToken) =>
         Remove(oneTimePassword) >> SaveChanges(cancellationToken);
 

@@ -10,9 +10,13 @@ internal sealed class ModuleProgramConfiguration : IEntityTypeConfiguration<Modu
     {
         builder.HasKey(x => x.Id);
 
-        builder.HasMany(x => x.Entries)
-            .WithOne(x => x.ModuleProgram)
-            .HasForeignKey(x => x.ModuleProgramId);
+        builder.OwnsOne(x => x.ManualQuantity, x =>
+        {
+            x.Property(p => p.Magnitude).HasColumnName("ManualProgram_Magnitude");
+            x.Property(p => p.Unit).HasColumnName("ManualProgram_Unit");
+        });
+        builder.OwnsMany(x => x.TimeOnlyEntries, x => x.ToJson());
+        builder.OwnsMany(x => x.WeekTimeOnlyEntries, x => x.ToJson());
         
         builder.HasOne(x => x.GrowHubModule)
             .WithOne(x => x.Program)

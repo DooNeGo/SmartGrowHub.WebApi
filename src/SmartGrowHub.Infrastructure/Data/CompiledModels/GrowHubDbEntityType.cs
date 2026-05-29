@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -23,7 +22,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
                 "SmartGrowHub.Infrastructure.Data.Model.GrowHubDb",
                 typeof(GrowHubDb),
                 baseEntityType,
-                propertyCount: 2,
+                propertyCount: 4,
                 navigationCount: 4,
                 foreignKeyCount: 1,
                 unnamedIndexCount: 1,
@@ -31,21 +30,31 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var id = runtimeEntityType.AddProperty(
                 "Id",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(GrowHubDb).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(GrowHubDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueConverter: new UlidConverter());
-            id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                afterSaveBehavior: PropertySaveBehavior.Throw);
             id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+            var model0 = runtimeEntityType.AddProperty(
+                "Model",
+                typeof(string),
+                propertyInfo: typeof(GrowHubDb).GetProperty("Model", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(GrowHubDb).GetField("<Model>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+            model0.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+            var name = runtimeEntityType.AddProperty(
+                "Name",
+                typeof(string),
+                propertyInfo: typeof(GrowHubDb).GetProperty("Name", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(GrowHubDb).GetField("<Name>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+            name.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var userId = runtimeEntityType.AddProperty(
                 "UserId",
-                typeof(Ulid),
+                typeof(string),
                 propertyInfo: typeof(GrowHubDb).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(GrowHubDb).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                valueConverter: new UlidConverter());
-            userId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                fieldInfo: typeof(GrowHubDb).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
             userId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var key = runtimeEntityType.AddKey(

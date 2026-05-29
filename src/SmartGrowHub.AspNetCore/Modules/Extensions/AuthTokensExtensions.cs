@@ -3,8 +3,8 @@ using SmartGrowHub.Shared.Tokens;
 
 namespace SmartGrowHub.AspNetCore.Modules.Extensions;
 
-public static class AuthTokensExtensions
+internal static class AuthTokensExtensions
 {
     public static AuthTokensDto ToDto(this AuthTokens tokens) =>
-        new(tokens.AccessToken.To(), tokens.RefreshToken.Ulid.ToString());
+        new(tokens.AccessToken.To(), tokens.RefreshToken.Value);
 }

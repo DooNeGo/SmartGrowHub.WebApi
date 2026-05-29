@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -20,105 +19,62 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
         public static RuntimeEntityType Create(RuntimeModel model, RuntimeEntityType baseEntityType = null)
         {
             var runtimeEntityType = model.AddEntityType(
-                "SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb",
-                typeof(TimedQuantityDb),
+                "SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb<SmartGrowHub.Infrastructure.Data.Model.WeekTimeOnlyDb>",
+                typeof(TimedQuantityDb<WeekTimeOnlyDb>),
                 baseEntityType,
-                propertyCount: 6,
-                navigationCount: 1,
+                propertyCount: 2,
+                navigationCount: 2,
                 foreignKeyCount: 1,
-                unnamedIndexCount: 1,
                 keyCount: 1);
 
-            var id = runtimeEntityType.AddProperty(
-                "Id",
-                typeof(Ulid),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+            var moduleProgramDbId = runtimeEntityType.AddProperty(
+                "ModuleProgramDbId",
+                typeof(string),
+                afterSaveBehavior: PropertySaveBehavior.Throw);
+            moduleProgramDbId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+            var __synthesizedOrdinal = runtimeEntityType.AddProperty(
+                "__synthesizedOrdinal",
+                typeof(int),
+                valueGenerated: ValueGenerated.OnAdd,
                 afterSaveBehavior: PropertySaveBehavior.Throw,
-                valueConverter: new UlidConverter());
-            id.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            id.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var endTime = runtimeEntityType.AddProperty(
-                "EndTime",
-                typeof(string),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("EndTime", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<EndTime>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            endTime.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var magnitude = runtimeEntityType.AddProperty(
-                "Magnitude",
-                typeof(float),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("Magnitude", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<Magnitude>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                sentinel: 0f);
-            magnitude.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var moduleProgramId = runtimeEntityType.AddProperty(
-                "ModuleProgramId",
-                typeof(Ulid),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("ModuleProgramId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<ModuleProgramId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                valueConverter: new UlidConverter());
-            moduleProgramId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            moduleProgramId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var startTime = runtimeEntityType.AddProperty(
-                "StartTime",
-                typeof(string),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("StartTime", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<StartTime>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            startTime.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
-
-            var unit = runtimeEntityType.AddProperty(
-                "Unit",
-                typeof(UnitDb),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("Unit", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<Unit>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            unit.SetSentinelFromProviderValue(0);
-            unit.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+                sentinel: 0);
+            __synthesizedOrdinal.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             var key = runtimeEntityType.AddKey(
-                new[] { id });
+                new[] { moduleProgramDbId, __synthesizedOrdinal });
             runtimeEntityType.SetPrimaryKey(key);
-
-            var index = runtimeEntityType.AddIndex(
-                new[] { moduleProgramId });
 
             return runtimeEntityType;
         }
 
         public static RuntimeForeignKey CreateForeignKey1(RuntimeEntityType declaringEntityType, RuntimeEntityType principalEntityType)
         {
-            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("ModuleProgramId") },
+            var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("ModuleProgramDbId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
                 deleteBehavior: DeleteBehavior.Cascade,
-                required: true);
+                required: true,
+                ownership: true);
 
-            var moduleProgram = declaringEntityType.AddNavigation("ModuleProgram",
-                runtimeForeignKey,
-                onDependent: true,
-                typeof(ModuleProgramDb),
-                propertyInfo: typeof(TimedQuantityDb).GetProperty("ModuleProgram", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(TimedQuantityDb).GetField("<ModuleProgram>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-
-            var entries = principalEntityType.AddNavigation("Entries",
+            var weekTimeOnlyEntries = principalEntityType.AddNavigation("WeekTimeOnlyEntries",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(List<TimedQuantityDb>),
-                propertyInfo: typeof(ModuleProgramDb).GetProperty("Entries", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(ModuleProgramDb).GetField("<Entries>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                typeof(List<TimedQuantityDb<WeekTimeOnlyDb>>),
+                propertyInfo: typeof(ModuleProgramDb).GetProperty("WeekTimeOnlyEntries", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(ModuleProgramDb).GetField("<WeekTimeOnlyEntries>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                eagerLoaded: true);
 
             return runtimeForeignKey;
         }
 
         public static void CreateAnnotations(RuntimeEntityType runtimeEntityType)
         {
+            runtimeEntityType.AddAnnotation("Relational:ContainerColumnName", "WeekTimeOnlyEntries");
             runtimeEntityType.AddAnnotation("Relational:FunctionName", null);
             runtimeEntityType.AddAnnotation("Relational:Schema", null);
             runtimeEntityType.AddAnnotation("Relational:SqlQuery", null);
-            runtimeEntityType.AddAnnotation("Relational:TableName", "TimedQuantityDb");
+            runtimeEntityType.AddAnnotation("Relational:TableName", "Programs");
             runtimeEntityType.AddAnnotation("Relational:ViewName", null);
             runtimeEntityType.AddAnnotation("Relational:ViewSchema", null);
 

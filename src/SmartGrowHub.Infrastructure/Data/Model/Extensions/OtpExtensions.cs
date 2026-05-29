@@ -15,8 +15,8 @@ internal static class OtpExtensions
     
     public static Fin<OneTimePassword> ToDomain(this OneTimePasswordDb oneTimePassword) =>
         from value in NonEmptyString.From(oneTimePassword.Value)
-        let id = new Id<OneTimePassword>(oneTimePassword.Id)
-        let userId = new Id<User>(oneTimePassword.UserId)
+        from id in Id<OneTimePassword>.From(oneTimePassword.Id)
+        from userId in Id<User>.From(oneTimePassword.UserId)
         let expires = oneTimePassword.Expires
         select new OneTimePassword(id, userId, value, expires);
 }

@@ -13,4 +13,9 @@ public sealed class GrowHubModule(
     public ModuleProgram Program { get; } = program;
 
     public ModuleType Type { get; } = type;
+    
+    public static GrowHubModule New(ModuleProgram program, ModuleType type) =>
+        new(new Id<GrowHubModule>(), program, type);
+    
+    public GrowHubModule SetProgram(ModuleProgram program) => new(Id, program, Type);
 }

@@ -16,13 +16,10 @@ internal static class UserExtensions
             .IfNone(string.Empty)
     };
 
-    public static Fin<User> TryToDomain(this UserDb user)
-    {
-        var id = new Id<User>(user.Id);
-        
-        Option<EmailAddress> email = EmailAddress.From(user.EmailAddress).ToOption();
-        Option<PhoneNumber> phoneNumber = PhoneNumber.From(user.PhoneNumber).ToOption();
-        
-        return User.Create(id, email, phoneNumber);
-    }
+    public static Fin<User> TryToDomain(this UserDb user) =>
+        from id in Id<User>.From(user.Id)
+        from u in User.Create(id,
+            EmailAddress.From(user.EmailAddress).ToOption(),
+            PhoneNumber.From(user.PhoneNumber).ToOption())
+        select u;
 }

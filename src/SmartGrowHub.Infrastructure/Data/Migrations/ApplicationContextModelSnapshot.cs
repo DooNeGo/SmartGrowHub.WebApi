@@ -24,12 +24,20 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("UserId")
+                    b.Property<string>("Model")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -40,12 +48,11 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("GrowHubId")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<string>("GrowHubId")
+                        .HasColumnType("text");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -59,12 +66,11 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("GrowHubModuleId")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<string>("GrowHubModuleId")
+                        .HasColumnType("text");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -74,20 +80,20 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.HasIndex("GrowHubModuleId")
                         .IsUnique();
 
-                    b.ToTable("ModuleProgramDb");
+                    b.ToTable("Programs");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<byte[]>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -103,16 +109,18 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.PlantDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("GrowHubId")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<string>("GrowHubId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("PlantedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -124,23 +132,16 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<byte[]>("GrowHubId")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<float>("Magnitude")
-                        .HasColumnType("real");
+                    b.Property<string>("GrowHubId")
+                        .HasColumnType("text");
 
                     b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Unit")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -150,40 +151,10 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.ToTable("SensorReading");
                 });
 
-            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb", b =>
-                {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("EndTime")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<float>("Magnitude")
-                        .HasColumnType("real");
-
-                    b.Property<byte[]>("ModuleProgramId")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("StartTime")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Unit")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModuleProgramId");
-
-                    b.ToTable("TimedQuantityDb");
-                });
-
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<string>("EmailAddress")
                         .HasMaxLength(200)
@@ -206,8 +177,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserSessionDb", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("bytea");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -216,13 +187,13 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<byte[]>("RefreshToken")
+                    b.Property<string>("RefreshToken")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("UserId")
+                    b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -250,8 +221,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("Modules")
                         .HasForeignKey("GrowHubId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("GrowHub");
                 });
@@ -261,10 +231,194 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", "GrowHubModule")
                         .WithOne("Program")
                         .HasForeignKey("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", "GrowHubModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "ManualQuantity", b1 =>
+                        {
+                            b1.Property<string>("ModuleProgramDbId")
+                                .HasColumnType("text");
+
+                            b1.Property<float>("Magnitude")
+                                .HasColumnType("real")
+                                .HasColumnName("ManualProgram_Magnitude");
+
+                            b1.Property<int>("Unit")
+                                .HasColumnType("integer")
+                                .HasColumnName("ManualProgram_Unit");
+
+                            b1.HasKey("ModuleProgramDbId");
+
+                            b1.ToTable("Programs");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ModuleProgramDbId");
+                        });
+
+                    b.OwnsMany("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb<SmartGrowHub.Infrastructure.Data.Model.WeekTimeOnlyDb>", "WeekTimeOnlyEntries", b1 =>
+                        {
+                            b1.Property<string>("ModuleProgramDbId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.HasKey("ModuleProgramDbId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Programs");
+
+                            b1
+                                .ToJson("WeekTimeOnlyEntries")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ModuleProgramDbId");
+
+                            b1.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.IntervalDb<SmartGrowHub.Infrastructure.Data.Model.WeekTimeOnlyDb>", "Interval", b2 =>
+                                {
+                                    b2.Property<string>("TimedQuantityDbModuleProgramDbId");
+
+                                    b2.Property<int>("TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.HasKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.ToTable("Programs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.WeekTimeOnlyDb", "End", b3 =>
+                                        {
+                                            b3.Property<string>("IntervalDbTimedQuantityDbModuleProgramDbId");
+
+                                            b3.Property<int>("IntervalDbTimedQuantityDb__synthesizedOrdinal");
+
+                                            b3.Property<int>("DayOfWeek");
+
+                                            b3.Property<TimeOnly>("TimeOnly");
+
+                                            b3.HasKey("IntervalDbTimedQuantityDbModuleProgramDbId", "IntervalDbTimedQuantityDb__synthesizedOrdinal");
+
+                                            b3.ToTable("Programs");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("IntervalDbTimedQuantityDbModuleProgramDbId", "IntervalDbTimedQuantityDb__synthesizedOrdinal");
+                                        });
+
+                                    b2.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.WeekTimeOnlyDb", "Start", b3 =>
+                                        {
+                                            b3.Property<string>("IntervalDbTimedQuantityDbModuleProgramDbId");
+
+                                            b3.Property<int>("IntervalDbTimedQuantityDb__synthesizedOrdinal");
+
+                                            b3.Property<int>("DayOfWeek");
+
+                                            b3.Property<TimeOnly>("TimeOnly");
+
+                                            b3.HasKey("IntervalDbTimedQuantityDbModuleProgramDbId", "IntervalDbTimedQuantityDb__synthesizedOrdinal");
+
+                                            b3.ToTable("Programs");
+
+                                            b3.WithOwner()
+                                                .HasForeignKey("IntervalDbTimedQuantityDbModuleProgramDbId", "IntervalDbTimedQuantityDb__synthesizedOrdinal");
+                                        });
+
+                                    b2.Navigation("End");
+
+                                    b2.Navigation("Start");
+                                });
+
+                            b1.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "Quantity", b2 =>
+                                {
+                                    b2.Property<string>("TimedQuantityDbModuleProgramDbId");
+
+                                    b2.Property<int>("TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.Property<float>("Magnitude");
+
+                                    b2.Property<int>("Unit");
+
+                                    b2.HasKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.ToTable("Programs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+                                });
+
+                            b1.Navigation("Interval")
+                                .IsRequired();
+
+                            b1.Navigation("Quantity")
+                                .IsRequired();
+                        });
+
+                    b.OwnsMany("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb<System.TimeOnly>", "TimeOnlyEntries", b1 =>
+                        {
+                            b1.Property<string>("ModuleProgramDbId");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd();
+
+                            b1.HasKey("ModuleProgramDbId", "__synthesizedOrdinal");
+
+                            b1.ToTable("Programs");
+
+                            b1
+                                .ToJson("TimeOnlyEntries")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ModuleProgramDbId");
+
+                            b1.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.IntervalDb<System.TimeOnly>", "Interval", b2 =>
+                                {
+                                    b2.Property<string>("TimedQuantityDbModuleProgramDbId");
+
+                                    b2.Property<int>("TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.Property<TimeOnly>("End");
+
+                                    b2.Property<TimeOnly>("Start");
+
+                                    b2.HasKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.ToTable("Programs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+                                });
+
+                            b1.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "Quantity", b2 =>
+                                {
+                                    b2.Property<string>("TimedQuantityDbModuleProgramDbId");
+
+                                    b2.Property<int>("TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.Property<float>("Magnitude");
+
+                                    b2.Property<int>("Unit");
+
+                                    b2.HasKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+
+                                    b2.ToTable("Programs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("TimedQuantityDbModuleProgramDbId", "TimedQuantityDb__synthesizedOrdinal");
+                                });
+
+                            b1.Navigation("Interval")
+                                .IsRequired();
+
+                            b1.Navigation("Quantity")
+                                .IsRequired();
+                        });
 
                     b.Navigation("GrowHubModule");
+
+                    b.Navigation("ManualQuantity");
+
+                    b.Navigation("TimeOnlyEntries");
+
+                    b.Navigation("WeekTimeOnlyEntries");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
@@ -282,9 +436,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithOne("Plant")
-                        .HasForeignKey("SmartGrowHub.Infrastructure.Data.Model.PlantDb", "GrowHubId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SmartGrowHub.Infrastructure.Data.Model.PlantDb", "GrowHubId");
 
                     b.Navigation("GrowHub");
                 });
@@ -293,22 +445,33 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("SensorReadings")
-                        .HasForeignKey("GrowHubId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GrowHubId");
+
+                    b.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "Quantity", b1 =>
+                        {
+                            b1.Property<string>("SensorReadingDbId")
+                                .HasColumnType("text");
+
+                            b1.Property<float>("Magnitude")
+                                .HasColumnType("real")
+                                .HasColumnName("Value");
+
+                            b1.Property<int>("Unit")
+                                .HasColumnType("integer")
+                                .HasColumnName("Unit");
+
+                            b1.HasKey("SensorReadingDbId");
+
+                            b1.ToTable("SensorReading");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SensorReadingDbId");
+                        });
 
                     b.Navigation("GrowHub");
-                });
 
-            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.TimedQuantityDb", b =>
-                {
-                    b.HasOne("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", "ModuleProgram")
-                        .WithMany("Entries")
-                        .HasForeignKey("ModuleProgramId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("Quantity")
                         .IsRequired();
-
-                    b.Navigation("ModuleProgram");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserSessionDb", b =>
@@ -335,11 +498,6 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     b.Navigation("Program")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ModuleProgramDb", b =>
-                {
-                    b.Navigation("Entries");
                 });
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>

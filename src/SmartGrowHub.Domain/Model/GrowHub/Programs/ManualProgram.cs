@@ -2,9 +2,15 @@
 
 namespace SmartGrowHub.Domain.Model.GrowHub.Programs;
 
-public sealed class ManualProgram(Id<ModuleProgram> id, Quantity quantity) : ModuleProgram(id)
+public sealed class ManualProgram : ModuleProgram
 {
-    public Quantity Quantity { get; } = quantity;
+    private ManualProgram(Id<ModuleProgram> id, Quantity quantity) : base(id) => Quantity = quantity;
+
+    public Quantity Quantity { get; }
     
-    public static ManualProgram New(Quantity quantity) => new(new Id<ModuleProgram>(), quantity);
+    public Fin<ManualProgram> ChangeQuantity(Quantity quantity) => New(quantity, Id);
+    
+    public static Fin<ManualProgram> New(Quantity quantity, Id<ModuleProgram>? id = null) =>
+        from _ in QuantityDefaults.ValidatePowerPercentRange(quantity)
+        select new ManualProgram(id ?? new Id<ModuleProgram>(), quantity);
 }
