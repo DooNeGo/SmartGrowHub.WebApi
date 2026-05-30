@@ -2,7 +2,7 @@
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 
-namespace SmartGrowHub.Domain.Model.GrowHub.Programs;
+namespace SmartGrowHub.Domain.Model.Programs;
 
 public sealed class DailyProgram : ModuleProgram
 {

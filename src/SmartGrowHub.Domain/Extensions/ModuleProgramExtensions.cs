@@ -1,4 +1,4 @@
-using SmartGrowHub.Domain.Model.GrowHub.Programs;
+using SmartGrowHub.Domain.Model.Programs;
 
 namespace SmartGrowHub.Domain.Extensions;
 

@@ -4,13 +4,9 @@ using System.Collections.Immutable;
 
 namespace SmartGrowHub.Application.Repositories;
 
-public interface IUserSessionRepository
+public interface IUserSessionRepository : IRepository<UserSession>
 {
-    IO<Unit> Add(UserSession userSession, CancellationToken cancellationToken);
-    IO<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken);
-    IO<Unit> Remove(UserSession session, CancellationToken cancellationToken);
     OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value, CancellationToken cancellationToken);
     OptionT<IO, UserSession> GetById(Id<UserSession> id, CancellationToken cancellationToken);
     IO<ImmutableArray<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
-    IO<Unit> Update(UserSession session, CancellationToken cancellationToken);
 }

@@ -4,7 +4,7 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [EntityTypeConfiguration(typeof(OneTimePasswordConfiguration))]
-internal sealed class OneTimePasswordDb
+internal sealed class OneTimePasswordDb : IContainsId
 {
     public required string Id { get; set; }
     

@@ -24,7 +24,7 @@ public abstract record ModuleProgramDto
         };
 }
 
-public sealed record DisabledProgramDto : ModuleProgramDto;
+public sealed record DisabledProgramDto(string Id) : ModuleProgramDto;
 
 public sealed record ManualProgramDto(string Id, QuantityDto Quantity) : ModuleProgramDto;
 

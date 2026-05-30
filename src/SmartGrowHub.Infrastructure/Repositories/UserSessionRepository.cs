@@ -32,7 +32,7 @@ internal sealed class UserSessionRepository(ApplicationContext context) : IUserS
                 .Map(iterable => iterable.ToImmutableArray())
                 .As().ToIO());
 
-    public IO<Unit> Remove(Id<UserSession> id, CancellationToken cancellationToken) =>
+    public IO<Unit> RemoveById(Id<UserSession> id, CancellationToken cancellationToken) =>
         IO.liftAsync(() => context.UserSessions
             .Where(session => session.Id == id)
             .ExecuteDeleteAsync(cancellationToken)

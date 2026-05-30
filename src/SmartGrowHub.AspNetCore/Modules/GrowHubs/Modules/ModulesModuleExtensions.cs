@@ -8,7 +8,7 @@ internal static class ModulesModuleExtensions
     {
         RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/modules/{moduleId}");
 
-        modulesGroup.MapPost("/set-program", SetModuleProgramEndpoint.SetModuleProgram);
+        modulesGroup.MapPost("/program", SetModuleProgramEndpoint.SetModuleProgram);
         
         return routeBuilder;
     }

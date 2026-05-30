@@ -1,8 +1,8 @@
-﻿using SmartGrowHub.Domain.Abstractions;
+﻿using System.Collections.Immutable;
+using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
-using System.Collections.Immutable;
 
-namespace SmartGrowHub.Domain.Model.GrowHub;
+namespace SmartGrowHub.Domain.Model;
 
 public sealed class GrowHub(
     Id<GrowHub> id,

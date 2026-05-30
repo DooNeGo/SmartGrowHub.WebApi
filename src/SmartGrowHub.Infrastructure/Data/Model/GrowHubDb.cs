@@ -4,13 +4,13 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [EntityTypeConfiguration(typeof(GrowHubConfiguration))]
-internal sealed class GrowHubDb
+internal sealed class GrowHubDb : IContainsId
 {
     public required string Id { get; set; }
     
-    public required string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
     
-    public required string Model { get; set; } = string.Empty;
+    public required string Model { get; set; }
     
     public PlantDb? Plant { get; set; }
 
@@ -18,7 +18,7 @@ internal sealed class GrowHubDb
     
     public UserDb? User { get; set; }
 
-    public List<SensorReadingDb> SensorReadings { get; set; } = [];
+    public ICollection<SensorReadingDb> SensorReadings { get; set; } = [];
     
-    public List<GrowHubModuleDb> Modules { get; set; } = [];
+    public ICollection<GrowHubModuleDb> Modules { get; set; } = [];
 }

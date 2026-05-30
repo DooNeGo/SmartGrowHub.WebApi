@@ -4,7 +4,7 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [EntityTypeConfiguration(typeof(UserSessionConfiguration))]
-internal sealed class UserSessionDb
+internal sealed class UserSessionDb : IContainsId
 {
     public required string Id { get; set; }
 

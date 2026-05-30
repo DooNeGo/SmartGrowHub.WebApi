@@ -4,7 +4,7 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [EntityTypeConfiguration(typeof(ModuleProgramConfiguration))]
-internal sealed class ModuleProgramDb
+internal sealed class ModuleProgramDb : IContainsId
 {
     public required string Id { get; set; }
     

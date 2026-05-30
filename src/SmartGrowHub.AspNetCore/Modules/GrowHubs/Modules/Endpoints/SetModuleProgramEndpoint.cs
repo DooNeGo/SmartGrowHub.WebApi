@@ -3,7 +3,7 @@ using SmartGrowHub.Application.UseCases.GrowHubs;
 using SmartGrowHub.AspNetCore.Modules.Extensions;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
-using SmartGrowHub.Domain.Model.GrowHub;
+using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Shared.GrowHubs.Model;
 using SmartGrowHub.Shared.GrowHubs.Requests;
 using SmartGrowHub.Shared.Results;

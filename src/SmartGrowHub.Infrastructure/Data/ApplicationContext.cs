@@ -6,9 +6,7 @@ namespace SmartGrowHub.Infrastructure.Data;
 
 internal sealed class ApplicationContext : DbContext
 {
-    public ApplicationContext(DbContextOptions options) : base(options)
-    {
-    }
+    public ApplicationContext(DbContextOptions options) : base(options) { }
 
     public DbSet<UserDb> Users => Set<UserDb>();
 

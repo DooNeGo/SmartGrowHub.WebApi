@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Model.GrowHub.Programs;
+using SmartGrowHub.Domain.Model.Programs;
 
 namespace SmartGrowHub.Infrastructure.Data.Model.Extensions;
 

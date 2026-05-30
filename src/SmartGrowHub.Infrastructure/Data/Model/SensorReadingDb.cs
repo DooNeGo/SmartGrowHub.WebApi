@@ -4,7 +4,7 @@ using SmartGrowHub.Infrastructure.Data.Configurations;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [EntityTypeConfiguration(typeof(SensorReadingConfiguration))]
-internal sealed class SensorReadingDb
+internal sealed class SensorReadingDb : IContainsId
 {
     public required string Id { get; set; }
 

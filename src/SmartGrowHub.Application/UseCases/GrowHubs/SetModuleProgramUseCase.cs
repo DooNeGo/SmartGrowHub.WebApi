@@ -2,8 +2,8 @@ using System.Collections.Immutable;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
-using SmartGrowHub.Domain.Model.GrowHub;
-using SmartGrowHub.Domain.Model.GrowHub.Programs;
+using SmartGrowHub.Domain.Model;
+using SmartGrowHub.Domain.Model.Programs;
 
 namespace SmartGrowHub.Application.UseCases.GrowHubs;
 
@@ -51,11 +51,13 @@ public sealed class SetModuleProgramUseCase
         from module in _modulesRepository
             .GetById(request.ModuleId, cancellationToken)
             .ToIOOrFail(Error.New("Module id not found"))
-        from program in request.Match(
-            mapDisabled: _ => Fin.Succ<ModuleProgram>(DisabledProgram.New()),
-            mapManual: manual => ManualProgram.New(manual.Quantity).Cast<ManualProgram, ModuleProgram>(),
-            mapDaily: daily => DailyProgram.New(daily.Entries).Cast<DailyProgram, ModuleProgram>(),
-            mapWeekly: weekly => WeeklyProgram.New(weekly.Entries).Cast<WeeklyProgram, ModuleProgram>())
+        let programId = module.Program.Id
+        from program in request
+            .Match(
+                mapDisabled: _ => Fin.Succ<ModuleProgram>(new DisabledProgram(programId)),
+                mapManual: manual => ManualProgram.New(manual.Quantity, programId).Cast<ManualProgram, ModuleProgram>(),
+                mapDaily: daily => DailyProgram.New(daily.Entries, programId).Cast<DailyProgram, ModuleProgram>(),
+                mapWeekly: weekly => WeeklyProgram.New(weekly.Entries, programId).Cast<WeeklyProgram, ModuleProgram>())
             .ToIO()
         let updatedModule = module.SetProgram(program)
         from _ in _modulesRepository.Update(updatedModule, cancellationToken)

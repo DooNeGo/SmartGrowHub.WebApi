@@ -1,7 +1,7 @@
 ﻿using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
 
-namespace SmartGrowHub.Domain.Model.GrowHub.Programs;
+namespace SmartGrowHub.Domain.Model.Programs;
 
 public abstract class ModuleProgram(Id<ModuleProgram> id) : Entity<ModuleProgram>(id)
 {

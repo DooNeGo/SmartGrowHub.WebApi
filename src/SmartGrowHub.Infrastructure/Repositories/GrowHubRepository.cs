@@ -3,48 +3,32 @@ using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
-using SmartGrowHub.Domain.Model.GrowHub;
 using SmartGrowHub.Infrastructure.Data;
+using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
 
 namespace SmartGrowHub.Infrastructure.Repositories;
 
-internal sealed class GrowHubRepository(ApplicationContext context) : IGrowHubRepository
+internal sealed class GrowHubRepository : Repository<GrowHub, GrowHubDb>, IGrowHubRepository
 {
+    private readonly ApplicationContext _context;
+
+    public GrowHubRepository(ApplicationContext context) : base(context) => _context = context;
+
     public IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
-        from list in IO.liftAsync(() => context.GrowHubs
-            .Where(x => x.UserId == id.Value)
-            .Include(x => x.Modules)
-            .ThenInclude(x => x.Program)
-            .ToListAsync(cancellationToken))
+        from list in IO.liftAsync(() =>
+            AddIncludes(_context.GrowHubs.Where(x => x.UserId == id.Value))
+                .ToListAsync(cancellationToken))
         from domains in list
             .AsIterable()
-            .Traverse(x => x.ToDomain())
+            .Traverse(ToDomain)
             .As().ToIO()
         select domains;
-    
-    public IO<Unit> Add(GrowHub growHub, CancellationToken cancellationToken) =>
-        Add(growHub) >> SaveChanges(cancellationToken);
-    
-    public IO<Unit> Remove(GrowHub growHub, CancellationToken cancellationToken) =>
-        Remove(growHub) >> SaveChanges(cancellationToken);
 
-    public IO<Unit> Update(GrowHub growHub, CancellationToken cancellationToken) =>
-        Update(growHub) >> SaveChanges(cancellationToken);
+    protected override GrowHubDb ToDb(GrowHub domain) => domain.ToDb();
 
-    private IO<Unit> Add(GrowHub growHub) =>
-        IO.lift(() => context.GrowHubs.Add(growHub.ToDb()))
-            .ToUnit();
+    protected override Fin<GrowHub> ToDomain(GrowHubDb db) => db.ToDomain();
 
-    private IO<Unit> Remove(GrowHub growHub) =>
-        IO.lift(() => context.GrowHubs.Remove(growHub.ToDb()))
-            .ToUnit();
-
-    private IO<Unit> Update(GrowHub growHub) =>
-        IO.lift(() => context.GrowHubs.Update(growHub.ToDb()))
-            .ToUnit();
-
-    private IO<Unit> SaveChanges(CancellationToken cancellationToken) =>
-        IO.liftAsync(() => context.SaveChangesAsync(cancellationToken))
-            .ToUnit();
+    protected override IQueryable<GrowHubDb> AddIncludes(IQueryable<GrowHubDb> query) =>
+        query.Include(x => x.Modules).ThenInclude(x => x.Program);
 }

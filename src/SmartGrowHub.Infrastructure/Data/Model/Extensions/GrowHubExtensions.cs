@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using LanguageExt.UnsafeValueAccess;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
-using SmartGrowHub.Domain.Model.GrowHub;
 
 namespace SmartGrowHub.Infrastructure.Data.Model.Extensions;
 
@@ -34,14 +33,16 @@ internal static class GrowHubModuleExtensions
     {
         Id = module.Id,
         Type = module.Type.ToDb(),
-        Program = module.Program.ToDb()
+        Program = module.Program.ToDb(),
+        GrowHubId = module.GrowHubId
     };
     
     public static Fin<GrowHubModule> ToDomain(this GrowHubModuleDb module) =>
         from id in Id<GrowHubModule>.From(module.Id)
+        from growHubId in Id<GrowHub>.From(module.GrowHubId)
         from program in module.Program.ToDomain()
         let type = module.Type.ToDomain()
-        select new GrowHubModule(id, program, type);
+        select new GrowHubModule(id, growHubId, program, type);
 }
 
 internal static class PlantExtensions
@@ -49,14 +50,16 @@ internal static class PlantExtensions
     public static PlantDb ToDb(this Plant plant) => new()
     {
         Id = plant.Id,
+        GrowHubId = plant.GrowHubId,
         Name = plant.Name,
         PlantedAt = plant.PlantedAt
     };
 
     public static Fin<Plant> ToDomain(this PlantDb plant) =>
         from id in Id<Plant>.From(plant.Id)
+        from growHubId in Id<GrowHub>.From(plant.GrowHubId)
         from name in NonEmptyString.From(plant.Name)
-        select new Plant(id, name, plant.PlantedAt);
+        select new Plant(id, growHubId, name, plant.PlantedAt);
 }
 
 internal static class ModuleTypeExtensions

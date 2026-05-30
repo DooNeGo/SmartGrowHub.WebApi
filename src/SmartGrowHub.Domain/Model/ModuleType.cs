@@ -1,4 +1,4 @@
-namespace SmartGrowHub.Domain.Model.GrowHub;
+namespace SmartGrowHub.Domain.Model;
 
 public enum ModuleType
 {

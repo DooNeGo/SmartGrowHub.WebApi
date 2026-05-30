@@ -1,6 +1,6 @@
 using SmartGrowHub.Domain.Common;
 
-namespace SmartGrowHub.Domain.Model.GrowHub.Programs;
+namespace SmartGrowHub.Domain.Model.Programs;
 
 public sealed class DisabledProgram(Id<ModuleProgram> id) : ModuleProgram(id)
 {
