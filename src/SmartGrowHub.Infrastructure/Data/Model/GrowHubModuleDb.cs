@@ -10,7 +10,7 @@ internal sealed class GrowHubModuleDb : IContainsId
     
     public required ModuleTypeDb Type { get; set; }
     
-    public required ModuleProgramDb Program { get; set; }
+    public required ScheduleDb Schedule { get; set; }
     
     public required string GrowHubId { get; set; }
     

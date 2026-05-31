@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
 [Owned]
-internal sealed class IntervalDb<T>
+internal sealed class IntervalDb
 {
-    public required T Start { get; set; }
+    public required string Start { get; set; }
     
-    public required T End { get; set; }
+    public required string End { get; set; }
 }

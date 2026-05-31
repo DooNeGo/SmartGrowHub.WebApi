@@ -16,7 +16,9 @@ internal sealed class ApplicationContext : DbContext
 
     public DbSet<GrowHubModuleDb> Modules => Set<GrowHubModuleDb>();
     
-    public DbSet<ModuleProgramDb> Programs => Set<ModuleProgramDb>();
+    public DbSet<ScheduleDb> Schedules => Set<ScheduleDb>();
+    
+    public DbSet<ScheduleUnitDb> SchedulesUnits => Set<ScheduleUnitDb>();
 
     public DbSet<SensorReadingDb> SensorReading => Set<SensorReadingDb>();
 
@@ -37,7 +39,7 @@ internal sealed class ApplicationContext : DbContext
         
         modelBuilder.Entity<GrowHubDb>();
         modelBuilder.Entity<GrowHubModuleDb>();
-        modelBuilder.Entity<ModuleProgramDb>();
+        modelBuilder.Entity<ScheduleDb>();
         modelBuilder.Entity<OneTimePasswordDb>();
         modelBuilder.Entity<PlantDb>();
         modelBuilder.Entity<SensorReadingDb>();

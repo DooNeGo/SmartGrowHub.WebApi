@@ -1,9 +1,9 @@
 namespace SmartGrowHub.Shared.GrowHubs.Model;
 
-public enum ProgramTypeDto
+public enum ScheduleTypeDto
 {
     Disabled,
-    Manual,
+    Enabled,
     Daily,
     Weekly,
 }

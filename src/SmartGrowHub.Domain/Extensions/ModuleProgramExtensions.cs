@@ -4,9 +4,9 @@ namespace SmartGrowHub.Domain.Extensions;
 
 public static class ModuleProgramExtensions
 {
-    extension(ModuleProgram program)
+    extension(ModuleSchedule schedule)
     {
-        public ProgramType Type => program.Match(
+        public ProgramType Type => schedule.Match(
             _ => ProgramType.Disabled,
             _ => ProgramType.Manual,
             _ => ProgramType.Daily,

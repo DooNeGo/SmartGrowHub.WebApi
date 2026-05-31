@@ -5,7 +5,7 @@ namespace SmartGrowHub.Domain.Extensions;
 
 public static class TimedQuantityExtensions
 {
-    extension<TTime>(IEnumerable<TimedQuantity<TTime>> timedQuantities)
+    extension<TTime>(IEnumerable<ScheduleUnit<TTime>> timedQuantities)
         where TTime : IComparisonOperators<TTime, TTime, bool>, ISubtractionOperators<TTime, TTime, TimeSpan>
     {
         public TimeInterval<TTime> CalculateTimeInterval() =>

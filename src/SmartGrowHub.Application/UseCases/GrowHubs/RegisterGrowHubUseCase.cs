@@ -28,6 +28,9 @@ public sealed class RegisterGrowHubUseCase
         return _repository.Add(growHub, cancellationToken);
     }
 
-    private static GrowHubModule CreateDefaultModule(Id<GrowHub> id, ModuleType type) =>
-        GrowHubModule.New(id, DisabledProgram.New(), type);
+    private static GrowHubModule CreateDefaultModule(Id<GrowHub> growHubId, ModuleType type)
+    {
+        var id = new Id<GrowHubModule>();
+        return new GrowHubModule(id, growHubId, DisabledSchedule.New(id), type);
+    }
 }

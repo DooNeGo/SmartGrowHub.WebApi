@@ -1,9 +1,9 @@
 namespace SmartGrowHub.Infrastructure.Data.Model;
 
-internal enum ProgramTypeDb
+internal enum ScheduleTypeDb
 {
     Disabled,
-    Manual,
+    Enabled,
     Daily,
     Weekly
 }

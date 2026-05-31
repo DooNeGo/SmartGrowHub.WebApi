@@ -14,9 +14,9 @@ internal sealed class GrowHubModuleConfiguration : IEntityTypeConfiguration<Grow
             .WithMany(x => x.Modules)
             .HasForeignKey(x => x.GrowHubId);
         
-        builder.HasOne(x => x.Program)
+        builder.HasOne(x => x.Schedule)
             .WithOne(x => x.GrowHubModule)
-            .HasForeignKey<ModuleProgramDb>(x => x.GrowHubModuleId)
+            .HasForeignKey<ScheduleDb>(x => x.GrowHubModuleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

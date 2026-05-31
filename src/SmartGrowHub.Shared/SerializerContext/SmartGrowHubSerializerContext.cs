@@ -12,7 +12,7 @@ namespace SmartGrowHub.Shared.SerializerContext;
 [JsonSerializable(typeof(LogInByPhoneRequest))]
 [JsonSerializable(typeof(RefreshTokensRequest))]
 [JsonSerializable(typeof(CheckOtpRequest))]
-[JsonSerializable(typeof(SetModuleProgramRequestDto))]
+[JsonSerializable(typeof(SetScheduleRequestDto))]
 [JsonSerializable(typeof(Result))]
 [JsonSerializable(typeof(Result<IEnumerable<AuthTokensDto>>))]
 [JsonSerializable(typeof(Result<IEnumerable<UserDto>>))]

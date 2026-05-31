@@ -33,14 +33,14 @@ internal static class GrowHubModuleExtensions
     {
         Id = module.Id,
         Type = module.Type.ToDb(),
-        Program = module.Program.ToDb(),
+        Schedule = module.Schedule.ToDb(),
         GrowHubId = module.GrowHubId
     };
     
     public static Fin<GrowHubModule> ToDomain(this GrowHubModuleDb module) =>
         from id in Id<GrowHubModule>.From(module.Id)
         from growHubId in Id<GrowHub>.From(module.GrowHubId)
-        from program in module.Program.ToDomain()
+        from program in module.Schedule.ToDomain()
         let type = module.Type.ToDomain()
         select new GrowHubModule(id, growHubId, program, type);
 }

@@ -3,7 +3,7 @@ using SmartGrowHub.Application.UseCases.GrowHubs;
 using SmartGrowHub.AspNetCore.Modules.Extensions;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
-using SmartGrowHub.Domain.Model;
+using SmartGrowHub.Domain.Model.Programs;
 using SmartGrowHub.Shared.GrowHubs.Model;
 using SmartGrowHub.Shared.GrowHubs.Requests;
 using SmartGrowHub.Shared.Results;
@@ -14,10 +14,10 @@ namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules.Endpoints;
 
 public sealed class SetModuleProgramEndpoint
 {
-    public static ValueTask<IResult> SetModuleProgram(string moduleId, SetModuleProgramRequestDto requestDto,
+    public static ValueTask<IResult> SetSchedule(string scheduleId, SetScheduleRequestDto requestDto,
         SetModuleProgramUseCase useCase, ILogger<SetModuleProgramEndpoint> logger,
         CancellationToken cancellationToken) => (
-            from id in Domain.Common.Id<GrowHubModule>.From(moduleId).ToIO()
+            from id in Domain.Common.Id<ModuleSchedule>.From(scheduleId).ToIO()
             from request in ToDomain(id, requestDto).ToIO()
             from _ in useCase.SetModuleProgram(request, cancellationToken)
             select _)
@@ -26,30 +26,25 @@ public sealed class SetModuleProgramEndpoint
             _ => Ok(Result.Success()),
             error => HandleError(logger, error)));
 
-    private static Fin<SetModuleProgramRequest> ToDomain(Id<GrowHubModule> id, SetModuleProgramRequestDto requestDto) =>
+    private static Fin<SetScheduleRequest> ToDomain(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.Type switch
         {
-            ProgramTypeDto.Disabled => Fin.Succ<SetModuleProgramRequest>(new SetDisableProgramRequest(id)),
-            ProgramTypeDto.Manual => ToManual(id, requestDto).Cast<SetManualProgramRequest, SetModuleProgramRequest>(),
-            ProgramTypeDto.Daily => ToDaily(id, requestDto).Cast<SetDailyProgramRequest, SetModuleProgramRequest>(),
-            ProgramTypeDto.Weekly => ToWeekly(id, requestDto).Cast<SetWeeklyProgramRequest, SetModuleProgramRequest>(),
+            ScheduleTypeDto.Disabled => Fin.Succ<SetScheduleRequest>(new SetDisableScheduleRequest(id)),
+            ScheduleTypeDto.Enabled => Fin.Succ<SetScheduleRequest>(new SetEnabledScheduleRequest(id)),
+            ScheduleTypeDto.Daily => ToDaily(id, requestDto).Cast<SetDailyScheduleRequest, SetScheduleRequest>(),
+            ScheduleTypeDto.Weekly => ToWeekly(id, requestDto).Cast<SetWeeklyScheduleRequest, SetScheduleRequest>(),
             _ => throw new InvalidOperationException()
         };
 
-    private static Fin<SetManualProgramRequest> ToManual(Id<GrowHubModule> id, SetModuleProgramRequestDto requestDto) =>
-        requestDto.ManualEntry is null
-            ? Error.New("Manual entry was null")
-            : Fin.Succ(new SetManualProgramRequest(id, requestDto.ManualEntry.ToDomain()));
-
-    private static Fin<SetDailyProgramRequest> ToDaily(Id<GrowHubModule> id, SetModuleProgramRequestDto requestDto) =>
+    private static Fin<SetDailyScheduleRequest> ToDaily(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.DailyEntries is null
             ? Error.New("Daily entries was null")
-            : Fin.Succ(new SetDailyProgramRequest(id,
+            : Fin.Succ(new SetDailyScheduleRequest(id,
                 requestDto.DailyEntries.Select(x => x.ToDomain()).ToImmutableList()));
 
-    private static Fin<SetWeeklyProgramRequest> ToWeekly(Id<GrowHubModule> id, SetModuleProgramRequestDto requestDto) =>
+    private static Fin<SetWeeklyScheduleRequest> ToWeekly(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.WeeklyEntries is null
             ? Error.New("Weekly entries was null")
-            : Fin.Succ(new SetWeeklyProgramRequest(id,
+            : Fin.Succ(new SetWeeklyScheduleRequest(id,
                 requestDto.WeeklyEntries.Select(x => x.ToDomain()).ToImmutableList()));
 }

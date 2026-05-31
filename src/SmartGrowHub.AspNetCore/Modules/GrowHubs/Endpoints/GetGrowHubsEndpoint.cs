@@ -32,7 +32,7 @@ internal sealed class GetGrowHubsEndpoint
     private static PlantDto ToDto(Plant plant) => new(plant.Id, plant.Name, plant.PlantedAt);
 
     private static GrowHubModuleDto ToDto(GrowHubModule module) =>
-        new(module.Id, ToDto(module.Program), ToDto(module.Type));
+        new(module.Id, ToDto(module.Schedule), ToDto(module.Type));
     
     private static ModuleTypeDto ToDto(ModuleType type) => type switch
     {
@@ -47,16 +47,16 @@ internal sealed class GetGrowHubsEndpoint
         _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
     };
 
-    private static ModuleProgramDto ToDto(ModuleProgram program) =>
-        program.Match<ModuleProgramDto>(ToDto, ToDto, ToDto, ToDto);
+    private static ScheduleDto ToDto(ModuleSchedule schedule) =>
+        schedule.Match<ScheduleDto>(ToDto, ToDto, ToDto, ToDto);
     
-    private static DisabledProgramDto ToDto(DisabledProgram program) => new(program.Id);
+    private static DisabledScheduleDto ToDto(DisabledSchedule schedule) => new(schedule.Id);
+    
+    private static EnabledScheduleDto ToDto(EnabledSchedule schedule) => new(schedule.Id);
 
-    private static WeeklyProgramDto ToDto(WeeklyProgram program) =>
-        new(program.Id, program.Entries.Select(x => x.ToDto()).ToList());
+    private static WeeklyScheduleDto ToDto(WeeklySchedule schedule) =>
+        new(schedule.Id, schedule.Entries.Select(x => x.ToDto()).ToList());
     
-    private static DailyProgramDto ToDto(DailyProgram program) =>
-        new(program.Id, program.Entries.Select(x => x.ToDto()).ToList());
-    
-    private static ManualProgramDto ToDto(ManualProgram program) => new(program.Id, program.Quantity.ToDto());
+    private static DailyScheduleDto ToDto(DailySchedule schedule) =>
+        new(schedule.Id, schedule.Entries.Select(x => x.ToDto()).ToList());
 }

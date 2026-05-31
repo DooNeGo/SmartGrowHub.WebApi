@@ -26,7 +26,7 @@ internal sealed class Program
             
             serializerOptions.TypeInfoResolverChain.Add(SmartGrowHubSerializerContext.Default);
             serializerOptions.Converters.Add(new JsonStringEnumConverter<ModuleTypeDto>());
-            serializerOptions.Converters.Add(new JsonStringEnumConverter<ProgramTypeDto>());
+            serializerOptions.Converters.Add(new JsonStringEnumConverter<ScheduleTypeDto>());
         });
         
         AccessTokenConfiguration configuration = builder.Configuration

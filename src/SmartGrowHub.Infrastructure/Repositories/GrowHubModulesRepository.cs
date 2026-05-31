@@ -16,5 +16,5 @@ internal sealed class GrowHubModulesRepository : Repository<GrowHubModule, GrowH
     protected override Fin<GrowHubModule> ToDomain(GrowHubModuleDb db) => db.ToDomain();
     
     protected override IQueryable<GrowHubModuleDb> AddIncludes(IQueryable<GrowHubModuleDb> query) =>
-        query.Include(x => x.Program);
+        query.Include(x => x.Schedule);
 }

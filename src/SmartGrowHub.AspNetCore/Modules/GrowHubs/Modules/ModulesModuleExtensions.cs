@@ -6,9 +6,9 @@ internal static class ModulesModuleExtensions
 {
     public static IEndpointRouteBuilder AddModulesEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
-        RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/modules/{moduleId}");
+        RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/modules");
 
-        modulesGroup.MapPost("/program", SetModuleProgramEndpoint.SetModuleProgram);
+        modulesGroup.MapPost("/schedules/{scheduleId}", SetModuleProgramEndpoint.SetSchedule);
         
         return routeBuilder;
     }

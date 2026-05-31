@@ -50,7 +50,8 @@ public static class DependencyInjection
                 .AddTransient<IUserSessionRepository, UserSessionRepository>()
                 .AddTransient<IOtpRepository, OtpRepository>()
                 .AddTransient<IGrowHubRepository, GrowHubRepository>()
-                .AddTransient<IGrowHubModulesRepository, GrowHubModulesRepository>();
+                .AddTransient<IGrowHubModulesRepository, GrowHubModulesRepository>()
+                .AddTransient<ISchedulesRepository, SchedulesRepository>();
 
         private IServiceCollection AddMqttClient() =>
             services
