@@ -30,6 +30,6 @@ public sealed class CheckOtpUseCase(
     public IO<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>
         from tokens in tokensIssuer.CreateTokens(user)
         let session = UserSession.New(user.Id, tokens)
-        from _ in sessionRepository.Add(session, cancellationToken)
+        from _ in sessionRepository.AddAndSave(session, cancellationToken)
         select session;
 }

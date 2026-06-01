@@ -31,11 +31,12 @@ public static class DependencyInjection
                 .AddSingleton<IOtpIssuer, OtpIssuer>()
                 .AddTransient<IEmailService, EmailService>()
                 .AddSingleton<IFileService, FileService>()
-                .AddTransient<ISmtpClient, SmtpClient>();
+                .AddTransient<ISmtpClient, SmtpClient>()
+                .AddTransient<IMessageService, MessageService>();
 
         private IServiceCollection AddDbContext(IConfiguration configuration) =>
             services.AddDbContextPool<ApplicationContext>(options => options
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
                 //.UseModel(ApplicationContextModel.Instance)
                 .EnableDetailedErrors()
                 .EnableSensitiveDataLogging()
@@ -51,7 +52,8 @@ public static class DependencyInjection
                 .AddTransient<IOtpRepository, OtpRepository>()
                 .AddTransient<IGrowHubRepository, GrowHubRepository>()
                 .AddTransient<IGrowHubModulesRepository, GrowHubModulesRepository>()
-                .AddTransient<ISchedulesRepository, SchedulesRepository>();
+                .AddTransient<ISchedulesRepository, SchedulesRepository>()
+                .AddTransient<ISensorMeasurementRepository, SensorMeasurementRepository>();
 
         private IServiceCollection AddMqttClient() =>
             services

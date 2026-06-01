@@ -25,7 +25,7 @@ public sealed class RegisterGrowHubUseCase
         var growHub = new GrowHub(id, userId, model, model,
             modulesTypes.Select(type => CreateDefaultModule(id, type)).ToImmutableList(), Option.None);
 
-        return _repository.Add(growHub, cancellationToken);
+        return _repository.AddAndSave(growHub, cancellationToken);
     }
 
     private static GrowHubModule CreateDefaultModule(Id<GrowHub> growHubId, ModuleType type)

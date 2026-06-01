@@ -22,7 +22,7 @@ public sealed class SendOtpToEmailUseCase(
         from body in emailTemplateService.GetOtpEmailBody(
             oneTimePassword.Value, otpIssuer.OtpLifetime, cancellationToken)
         from _ in emailService.Send(emailAddress, subject, body, isHtmlBody: true, cancellationToken)
-        from __ in otpRepository.Add(oneTimePassword, cancellationToken)
+        from __ in otpRepository.AddAndSave(oneTimePassword, cancellationToken)
         select unit;
 
     private IO<User> GetOrCreateUserByEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
@@ -30,6 +30,6 @@ public sealed class SendOtpToEmailUseCase(
             .GetByEmailAddress(emailAddress, cancellationToken)
             .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromEmailAddress(emailAddress))
-                from _1 in userRepository.Add(user, cancellationToken)
+                from _1 in userRepository.AddAndSave(user, cancellationToken)
                 select user);
 }

@@ -22,7 +22,7 @@ public sealed class RefreshTokensUseCase(
         from newTokens in tokensIssuer.CreateTokens(user)
         from utcNow in timeProvider.UtcNow
         from updatedSession in session.UpdateTokens(newTokens, utcNow).ToIO()
-            .TapOnFail(_ => sessionRepository.RemoveById(session.Id, cancellationToken))
-        from _ in sessionRepository.Update(updatedSession, cancellationToken)
+            .TapOnFail(_ => sessionRepository.RemoveByIdAndSave(session.Id, cancellationToken))
+        from _ in sessionRepository.UpdateAndSave(updatedSession, cancellationToken)
         select newTokens;
 }

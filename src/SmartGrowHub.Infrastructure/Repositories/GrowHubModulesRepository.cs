@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
+using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
+using SmartGrowHub.Domain.Model.Programs;
 using SmartGrowHub.Infrastructure.Data;
 using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
@@ -17,4 +19,7 @@ internal sealed class GrowHubModulesRepository : Repository<GrowHubModule, GrowH
     
     protected override IQueryable<GrowHubModuleDb> AddIncludes(IQueryable<GrowHubModuleDb> query) =>
         query.Include(x => x.Schedule);
+
+    public OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id, CancellationToken cancellationToken) =>
+        GetByPredicate(module => module.Schedule.Id == id, cancellationToken);
 }

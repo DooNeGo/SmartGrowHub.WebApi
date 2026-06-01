@@ -17,7 +17,7 @@ public sealed class SendOtpToPhoneUseCase(
         from oneTimePassword in otpIssuer.Create(user.Id)
         from payload in NonEmptyString.From($"Your one time password: {oneTimePassword.Value}").ToIO()
         from _ in smsService.Send(phoneNumber, payload, cancellationToken)
-        from __ in otpRepository.Add(oneTimePassword, cancellationToken)
+        from __ in otpRepository.AddAndSave(oneTimePassword, cancellationToken)
         select unit;
 
     private IO<User> GetOrCreateUserByPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
@@ -25,6 +25,6 @@ public sealed class SendOtpToPhoneUseCase(
             .GetByPhoneNumber(phoneNumber, cancellationToken)
             .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromPhoneNumber(phoneNumber))
-                from _1 in userRepository.Add(user, cancellationToken)
+                from _1 in userRepository.AddAndSave(user, cancellationToken)
                 select user);
 }

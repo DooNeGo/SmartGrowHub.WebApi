@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Numerics;
 using SmartGrowHub.Application.Repositories;
+using SmartGrowHub.Application.Services;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
@@ -47,17 +48,27 @@ public sealed record SetWeeklyScheduleRequest(
     ImmutableList<ScheduleUnitTemplate<WeekTimeOnly>> Entries)
     : SetScheduleRequest(ScheduleId);
 
-public sealed class SetModuleProgramUseCase
+public sealed class SetScheduleUseCase
 {
     private readonly ISchedulesRepository _schedulesRepository;
+    private readonly IGrowHubModulesRepository _modulesRepository;
+    private readonly IMessageService _messageService;
 
-    public SetModuleProgramUseCase(ISchedulesRepository schedulesRepository) =>
+    public SetScheduleUseCase(
+        ISchedulesRepository schedulesRepository,
+        IGrowHubModulesRepository modulesRepository,
+        IMessageService messageService)
+    {
         _schedulesRepository = schedulesRepository;
+        _modulesRepository = modulesRepository;
+        _messageService = messageService;
+    }
 
     public IO<Unit> SetModuleProgram(SetScheduleRequest request, CancellationToken cancellationToken) =>
-        from oldSchedule in _schedulesRepository
-            .GetById(request.ScheduleId, cancellationToken)
+        from module in _modulesRepository
+            .GetByScheduleId(request.ScheduleId, cancellationToken)
             .ToIOOrFail(Error.New("Schedule id not found"))
+        let oldSchedule = module.Schedule
         let scheduleId = oldSchedule.Id
         let moduleId = oldSchedule.ModuleId
         from newSchedule in request
@@ -67,8 +78,9 @@ public sealed class SetModuleProgramUseCase
                 mapDaily: daily => ToDailySchedule(daily, moduleId).Cast<DailySchedule, ModuleSchedule>(),
                 mapWeekly: weekly => ToWeeklySchedule(weekly, moduleId).Cast<WeeklySchedule, ModuleSchedule>())
             .As().ToIO()
-        from _ in _schedulesRepository.Update(newSchedule, cancellationToken)
-        select _;
+        from _1 in _schedulesRepository.UpdateAndSave(newSchedule, cancellationToken)
+        from _2 in _messageService.ChangeSchedule(module, newSchedule, cancellationToken)
+        select _2;
     
     private static Fin<DailySchedule> ToDailySchedule(SetDailyScheduleRequest request, Id<GrowHubModule> moduleId) =>
         from units in request.Entries.ToScheduleUnits(request.ScheduleId)

@@ -22,12 +22,12 @@ internal static class ScheduleExtensions
             _ => scheduleDb.Type = ScheduleTypeDb.Enabled,
             daily =>
             {
-                scheduleDb.Units = daily.Entries.Select(x => x.ToDb()).ToList();
+                scheduleDb.Units = daily.Entries.Select(x => x.ToDb()).ToArray();
                 return scheduleDb.Type = ScheduleTypeDb.Daily;
             },
             weekly =>
             {
-                scheduleDb.Units = weekly.Entries.Select(x => x.ToDb()).ToList();
+                scheduleDb.Units = weekly.Entries.Select(x => x.ToDb()).ToArray();
                 return scheduleDb.Type = ScheduleTypeDb.Weekly;
             });
 

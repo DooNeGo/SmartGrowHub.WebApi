@@ -15,12 +15,8 @@ public sealed class DailySchedule : ModuleSchedule
     public ImmutableList<ScheduleUnit<TimeOnlyWrapper>> Entries { get; }
 
     public static Fin<DailySchedule> New(ImmutableList<ScheduleUnit<TimeOnlyWrapper>> entries,
-        Id<GrowHubModule> moduleId, Id<ModuleSchedule>? id = null)
-    {
-        if (entries.HasOverlappingIntervals()) return Error.New("Intervals must not overlap");
-        if (entries.CalculateTimeInterval().Duration > TimeSpan.FromHours(TimeSpan.HoursPerDay))
-            return Error.New($"Duration must be less than or equal {TimeSpan.HoursPerDay} hours");
-
-        return new DailySchedule(id ?? new Id<ModuleSchedule>(), moduleId, entries);
-    }
+        Id<GrowHubModule> moduleId, Id<ModuleSchedule>? id = null) =>
+        entries.HasOverlappingIntervals()
+            ? Error.New("Intervals must not overlap")
+            : new DailySchedule(id ?? new Id<ModuleSchedule>(), moduleId, entries);
 }

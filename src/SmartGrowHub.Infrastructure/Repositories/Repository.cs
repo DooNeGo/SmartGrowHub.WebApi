@@ -20,20 +20,34 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
     public OptionT<IO, TDomain> GetById(Id<TDomain> id, CancellationToken cancellationToken) =>
         GetByPredicate(db => db.Id == id, cancellationToken);
 
-    public IO<Unit> Add(TDomain domain, CancellationToken cancellationToken) =>
-        _context.AddIO(ToDb(domain)) >> _context.SaveChangesIO(cancellationToken);
-    
-    public IO<Unit> Remove(TDomain domain, CancellationToken cancellationToken) =>
-        _context.RemoveIO(ToDb(domain)) >> _context.SaveChangesIO(cancellationToken);
-
-    public IO<Unit> RemoveById(Id<TDomain> id, CancellationToken cancellationToken) =>
+    public IO<Unit> RemoveByIdAndSave(Id<TDomain> id, CancellationToken cancellationToken) =>
         IO.liftAsync(() => _context.Set<TDb>()
             .Where(db => db.Id == id)
             .ExecuteDeleteAsync(cancellationToken)
             .ToUnit());
 
-    public IO<Unit> Update(TDomain domain, CancellationToken cancellationToken) =>
-        _context.UpdateIO(ToDb(domain)) >> _context.SaveChangesIO(cancellationToken);
+    public IO<Unit> Add(TDomain domain) =>
+        _context.AddIO(ToDb(domain));
+
+    public IO<Unit> AddRange(IEnumerable<TDomain> domains) =>
+        _context.AddRangeIO(domains.Select(ToDb));
+
+    public IO<Unit> Remove(TDomain domain) =>
+        _context.RemoveIO(ToDb(domain));
+
+    public IO<Unit> RemoveRange(IEnumerable<TDomain> domains) =>
+        _context.RemoveRangeIO(domains.Select(ToDb));
+
+    public virtual IO<Unit> Update(TDomain domain) =>
+        from option in IO.lift(() => Prelude.Optional(_context.Set<TDb>().Local.FindEntry(domain.Id.Value)))
+        let newDb = ToDb(domain)
+        from _1 in option.Match(
+            Some: entry => IO.lift(() => entry.CurrentValues.SetValues(newDb)),
+            None: () => _context.UpdateIO(newDb))
+        select _1;
+
+    public IO<Unit> SaveChanges(CancellationToken cancellationToken) =>
+        _context.SaveChangesIO(cancellationToken);
 
     protected abstract TDb ToDb(TDomain domain);
     

@@ -2,6 +2,9 @@
 
 public interface IId<out T>;
 
+// TODO: Сделать реализацию Id как discriminated union,
+// TODO: чтобы иметь UlidId, StringId, IntId, GrowHubId... А на уровне ef сделать IdConverter
+
 public sealed class Id<T> : DomainType<Id<T>, string>
 {
     private Id(string value) => Value = value;
@@ -21,17 +24,3 @@ public sealed class Id<T> : DomainType<Id<T>, string>
     
     public override string ToString() => Value;
 }
-
-// public readonly record struct Id<T>(Ulid Value)
-// {
-//     public Id() : this(Ulid.NewUlid()) { }
-//     
-//     public static implicit operator Ulid(Id<T> id) => id.Value;
-//
-//     public static Fin<Id<T>> From(string representation) =>
-//         Ulid.TryParse(representation, out Ulid ulid)
-//             ? new Id<T>(ulid)
-//             : Error.New("Invalid ulid representation");
-//
-//     public override string ToString() => Value.ToString();
-// }

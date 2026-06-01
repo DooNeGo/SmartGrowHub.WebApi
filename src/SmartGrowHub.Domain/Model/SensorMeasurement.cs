@@ -5,17 +5,20 @@ namespace SmartGrowHub.Domain.Model;
 
 public sealed class SensorMeasurement(
     Id<SensorMeasurement> id,
+    Id<GrowHub> growHubId,
+    NonEmptyString sensorId,
     SensorType type,
-    NonEmptyString value,
-    NonEmptyString unit,
+    Quantity quantity,
     DateTime createdAt)
     : Entity<SensorMeasurement>(id)
 {
+    public Id<GrowHub> GrowHubId { get; init; } = growHubId;
+    
+    public NonEmptyString SensorId { get; init; } = sensorId;
+    
     public SensorType Type { get; init; } = type;
 
-    public NonEmptyString Value { get; init; } = value;
-
-    public NonEmptyString Unit { get; init; } = unit;
+    public Quantity Quantity { get; init; } = quantity;
 
     public DateTime CreatedAt { get; init; } = createdAt;
 }

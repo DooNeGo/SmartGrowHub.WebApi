@@ -2,14 +2,11 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 
 public enum SensorTypeDb
 {
-    Methane,
-    Smoke,
-    Hydrogen,
+    RandomNumber,
     AirTemperature,
     AirPressure,
     AirHumidity,
     PlantHeight,
-    SoilAcidity,
     SoilMoisture,
     SoilTemperature,
     Illumination

@@ -15,7 +15,7 @@ namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules.Endpoints;
 public sealed class SetModuleProgramEndpoint
 {
     public static ValueTask<IResult> SetSchedule(string scheduleId, SetScheduleRequestDto requestDto,
-        SetModuleProgramUseCase useCase, ILogger<SetModuleProgramEndpoint> logger,
+        SetScheduleUseCase useCase, ILogger<SetModuleProgramEndpoint> logger,
         CancellationToken cancellationToken) => (
             from id in Domain.Common.Id<ModuleSchedule>.From(scheduleId).ToIO()
             from request in ToDomain(id, requestDto).ToIO()

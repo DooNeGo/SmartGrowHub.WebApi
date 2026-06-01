@@ -2,14 +2,11 @@
 
 public enum SensorType
 {
-    Methane,
-    Smoke,
-    Hydrogen,
+    RandomNumber,
     AirTemperature,
     AirPressure,
     AirHumidity,
     PlantHeight,
-    SoilAcidity,
     SoilMoisture,
     SoilTemperature,
     Illumination

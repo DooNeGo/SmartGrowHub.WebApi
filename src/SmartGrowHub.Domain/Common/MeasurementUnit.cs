@@ -3,5 +3,7 @@
 public enum MeasurementUnit
 {
     Celsius,
-    Percent
+    Percent,
+    Centimeters,
+    Pascals
 }
