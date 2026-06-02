@@ -14,10 +14,25 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartGrowHub.Shared", "SmartGrowHub.Shared\SmartGrowHub.Shared.csproj", "{19AA7A7E-459B-4329-8900-65D18D7B4E67}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BC71E26-AAFD-46F5-98F6-FC665C39E52A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{3363857E-E3AE-4E2B-B3CB-3627FF939BBD}"
 	ProjectSection(SolutionItems) = preProject
-		..\docker\compose.yaml = ..\docker\compose.yaml
-		..\docker\mosquitto.conf = ..\docker\mosquitto.conf
 		..\docker\.env = ..\docker\.env
+		..\docker\compose.yaml = ..\docker\compose.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemes", "schemes", "{BE670003-55DB-4E7B-B0A7-C2561784A8F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "auth", "auth", "{6359AE23-D9D9-425D-BA9E-0926ACE1C6D7}"
+	ProjectSection(SolutionItems) = preProject
+		..\schemes\auth\stage1.mmd = ..\schemes\auth\stage1.mmd
+		..\schemes\auth\stage2.mmd = ..\schemes\auth\stage2.mmd
+		..\schemes\auth\stage3.mmd = ..\schemes\auth\stage3.mmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "database", "database", "{3526873C-DE60-40F0-B1B9-4B6166336AFC}"
+	ProjectSection(SolutionItems) = preProject
+		..\schemes\database\database.mmd = ..\schemes\database\database.mmd
 	EndProjectSection
 EndProject
 Global
@@ -49,5 +64,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3363857E-E3AE-4E2B-B3CB-3627FF939BBD} = {9BC71E26-AAFD-46F5-98F6-FC665C39E52A}
+		{BE670003-55DB-4E7B-B0A7-C2561784A8F3} = {9BC71E26-AAFD-46F5-98F6-FC665C39E52A}
+		{6359AE23-D9D9-425D-BA9E-0926ACE1C6D7} = {BE670003-55DB-4E7B-B0A7-C2561784A8F3}
+		{3526873C-DE60-40F0-B1B9-4B6166336AFC} = {BE670003-55DB-4E7B-B0A7-C2561784A8F3}
 	EndGlobalSection
 EndGlobal

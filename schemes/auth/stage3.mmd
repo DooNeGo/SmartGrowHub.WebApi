@@ -1,0 +1,28 @@
+sequenceDiagram
+    %%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'18px'}}}%%
+
+    actor User as 📱 Пользователь
+    participant API as 🖥️ API
+    participant DB as 🗄️ База данных
+
+    User->>API: POST /auth/refresh
+    Note over User,API: { refreshToken }
+
+    API->>DB: Найти сессию по refresh-токену
+
+    alt Сессия не найдена
+        API-->>User: ❌ Сессия не найдена
+    else Сессия найдена
+        API->>API: Срок refresh-токена истёк?
+
+        alt Истёк
+            API->>DB: Удалить сессию
+            API-->>User: ❌ Сессия истекла<br/>Нужно заново войти
+        else Действителен
+            API->>DB: Найти пользователя
+            API->>API: Сгенерировать новую пару токенов
+            API->>DB: Обновить токены в сессии
+            API-->>User: { accessToken, refreshToken }
+            Note over User: Старая пара заменена<br/>новой
+        end
+    end

@@ -1,0 +1,28 @@
+sequenceDiagram
+    %%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'18px'}}}%%
+
+    actor User as 📱 Пользователь
+    participant API as 🖥️ API
+    participant DB as 🗄️ База данных
+
+    User->>API: POST /auth/login/check
+    Note over User,API: { otpValue: "482931" }
+
+    API->>DB: Найти код в базе
+
+    alt Код не найден
+        API-->>User: ❌ Код не существует
+    else Код найден
+        API->>API: Код просрочен?
+
+        alt Просрочен
+            API-->>User: ❌ Срок кода истёк
+        else Действителен
+            API->>DB: Найти пользователя
+            API->>API: Сгенерировать JWT-токен доступа
+            API->>API: Сгенерировать токен обновления
+            API->>DB: Создать сессию с парой токенов
+            API-->>User: { accessToken, refreshToken }
+            Note over User: Токены сохранены<br/>для дальнейших запросов
+        end
+    end

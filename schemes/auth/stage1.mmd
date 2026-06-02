@@ -1,0 +1,25 @@
+sequenceDiagram
+    %%{init: {'theme':'neutral', 'themeVariables': {'fontSize':'18px'}}}%%
+
+    actor User as 📱 Пользователь
+    participant API as 🖥️ API
+    participant DB as 🗄️ База данных
+    participant Smtp as 📧 Почтовый сервер
+
+    User->>API: POST /auth/login/email
+    Note over User,API: { emailAddress }
+
+    API->>DB: Найти пользователя по email
+    alt Новый пользователь
+        API->>DB: Создать пользователя
+    end
+
+    API->>API: Сгенерировать 6-значный код
+    API->>API: Установить срок жизни 5 минут
+
+    API->>Smtp: Отправить письмо с кодом
+    Smtp-->>API: Доставлено
+
+    API->>DB: Сохранить код
+    API-->>User: { success: true }
+    Note over User: Проверяет почту

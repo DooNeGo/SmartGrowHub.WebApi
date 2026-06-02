@@ -1,4 +1,5 @@
-﻿using SmartGrowHub.Domain.Abstractions;
+﻿using System.Diagnostics.CodeAnalysis;
+using SmartGrowHub.Domain.Abstractions;
 using SmartGrowHub.Domain.Common;
 
 namespace SmartGrowHub.Domain.Model.Programs;
@@ -9,17 +10,18 @@ public abstract class ModuleSchedule : Entity<ModuleSchedule>
 
     public Id<GrowHubModule> ModuleId { get; init; }
     
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public T Match<T>(
-        Func<DisabledSchedule, T> mapDisable,
-        Func<EnabledSchedule, T> mapEnabled,
-        Func<DailySchedule, T> mapDaily,
-        Func<WeeklySchedule, T> mapWeekly) =>
+        Func<DisabledSchedule, T> Disabled,
+        Func<EnabledSchedule, T> Enabled,
+        Func<DailySchedule, T> Daily,
+        Func<WeeklySchedule, T> Weekly) =>
         this switch
         {
-            DisabledSchedule schedule => mapDisable(schedule),
-            EnabledSchedule schedule => mapEnabled(schedule),
-            DailySchedule schedule => mapDaily(schedule),
-            WeeklySchedule schedule => mapWeekly(schedule),
+            DisabledSchedule schedule => Disabled(schedule),
+            EnabledSchedule schedule => Enabled(schedule),
+            DailySchedule schedule => Daily(schedule),
+            WeeklySchedule schedule => Weekly(schedule),
             _ => throw new InvalidOperationException()
         };
 }

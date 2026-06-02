@@ -1,0 +1,80 @@
+erDiagram
+    %%{init: {'theme':'neutral', 'themeVariables': {'primaryColor':'#e8ecf1','primaryBorderColor':'#9aa4b2','lineColor':'#6b7b8d','secondaryColor':'#f4f6f8','tertiaryColor':'#fff'}}}%%
+
+    Users {
+        string Id PK
+        string EmailAddress
+        string PhoneNumber
+    }
+
+    UserSessions {
+        string Id PK
+        string AccessToken
+        string RefreshToken UK
+        datetime Expires
+        string UserId FK
+    }
+
+    OneTimePasswords {
+        string Id PK
+        string Value
+        datetime Expires
+        string UserId FK
+    }
+
+    GrowHubs {
+        string Id PK
+        string Name
+        string Model
+        string UserId FK
+    }
+
+    Plants {
+        string Id PK
+        string Name
+        datetime PlantedAt
+        string GrowHubId FK
+    }
+
+    SensorReadings {
+        string Id PK
+        string SensorId
+        enum Type
+        float Value
+        enum Unit
+        datetime CreatedAt
+        string GrowHubId FK
+    }
+
+    Modules {
+        string Id PK
+        enum Type
+        string GrowHubId FK
+    }
+
+    Schedules {
+        string Id PK
+        enum Type
+        string GrowHubModuleId FK
+    }
+
+    SchedulesUnits {
+        string Id PK
+        enum Kind
+        float Quantity_Magnitude
+        enum Quantity_Unit
+        string Interval_Start
+        string Interval_End
+        string ScheduleId FK
+    }
+
+    Users ||--o{ GrowHubs : ""
+    Users ||--o{ UserSessions : ""
+    Users ||--o{ OneTimePasswords : ""
+
+    GrowHubs ||--o| Plants : ""
+    GrowHubs ||--o{ SensorReadings : ""
+    GrowHubs ||--o{ Modules : "cascade"
+
+    Modules ||--|| Schedules : "cascade"
+    Schedules ||--o{ SchedulesUnits : ""
