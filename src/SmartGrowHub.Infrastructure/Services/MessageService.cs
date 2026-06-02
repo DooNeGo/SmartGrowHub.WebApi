@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
@@ -17,6 +18,13 @@ internal sealed class MessageService : IMessageService
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        Converters =
+        {
+            new JsonStringEnumConverter<ScheduleActionMqtt>(),
+            new JsonStringEnumConverter<ModuleModeMqtt>(),
+            new JsonStringEnumConverter<ModuleTypeMqtt>(),
+            new JsonStringEnumConverter<ScheduleKindMqtt>()
+        }
     };
 
     private readonly IMqttClient _mqttClient;
@@ -49,8 +57,7 @@ internal sealed class MessageService : IMessageService
     private static ImmutableList<MqttApplicationMessage> BuildMessages(
         GrowHubModule module, ModuleSchedule schedule, NonEmptyString topic)
     {
-        ImmutableList<MqttApplicationMessage>.Builder messages =
-            ImmutableList.CreateBuilder<MqttApplicationMessage>();
+        ImmutableList<MqttApplicationMessage>.Builder messages = ImmutableList.CreateBuilder<MqttApplicationMessage>();
         
         messages.Add(CreateMessage(topic, new ModuleCommandMqtt(
             module.GrowHubId.Value,
