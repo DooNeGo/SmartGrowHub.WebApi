@@ -15,12 +15,12 @@ internal sealed class OtpRepository : Repository<OneTimePassword, OneTimePasswor
 
     public OtpRepository(ApplicationContext context) : base(context) => _context = context;
 
-    public OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value, CancellationToken cancellationToken) =>
+    public OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value) =>
         from otp in OptionT.liftIO<IO, OneTimePasswordDb>(
-            IO.liftAsync(() =>
+            IO.liftAsync(env =>
                 _context.OneTimePasswords
                     .Where(otp => otp.Value == value)
-                    .FirstOrDefaultAsync(cancellationToken)
+                    .FirstOrDefaultAsync(env.Token)
                     .Map(Prelude.Optional)))
         from domainOtp in otp.ToDomain().ToIO()
         select domainOtp;

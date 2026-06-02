@@ -15,21 +15,20 @@ public sealed class SendOtpToEmailUseCase(
 {
     private const string Subject = "One Time Password for Smart Grow Hub";
 
-    public IO<Unit> SendOtpToEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
-        from user in GetOrCreateUserByEmail(emailAddress, cancellationToken)
+    public IO<Unit> SendOtpToEmail(EmailAddress emailAddress) =>
+        from user in GetOrCreateUserByEmail(emailAddress)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from subject in NonEmptyString.From(Subject).ToIO()
-        from body in emailTemplateService.GetOtpEmailBody(
-            oneTimePassword.Value, otpIssuer.OtpLifetime, cancellationToken)
-        from _ in emailService.Send(emailAddress, subject, body, isHtmlBody: true, cancellationToken)
-        from __ in otpRepository.AddAndSave(oneTimePassword, cancellationToken)
+        from body in emailTemplateService.GetOtpEmailBody(oneTimePassword.Value, otpIssuer.OtpLifetime)
+        from _1 in emailService.Send(emailAddress, subject, body, isHtmlBody: true)
+        from _2 in otpRepository.AddAndSave(oneTimePassword)
         select unit;
 
-    private IO<User> GetOrCreateUserByEmail(EmailAddress emailAddress, CancellationToken cancellationToken) =>
+    private IO<User> GetOrCreateUserByEmail(EmailAddress emailAddress) =>
         userRepository
-            .GetByEmailAddress(emailAddress, cancellationToken)
+            .GetByEmailAddress(emailAddress)
             .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromEmailAddress(emailAddress))
-                from _1 in userRepository.AddAndSave(user, cancellationToken)
+                from _ in userRepository.AddAndSave(user)
                 select user);
 }

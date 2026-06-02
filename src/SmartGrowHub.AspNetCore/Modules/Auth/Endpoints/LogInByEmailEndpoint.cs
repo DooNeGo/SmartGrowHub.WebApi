@@ -13,9 +13,9 @@ internal sealed class LogInByEmailEndpoint
     public static ValueTask<IResult> LogIn(LogInByEmailRequest request, SendOtpToEmailUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from email in EmailAddress.From(request.EmailAddress).ToIO()
-            from _ in useCase.SendOtpToEmail(email, cancellationToken)
+            from _ in useCase.SendOtpToEmail(email)
             select unit)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             Succ: _ => Ok(new Result(true, null, null)),
             Fail: error => HandleError(logger, error)));

@@ -5,5 +5,5 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IGrowHubRepository : IRepository<GrowHub>
 {
-    IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
+    IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id);
 }

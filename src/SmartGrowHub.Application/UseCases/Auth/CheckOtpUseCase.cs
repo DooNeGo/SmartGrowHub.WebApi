@@ -14,22 +14,22 @@ public sealed class CheckOtpUseCase(
     IUserRepository userRepository,
     ITimeProvider timeProvider)
 {
-    public IO<AuthTokens> CheckOtp(NonEmptyString otpValue, CancellationToken cancellationToken) =>
+    public IO<AuthTokens> CheckOtp(NonEmptyString otpValue) =>
         from otp in otpRepository
-            .GetByValue(otpValue, cancellationToken)
+            .GetByValue(otpValue)
             .ToIOOrFail(Error.New("The one-time password does not exist"))
         from user in userRepository
-            .GetById(otp.UserId, cancellationToken)
+            .GetById(otp.UserId)
             .ToIOOrFail(DomainErrors.UserNotFoundError)
         from utcNow in timeProvider.UtcNow
         from tokens in otp.IsExpired(utcNow)
             ? IO.fail<UserSession>(Error.New("The one-time password has expired"))
-            : AddNewSessionToUser(user, cancellationToken)
+            : AddNewSessionToUser(user)
         select tokens.AuthTokens;
     
-    public IO<UserSession> AddNewSessionToUser(User user, CancellationToken cancellationToken) =>
+    public IO<UserSession> AddNewSessionToUser(User user) =>
         from tokens in tokensIssuer.CreateTokens(user)
         let session = UserSession.New(user.Id, tokens)
-        from _ in sessionRepository.AddAndSave(session, cancellationToken)
+        from _ in sessionRepository.AddAndSave(session)
         select session;
 }

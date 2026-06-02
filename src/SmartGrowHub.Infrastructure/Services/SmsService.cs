@@ -18,7 +18,7 @@ internal sealed partial class SmsService(
         .Map(credentials => Option.Some(new SmsClient(credentials)))
         .IfFail(error => LogErrorIO(logger, error.ToString()).Run());
     
-    public IO<Unit> Send(PhoneNumber phoneNumber, NonEmptyString payload, CancellationToken cancellationToken) =>
+    public IO<Unit> Send(PhoneNumber phoneNumber, NonEmptyString payload) =>
         from smsClient in _smsClient.Match(IO.pure, IO.fail<SmsClient>(Error.Empty))
         let request = new SendSmsRequest
         {
@@ -26,7 +26,7 @@ internal sealed partial class SmsService(
             From = "Test",
             Text = payload
         }
-        from _ in IO.liftAsync(() => smsClient.SendAnSmsAsync(request).WaitAsync(cancellationToken))
+        from _ in IO.liftAsync(env => smsClient.SendAnSmsAsync(request).WaitAsync(env.Token))
         select Unit.Default;
 
     private static IO<Unit> LogErrorIO(ILogger logger, string error) =>

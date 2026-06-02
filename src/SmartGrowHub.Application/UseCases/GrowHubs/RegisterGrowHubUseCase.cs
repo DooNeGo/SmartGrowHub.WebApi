@@ -12,7 +12,7 @@ public sealed class RegisterGrowHubUseCase
 
     public RegisterGrowHubUseCase(IGrowHubRepository repository) => _repository = repository;
 
-    public IO<Unit> RegisterGrowHub(Id<User> userId, NonEmptyString model, CancellationToken cancellationToken)
+    public IO<Unit> RegisterGrowHub(Id<User> userId, NonEmptyString model)
     {
         var id = new Id<GrowHub>();
 
@@ -25,7 +25,7 @@ public sealed class RegisterGrowHubUseCase
         var growHub = new GrowHub(id, userId, model, model,
             modulesTypes.Select(type => CreateDefaultModule(id, type)).ToImmutableList(), Option.None);
 
-        return _repository.AddAndSave(growHub, cancellationToken);
+        return _repository.AddAndSave(growHub);
     }
 
     private static GrowHubModule CreateDefaultModule(Id<GrowHub> growHubId, ModuleType type)

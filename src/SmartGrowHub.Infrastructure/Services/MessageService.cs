@@ -48,12 +48,12 @@ internal sealed class MessageService : IMessageService
             });
     }
 
-    public IO<Unit> ChangeSchedule(GrowHubModule module, ModuleSchedule schedule, CancellationToken cancellationToken) =>
+    public IO<Unit> ChangeSchedule(GrowHubModule module, ModuleSchedule schedule) =>
         from topic in _modulesTopic.ToIO()
         let messages = BuildMessages(module, schedule, topic)
         from _ in messages
             .AsIterable()
-            .Traverse(message => IO.liftAsync(() => _mqttClient.PublishAsync(message, cancellationToken)))
+            .Traverse(message => IO.liftAsync(env => _mqttClient.PublishAsync(message, env.Token)))
             .As().ToUnit()
         select _;
     

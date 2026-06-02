@@ -24,7 +24,7 @@ internal static class DbContextExtensions
         public IO<Unit> UpdateIO<T>(T entity) where T : class =>
             IO.lift(() => context.Update(entity)).ToUnit();
 
-        public IO<Unit> SaveChangesIO(CancellationToken cancellationToken) =>
-            IO.liftAsync(() => context.SaveChangesAsync(cancellationToken)).ToUnit();
+        public IO<Unit> SaveChangesIO() =>
+            IO.liftAsync(env => context.SaveChangesAsync(env.Token)).ToUnit();
     }
 }

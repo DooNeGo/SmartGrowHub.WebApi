@@ -17,9 +17,9 @@ internal sealed class RefreshTokensEndpoint
             from oldToken in NonEmptyString.From(requestDto.RefreshToken)
                 .MapFail(error => Error.New("Invalid refresh token format", error))
                 .ToIO()
-            from response in useCase.RefreshTokens(oldToken, cancellationToken)
+            from response in useCase.RefreshTokens(oldToken)
             select response)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             Succ: response => Ok(Result<AuthTokensDto>.Success(response.ToDto())),
             Fail: error => HandleError(logger, error)));

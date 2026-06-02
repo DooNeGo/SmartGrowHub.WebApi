@@ -9,9 +9,8 @@ namespace SmartGrowHub.Infrastructure.Services;
 internal sealed class EmailService(ISmtpClient smtpClient, IConfiguration configuration)
     : IEmailService
 {
-    public IO<Unit> Send(EmailAddress to, NonEmptyString subject, NonEmptyString body, bool isHtmlBody,
-        CancellationToken cancellationToken) =>
-        IO.liftAsync(async () =>
+    public IO<Unit> Send(EmailAddress to, NonEmptyString subject, NonEmptyString body, bool isHtmlBody) =>
+        IO.liftAsync(async env =>
         {
             IConfigurationSection section = configuration.GetRequiredSection("Smtp");
 
@@ -26,11 +25,11 @@ internal sealed class EmailService(ISmtpClient smtpClient, IConfiguration config
                 section["Host"],
                 section.GetValue<int>("Port"),
                 section.GetValue<bool>("UseSsl"),
-                cancellationToken);
+                env.Token);
 
-            await smtpClient.AuthenticateAsync(section["Username"], section["Password"], cancellationToken);
-            await smtpClient.SendAsync(message, cancellationToken);
-            await smtpClient.DisconnectAsync(true, cancellationToken);
+            await smtpClient.AuthenticateAsync(section["Username"], section["Password"], env.Token);
+            await smtpClient.SendAsync(message, env.Token);
+            await smtpClient.DisconnectAsync(true, env.Token);
 
             return Unit.Default;
         });

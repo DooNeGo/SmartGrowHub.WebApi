@@ -17,9 +17,9 @@ internal sealed class RegisterGrowHubEndpoint
         IAccessTokenReader tokenReader, ILogger<GetGrowHubsEndpoint> logger, CancellationToken cancellationToken) => (
             from userId in tokenReader.GetUserId(context)
             from model in NonEmptyString.From(request.Model).ToIO()
-            from _ in useCase.RegisterGrowHub(userId, model, cancellationToken)
+            from _ in useCase.RegisterGrowHub(userId, model)
             select _)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             _ => Ok(Result.Success()),
             error => HandleError(logger, error)));

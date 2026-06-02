@@ -19,9 +19,9 @@ public sealed class SetModuleProgramEndpoint
         CancellationToken cancellationToken) => (
             from id in Domain.Common.Id<ModuleSchedule>.From(scheduleId).ToIO()
             from request in ToDomain(id, requestDto).ToIO()
-            from _ in useCase.SetModuleProgram(request, cancellationToken)
+            from _ in useCase.SetModuleProgram(request)
             select _)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             _ => Ok(Result.Success()),
             error => HandleError(logger, error)));

@@ -17,13 +17,13 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
 
     protected Repository(DbContext context) => _context = context;
 
-    public OptionT<IO, TDomain> GetById(Id<TDomain> id, CancellationToken cancellationToken) =>
-        GetByPredicate(db => db.Id == id, cancellationToken);
+    public OptionT<IO, TDomain> GetById(Id<TDomain> id) =>
+        GetByPredicate(db => db.Id == id);
 
-    public IO<Unit> RemoveByIdAndSave(Id<TDomain> id, CancellationToken cancellationToken) =>
-        IO.liftAsync(() => _context.Set<TDb>()
+    public IO<Unit> RemoveByIdAndSave(Id<TDomain> id) =>
+        IO.liftAsync(env => _context.Set<TDb>()
             .Where(db => db.Id == id)
-            .ExecuteDeleteAsync(cancellationToken)
+            .ExecuteDeleteAsync(env.Token)
             .ToUnit());
 
     public IO<Unit> Add(TDomain domain) =>
@@ -46,8 +46,7 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
             None: () => _context.UpdateIO(newDb))
         select _1;
 
-    public IO<Unit> SaveChanges(CancellationToken cancellationToken) =>
-        _context.SaveChangesIO(cancellationToken);
+    public IO<Unit> SaveChanges() => _context.SaveChangesIO();
 
     protected abstract TDb ToDb(TDomain domain);
     
@@ -55,12 +54,11 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
     
     protected abstract IQueryable<TDb> AddIncludes(IQueryable<TDb> query);
     
-    protected OptionT<IO, TDomain> GetByPredicate(Expression<Func<TDb, bool>> predicate,
-        CancellationToken cancellationToken) =>
+    protected OptionT<IO, TDomain> GetByPredicate(Expression<Func<TDb, bool>> predicate) =>
         from moduleDb in OptionT.liftIO<IO, TDb>(
-            IO.liftAsync(() =>
+            IO.liftAsync(env =>
                 AddIncludes(_context.Set<TDb>().Where(predicate))
-                    .FirstOrDefaultAsync(cancellationToken)
+                    .FirstOrDefaultAsync(env.Token)
                     .Map(Prelude.Optional)))
         from module in ToDomain(moduleDb).ToIO()
         select module;

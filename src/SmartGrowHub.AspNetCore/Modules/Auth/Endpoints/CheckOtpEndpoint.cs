@@ -16,9 +16,9 @@ internal sealed class CheckOtpEndpoint
         ILogger<CheckOtpEndpoint> logger,
         CancellationToken cancellationToken) => (
             from otp in NonEmptyString.From(request.OtpValue).ToIO()
-            from result in useCase.CheckOtp(otp, cancellationToken)
+            from result in useCase.CheckOtp(otp)
             select result)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             Succ: tokens => Ok(Result<AuthTokensDto>.Success(tokens.ToDto())),
             Fail: error => HandleError(logger, error)));

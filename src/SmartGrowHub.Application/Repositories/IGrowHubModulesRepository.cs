@@ -6,5 +6,5 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IGrowHubModulesRepository : IRepository<GrowHubModule>
 {
-    OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id, CancellationToken cancellationToken);
+    OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id);
 }

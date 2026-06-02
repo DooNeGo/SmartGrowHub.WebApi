@@ -5,5 +5,5 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IMessageService
 {
-    IO<Unit> ChangeSchedule(GrowHubModule module, ModuleSchedule schedule, CancellationToken cancellationToken);
+    IO<Unit> ChangeSchedule(GrowHubModule module, ModuleSchedule schedule);
 }

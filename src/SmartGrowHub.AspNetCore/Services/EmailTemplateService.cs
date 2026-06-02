@@ -10,25 +10,19 @@ internal sealed class EmailTemplateService(
     IFileService fileService)
     : IEmailTemplateService
 {
-    public IO<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration,
-        CancellationToken cancellationToken) =>
-        GetEmailBody("OtpEmailTemplate.html",
-        [
-            ("OTP", otpValue),
-            ("Expiration", expiration.Minutes.ToString())
-        ], cancellationToken);
+    public IO<NonEmptyString> GetOtpEmailBody(NonEmptyString otpValue, TimeSpan expiration) =>
+        GetEmailBody("OtpEmailTemplate.html", [("OTP", otpValue), ("Expiration", expiration.Minutes.ToString())]);
 
-    private IO<NonEmptyString> GetEmailBody(string templateName, (string, string)[] placeholders,
-        CancellationToken cancellationToken) =>
-        from template in GetTemplate(templateName, cancellationToken)
+    private IO<NonEmptyString> GetEmailBody(string templateName, (string, string)[] placeholders) =>
+        from template in GetTemplate(templateName)
         let otpEmailBody = ReplacePlaceholders(template, placeholders)
         from result in NonEmptyString.From(otpEmailBody).ToIO()
         select result;
 
-    private IO<string> GetTemplate(string templateName, CancellationToken cancellationToken)
+    private IO<string> GetTemplate(string templateName)
     {
         string path = Path.Combine(environment.WebRootPath, "templates", templateName);
-        return fileService.ReadAllTextAsync(path, Encoding.Default, cancellationToken);
+        return fileService.ReadAllTextAsync(path, Encoding.Default);
     }
 
     private static string ReplacePlaceholders(string template, (string, string)[] placeholders)

@@ -15,10 +15,10 @@ internal sealed class GrowHubRepository : Repository<GrowHub, GrowHubDb>, IGrowH
 
     public GrowHubRepository(ApplicationContext context) : base(context) => _context = context;
 
-    public IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
-        from list in IO.liftAsync(() =>
+    public IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id) =>
+        from list in IO.liftAsync(env =>
             AddIncludes(_context.GrowHubs.Where(x => x.UserId == id.Value))
-                .ToListAsync(cancellationToken))
+                .ToListAsync(env.Token))
         from domains in list
             .AsIterable()
             .Traverse(ToDomain)

@@ -20,6 +20,6 @@ internal sealed class GrowHubModulesRepository : Repository<GrowHubModule, GrowH
     protected override IQueryable<GrowHubModuleDb> AddIncludes(IQueryable<GrowHubModuleDb> query) =>
         query.Include(x => x.Schedule);
 
-    public OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id, CancellationToken cancellationToken) =>
-        GetByPredicate(module => module.Schedule.Id == id, cancellationToken);
+    public OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id) =>
+        GetByPredicate(module => module.Schedule.Id == id);
 }

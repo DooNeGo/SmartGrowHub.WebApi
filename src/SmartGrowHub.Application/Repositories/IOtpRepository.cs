@@ -5,5 +5,5 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IOtpRepository : IRepository<OneTimePassword>
 {
-    OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value, CancellationToken cancellationToken);
+    OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value);
 }

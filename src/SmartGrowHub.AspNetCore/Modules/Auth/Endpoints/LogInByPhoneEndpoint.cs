@@ -12,9 +12,9 @@ internal sealed class LogInByPhoneEndpoint
     public static ValueTask<IResult> LogIn(LogInByPhoneRequest request, SendOtpToPhoneUseCase useCase,
         ILogger<LogInByEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from phone in PhoneNumber.From(request.PhoneNumber).ToIO()
-            from _ in useCase.SendCodeToPhone(phone, cancellationToken)
+            from _ in useCase.SendCodeToPhone(phone)
             select unit)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             Succ: _ => Ok(),
             Fail: error => HandleError(logger, error)));

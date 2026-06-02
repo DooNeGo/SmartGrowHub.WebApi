@@ -17,13 +17,13 @@ internal sealed class UserSessionRepository : Repository<UserSession, UserSessio
 
     public UserSessionRepository(ApplicationContext context) : base(context) => _context = context;
 
-    public OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value, CancellationToken cancellationToken) =>
-        GetByPredicate(session => session.RefreshToken == value, cancellationToken);
+    public OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value) =>
+        GetByPredicate(session => session.RefreshToken == value);
 
-    public IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken) =>
-        IO.liftAsync(() => _context.UserSessions
+    public IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id) =>
+        IO.liftAsync(env => _context.UserSessions
                 .Where(session => session.UserId == id)
-                .ToListAsync(cancellationToken))
+                .ToListAsync(env.Token))
             .Bind(list => list
                 .AsIterable()
                 .Traverse(session => session.TryToDomain())

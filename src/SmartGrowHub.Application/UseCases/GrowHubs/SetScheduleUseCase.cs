@@ -64,9 +64,9 @@ public sealed class SetScheduleUseCase
         _messageService = messageService;
     }
 
-    public IO<Unit> SetModuleProgram(SetScheduleRequest request, CancellationToken cancellationToken) =>
+    public IO<Unit> SetModuleProgram(SetScheduleRequest request) =>
         from module in _modulesRepository
-            .GetByScheduleId(request.ScheduleId, cancellationToken)
+            .GetByScheduleId(request.ScheduleId)
             .ToIOOrFail(Error.New("Schedule id not found"))
         let oldSchedule = module.Schedule
         let scheduleId = oldSchedule.Id
@@ -78,8 +78,8 @@ public sealed class SetScheduleUseCase
                 mapDaily: daily => ToDailySchedule(daily, moduleId).Cast<DailySchedule, ModuleSchedule>(),
                 mapWeekly: weekly => ToWeeklySchedule(weekly, moduleId).Cast<WeeklySchedule, ModuleSchedule>())
             .As().ToIO()
-        from _1 in _schedulesRepository.UpdateAndSave(newSchedule, cancellationToken)
-        from _2 in _messageService.ChangeSchedule(module, newSchedule, cancellationToken)
+        from _1 in _schedulesRepository.UpdateAndSave(newSchedule)
+        from _2 in _messageService.ChangeSchedule(module, newSchedule)
         select _2;
     
     private static Fin<DailySchedule> ToDailySchedule(SetDailyScheduleRequest request, Id<GrowHubModule> moduleId) =>

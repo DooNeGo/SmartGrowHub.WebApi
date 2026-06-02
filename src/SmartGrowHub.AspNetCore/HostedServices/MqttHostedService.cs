@@ -63,8 +63,8 @@ public sealed class MqttHostedService : IHostedService
 
             return _sensorsTopic.Match(
                 Succ: topic => args.ApplicationMessage.Topic.Contains(topic)
-                    ? SaveSensorMeasurement(stringPayload, cancellationToken)
-                        .RunSafeAsync()
+                    ? SaveSensorMeasurement(stringPayload)
+                        .RunSafeAsync(EnvIO.New(token: cancellationToken))
                         .Map(fin => fin.MapFail(error =>
                         {
                             _logger.LogError(
@@ -79,7 +79,7 @@ public sealed class MqttHostedService : IHostedService
         };
     }
 
-    private IO<Unit> SaveSensorMeasurement(string payload, CancellationToken cancellationToken) =>
+    private IO<Unit> SaveSensorMeasurement(string payload) =>
         from utcNow in _timeProvider.UtcNow
         from measurements in IO.lift(() =>
         {
@@ -96,7 +96,7 @@ public sealed class MqttHostedService : IHostedService
         })
         from scope in use(IO.lift(() => _serviceProvider.CreateScope()))
         from repository in IO.lift(() => scope.ServiceProvider.GetRequiredService<ISensorMeasurementRepository>())
-        from _1 in repository.AddRangeAndSave(measurements, cancellationToken)
+        from _1 in repository.AddRangeAndSave(measurements)
         from _2 in release(scope)
         select _1;
 

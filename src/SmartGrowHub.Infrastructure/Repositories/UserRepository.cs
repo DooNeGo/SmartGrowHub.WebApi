@@ -9,11 +9,11 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class UserRepository(ApplicationContext context) : Repository<User, UserDb>(context), IUserRepository
 {
-    public OptionT<IO, User> GetByPhoneNumber(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
-        GetByPredicate(user => user.PhoneNumber == phoneNumber, cancellationToken);
+    public OptionT<IO, User> GetByPhoneNumber(PhoneNumber phoneNumber) =>
+        GetByPredicate(user => user.PhoneNumber == phoneNumber);
 
-    public OptionT<IO, User> GetByEmailAddress(EmailAddress email, CancellationToken cancellationToken) =>
-        GetByPredicate(user => user.EmailAddress == email, cancellationToken);
+    public OptionT<IO, User> GetByEmailAddress(EmailAddress email) =>
+        GetByPredicate(user => user.EmailAddress == email);
 
     protected override UserDb ToDb(User domain) => domain.ToDb();
 

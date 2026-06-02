@@ -12,19 +12,19 @@ public sealed class SendOtpToPhoneUseCase(
     IOtpRepository otpRepository,
     IUserRepository userRepository)
 {
-    public IO<Unit> SendCodeToPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
-        from user in GetOrCreateUserByPhone(phoneNumber, cancellationToken)
+    public IO<Unit> SendCodeToPhone(PhoneNumber phoneNumber) =>
+        from user in GetOrCreateUserByPhone(phoneNumber)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from payload in NonEmptyString.From($"Your one time password: {oneTimePassword.Value}").ToIO()
-        from _ in smsService.Send(phoneNumber, payload, cancellationToken)
-        from __ in otpRepository.AddAndSave(oneTimePassword, cancellationToken)
+        from _1 in smsService.Send(phoneNumber, payload)
+        from _2 in otpRepository.AddAndSave(oneTimePassword)
         select unit;
 
-    private IO<User> GetOrCreateUserByPhone(PhoneNumber phoneNumber, CancellationToken cancellationToken) =>
+    private IO<User> GetOrCreateUserByPhone(PhoneNumber phoneNumber) =>
         userRepository
-            .GetByPhoneNumber(phoneNumber, cancellationToken)
+            .GetByPhoneNumber(phoneNumber)
             .ToIOOrFail(() =>
                 from user in IO.pure(User.NewFromPhoneNumber(phoneNumber))
-                from _1 in userRepository.AddAndSave(user, cancellationToken)
+                from _ in userRepository.AddAndSave(user)
                 select user);
 }

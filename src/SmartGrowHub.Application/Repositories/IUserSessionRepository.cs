@@ -6,6 +6,6 @@ namespace SmartGrowHub.Application.Repositories;
 
 public interface IUserSessionRepository : IRepository<UserSession>
 {
-    OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value, CancellationToken cancellationToken);
-    IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id, CancellationToken cancellationToken);
+    OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value);
+    IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id);
 }

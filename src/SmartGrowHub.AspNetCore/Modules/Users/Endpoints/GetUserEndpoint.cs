@@ -17,10 +17,10 @@ public sealed class GetUserEndpoint
         CancellationToken cancellationToken) => (
             from userId in tokenReader.GetUserId(context)
             from user in userRepository
-                .GetById(userId, cancellationToken)
+                .GetById(userId)
                 .ToIOOrFail(DomainErrors.UserNotFoundError)
             select user)
-        .RunSafeAsync()
+        .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             Succ: user => Ok(user.ToDto()),
             Fail: error => HandleError(logger, error)));
