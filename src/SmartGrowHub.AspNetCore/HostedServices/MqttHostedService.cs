@@ -12,7 +12,7 @@ public sealed class MqttHostedService : IHostedService
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
     
     private readonly IMqttClient _mqttClient;
@@ -21,7 +21,6 @@ public sealed class MqttHostedService : IHostedService
     private readonly IServiceProvider _serviceProvider;
     private readonly ITimeProvider _timeProvider;
     private readonly ILogger<MqttHostedService> _logger;
-
     private readonly Fin<NonEmptyString> _sensorsTopic;
 
     public MqttHostedService(
@@ -80,29 +79,26 @@ public sealed class MqttHostedService : IHostedService
         };
     }
 
-    private IO<Unit> SaveSensorMeasurement(string payload, CancellationToken cancellationToken)
-    {
-        return 
-            from utcNow in _timeProvider.UtcNow
-            from measurements in IO.lift(() =>
-            {
-                var measurementsMqtt = JsonSerializer.Deserialize<SensorMeasurementsMqtt>(payload, JsonSerializerOptions);
-                if (measurementsMqtt is null) return Iterable<SensorMeasurement>();
+    private IO<Unit> SaveSensorMeasurement(string payload, CancellationToken cancellationToken) =>
+        from utcNow in _timeProvider.UtcNow
+        from measurements in IO.lift(() =>
+        {
+            var measurementsMqtt = JsonSerializer.Deserialize<SensorMeasurementsMqtt>(payload, JsonSerializerOptions);
+            if (measurementsMqtt is null) return Iterable<SensorMeasurement>();
 
-                return
-                    from growHubId in Domain.Common.Id<GrowHub>.From(measurementsMqtt.DeviceId)
-                    from measurements in measurementsMqtt.Data
-                        .AsIterable()
-                        .Traverse(mqtt => ToDomain(growHubId, utcNow, mqtt))
-                        .As()
-                    select measurements;
-            })
-            from scope in use(IO.lift(() => _serviceProvider.CreateScope()))
-            from repository in IO.lift(() => scope.ServiceProvider.GetRequiredService<ISensorMeasurementRepository>())
-            from _1 in repository.AddRangeAndSave(measurements, cancellationToken)
-            from _2 in release(scope)
-            select _1;
-    }
+            return
+                from growHubId in Domain.Common.Id<GrowHub>.From(measurementsMqtt.DeviceId)
+                from measurements in measurementsMqtt.Data
+                    .AsIterable()
+                    .Traverse(mqtt => ToDomain(growHubId, utcNow, mqtt))
+                    .As()
+                select measurements;
+        })
+        from scope in use(IO.lift(() => _serviceProvider.CreateScope()))
+        from repository in IO.lift(() => scope.ServiceProvider.GetRequiredService<ISensorMeasurementRepository>())
+        from _1 in repository.AddRangeAndSave(measurements, cancellationToken)
+        from _2 in release(scope)
+        select _1;
 
     public Task StopAsync(CancellationToken cancellationToken) =>
         _mqttClient.DisconnectAsync(_disconnectOptions, cancellationToken);
