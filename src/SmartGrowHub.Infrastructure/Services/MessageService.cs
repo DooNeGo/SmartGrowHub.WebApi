@@ -15,15 +15,18 @@ namespace SmartGrowHub.Infrastructure.Services;
 
 internal sealed class MessageService : IMessageService
 {
+    private static readonly JsonNamingPolicy DefaultNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
+    private static readonly JsonNamingPolicy EnumNamingPolicy = JsonNamingPolicy.CamelCase;
+    
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+        PropertyNamingPolicy = DefaultNamingPolicy,
         Converters =
         {
-            new JsonStringEnumConverter<ScheduleActionMqtt>(),
-            new JsonStringEnumConverter<ModuleModeMqtt>(),
-            new JsonStringEnumConverter<ModuleTypeMqtt>(),
-            new JsonStringEnumConverter<ScheduleKindMqtt>()
+            new JsonStringEnumConverter<ScheduleActionMqtt>(EnumNamingPolicy),
+            new JsonStringEnumConverter<ModuleModeMqtt>(EnumNamingPolicy),
+            new JsonStringEnumConverter<ModuleTypeMqtt>(EnumNamingPolicy),
+            new JsonStringEnumConverter<ScheduleKindMqtt>(EnumNamingPolicy)
         }
     };
 
