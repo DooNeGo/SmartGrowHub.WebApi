@@ -7,7 +7,7 @@ public static class GrowHubModuleExtensions
 {
     public static IEndpointRouteBuilder AddGrowHubEndpoints(this IEndpointRouteBuilder routeBuilder)
     {
-        RouteGroupBuilder growHubsGroup = routeBuilder.MapGroup("/growHubs").RequireAuthorization();
+        RouteGroupBuilder growHubsGroup = routeBuilder.MapGroup("/grow-hubs").RequireAuthorization();
         
         growHubsGroup.MapGet("", GetGrowHubsEndpoint.GetGrowHubs);
         growHubsGroup.MapPost("", CreateGrowHubEndpoint.CreateGrowHub);
