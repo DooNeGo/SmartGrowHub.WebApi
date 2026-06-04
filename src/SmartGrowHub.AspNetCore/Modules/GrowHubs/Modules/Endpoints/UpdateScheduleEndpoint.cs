@@ -12,39 +12,39 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules.Endpoints;
 
-public sealed class SetModuleProgramEndpoint
+public sealed class UpdateScheduleEndpoint
 {
-    public static ValueTask<IResult> SetSchedule(string scheduleId, SetScheduleRequestDto requestDto,
-        SetScheduleUseCase useCase, ILogger<SetModuleProgramEndpoint> logger,
+    public static ValueTask<IResult> UpdateSchedule(string scheduleId, SetScheduleRequestDto requestDto,
+        UpdateScheduleUseCase useCase, ILogger<UpdateScheduleEndpoint> logger,
         CancellationToken cancellationToken) => (
             from id in Domain.Common.Id<ModuleSchedule>.From(scheduleId).ToIO()
             from request in ToDomain(id, requestDto).ToIO()
-            from _ in useCase.SetModuleProgram(request)
+            from _ in useCase.UpdateSchedule(request)
             select _)
         .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             _ => Ok(Result.Success()),
             error => HandleError(logger, error)));
 
-    private static Fin<SetScheduleRequest> ToDomain(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateScheduleRequest> ToDomain(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.Type switch
         {
-            ScheduleTypeDto.Disabled => Fin.Succ<SetScheduleRequest>(new SetDisableScheduleRequest(id)),
-            ScheduleTypeDto.Enabled => Fin.Succ<SetScheduleRequest>(new SetEnabledScheduleRequest(id)),
-            ScheduleTypeDto.Daily => ToDaily(id, requestDto).Cast<SetDailyScheduleRequest, SetScheduleRequest>(),
-            ScheduleTypeDto.Weekly => ToWeekly(id, requestDto).Cast<SetWeeklyScheduleRequest, SetScheduleRequest>(),
+            ScheduleTypeDto.Disabled => Fin.Succ<UpdateScheduleRequest>(new UpdateDisableScheduleRequest(id)),
+            ScheduleTypeDto.Enabled => Fin.Succ<UpdateScheduleRequest>(new UpdateEnabledScheduleRequest(id)),
+            ScheduleTypeDto.Daily => ToDaily(id, requestDto).Cast<UpdateDailyScheduleRequest, UpdateScheduleRequest>(),
+            ScheduleTypeDto.Weekly => ToWeekly(id, requestDto).Cast<UpdateWeeklyScheduleRequest, UpdateScheduleRequest>(),
             _ => throw new InvalidOperationException()
         };
 
-    private static Fin<SetDailyScheduleRequest> ToDaily(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateDailyScheduleRequest> ToDaily(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.DailyEntries is null
             ? Error.New("Daily entries was null")
-            : Fin.Succ(new SetDailyScheduleRequest(id,
+            : Fin.Succ(new UpdateDailyScheduleRequest(id,
                 requestDto.DailyEntries.Select(x => x.ToDomain()).ToImmutableList()));
 
-    private static Fin<SetWeeklyScheduleRequest> ToWeekly(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateWeeklyScheduleRequest> ToWeekly(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
         requestDto.WeeklyEntries is null
             ? Error.New("Weekly entries was null")
-            : Fin.Succ(new SetWeeklyScheduleRequest(id,
+            : Fin.Succ(new UpdateWeeklyScheduleRequest(id,
                 requestDto.WeeklyEntries.Select(x => x.ToDomain()).ToImmutableList()));
 }

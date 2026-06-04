@@ -8,7 +8,7 @@ internal static class ModulesModuleExtensions
     {
         RouteGroupBuilder modulesGroup = routeBuilder.MapGroup("/modules");
 
-        modulesGroup.MapPost("/schedules/{scheduleId}", SetModuleProgramEndpoint.SetSchedule);
+        modulesGroup.MapPut("/schedules/{scheduleId}", UpdateScheduleEndpoint.UpdateSchedule);
         
         return routeBuilder;
     }

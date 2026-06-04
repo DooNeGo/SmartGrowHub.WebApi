@@ -10,13 +10,13 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
-internal sealed class CheckOtpEndpoint
+internal sealed class VerifyOtpEndpoint
 {
-    public static ValueTask<IResult> CheckOtp(CheckOtpRequest request, CheckOtpUseCase useCase,
-        ILogger<CheckOtpEndpoint> logger,
+    public static ValueTask<IResult> Verify(CheckOtpRequest request, VerifyOtpUseCase useCase,
+        ILogger<VerifyOtpEndpoint> logger,
         CancellationToken cancellationToken) => (
             from otp in NonEmptyString.From(request.OtpValue).ToIO()
-            from result in useCase.CheckOtp(otp)
+            from result in useCase.VerifyOtp(otp)
             select result)
         .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(

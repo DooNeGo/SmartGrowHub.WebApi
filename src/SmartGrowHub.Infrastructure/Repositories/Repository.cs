@@ -17,8 +17,7 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
 
     protected Repository(DbContext context) => _context = context;
 
-    public OptionT<IO, TDomain> GetById(Id<TDomain> id) =>
-        GetByPredicate(db => db.Id == id);
+    public OptionT<IO, TDomain> GetById(Id<TDomain> id) => GetByPredicate(db => db.Id == id);
 
     public IO<Unit> RemoveByIdAndSave(Id<TDomain> id) =>
         IO.liftAsync(env => _context.Set<TDb>()

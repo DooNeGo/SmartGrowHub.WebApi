@@ -18,7 +18,7 @@ internal sealed class GrowHubModulesRepository : Repository<GrowHubModule, GrowH
     protected override Fin<GrowHubModule> ToDomain(GrowHubModuleDb db) => db.ToDomain();
     
     protected override IQueryable<GrowHubModuleDb> AddIncludes(IQueryable<GrowHubModuleDb> query) =>
-        query.Include(x => x.Schedule);
+        query.Include(x => x.Schedule).ThenInclude(x => x.Units);
 
     public OptionT<IO, GrowHubModule> GetByScheduleId(Id<ModuleSchedule> id) =>
         GetByPredicate(module => module.Schedule.Id == id);

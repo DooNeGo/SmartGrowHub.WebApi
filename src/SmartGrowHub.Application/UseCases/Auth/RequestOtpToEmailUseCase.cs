@@ -6,7 +6,7 @@ using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Application.UseCases.Auth;
 
-public sealed class SendOtpToEmailUseCase(
+public sealed class RequestOtpToEmailUseCase(
     IEmailService emailService,
     IOtpIssuer otpIssuer,
     IOtpRepository otpRepository,
@@ -15,7 +15,7 @@ public sealed class SendOtpToEmailUseCase(
 {
     private const string Subject = "One Time Password for Smart Grow Hub";
 
-    public IO<Unit> SendOtpToEmail(EmailAddress emailAddress) =>
+    public IO<Unit> RequestOtpToEmail(EmailAddress emailAddress) =>
         from user in GetOrCreateUserByEmail(emailAddress)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from subject in NonEmptyString.From(Subject).ToIO()

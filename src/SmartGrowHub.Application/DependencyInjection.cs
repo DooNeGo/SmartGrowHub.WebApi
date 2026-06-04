@@ -7,10 +7,10 @@ namespace SmartGrowHub.Application;
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services) =>
-        services.AddTransient<SendOtpToEmailUseCase>()
-            .AddTransient<SendOtpToPhoneUseCase>()
+        services.AddTransient<RequestOtpToEmailUseCase>()
+            .AddTransient<RequestOtpToPhoneUseCase>()
             .AddTransient<RefreshTokensUseCase>()
-            .AddTransient<CheckOtpUseCase>()
-            .AddTransient<RegisterGrowHubUseCase>()
-            .AddTransient<SetScheduleUseCase>();
+            .AddTransient<VerifyOtpUseCase>()
+            .AddTransient<CreateGrowHubUseCase>()
+            .AddTransient<UpdateScheduleUseCase>();
 }

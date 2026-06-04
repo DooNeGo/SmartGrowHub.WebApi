@@ -11,6 +11,7 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 internal sealed class SchedulesRepository : Repository<ModuleSchedule, ScheduleDb>, ISchedulesRepository
 {
     private readonly ApplicationContext _context;
+    
     public SchedulesRepository(ApplicationContext context) : base(context) => _context = context;
 
     public override IO<Unit> Update(ModuleSchedule domain) =>

@@ -10,14 +10,14 @@ using static SmartGrowHub.AspNetCore.Modules.ErrorHandler;
 
 namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Endpoints;
 
-internal sealed class RegisterGrowHubEndpoint
+internal sealed class CreateGrowHubEndpoint
 {
-    public static ValueTask<IResult> RegisterGrowHub(
-        RegisterGrowHubRequest request, RegisterGrowHubUseCase useCase, HttpContext context,
+    public static ValueTask<IResult> CreateGrowHub(
+        RegisterGrowHubRequest request, CreateGrowHubUseCase useCase, HttpContext context,
         IAccessTokenReader tokenReader, ILogger<GetGrowHubsEndpoint> logger, CancellationToken cancellationToken) => (
             from userId in tokenReader.GetUserId(context)
             from model in NonEmptyString.From(request.Model).ToIO()
-            from _ in useCase.RegisterGrowHub(userId, model)
+            from _ in useCase.CreateGrowHub(userId, model)
             select _)
         .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(

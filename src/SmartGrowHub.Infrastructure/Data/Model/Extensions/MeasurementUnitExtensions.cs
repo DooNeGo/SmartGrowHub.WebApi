@@ -8,6 +8,8 @@ internal static class MeasurementUnitExtensions
     {
         MeasurementUnit.Celsius => MeasurementUnitDb.Celsius,
         MeasurementUnit.Percent => MeasurementUnitDb.Percent,
+        MeasurementUnit.Centimeters => MeasurementUnitDb.Centimeters,
+        MeasurementUnit.Pascals => MeasurementUnitDb.Pascals,
         _ => throw new ArgumentOutOfRangeException(nameof(unit), unit, null)
     };
     
@@ -15,6 +17,8 @@ internal static class MeasurementUnitExtensions
     {
         MeasurementUnitDb.Celsius => MeasurementUnit.Celsius,
         MeasurementUnitDb.Percent => MeasurementUnit.Percent,
+        MeasurementUnitDb.Centimeters => MeasurementUnit.Centimeters,
+        MeasurementUnitDb.Pascals => MeasurementUnit.Pascals,
         _ => throw new ArgumentOutOfRangeException(nameof(unit), unit, null)
     };
 }

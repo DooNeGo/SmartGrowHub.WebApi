@@ -116,7 +116,7 @@ public sealed class MqttHostedService : IHostedService
         "%" => MeasurementUnit.Percent,
         "Pa" => MeasurementUnit.Pascals,
         "cm" => MeasurementUnit.Centimeters,
-        "" => MeasurementUnit.Celsius,
+        "-" => MeasurementUnit.Celsius,
         _ => throw new ArgumentOutOfRangeException(nameof(unit), unit, null)
     };
     

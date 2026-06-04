@@ -11,7 +11,7 @@ namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
 internal sealed class RefreshTokensEndpoint
 {
-    public static ValueTask<IResult> RefreshTokens(
+    public static ValueTask<IResult> Refresh(
         RefreshTokensRequest requestDto, RefreshTokensUseCase useCase,
         ILogger<RefreshTokensEndpoint> logger, CancellationToken cancellationToken) => (
             from oldToken in NonEmptyString.From(requestDto.RefreshToken)

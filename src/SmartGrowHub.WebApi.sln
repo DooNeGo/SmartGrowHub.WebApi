@@ -19,6 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{336385
 	ProjectSection(SolutionItems) = preProject
 		..\docker\.env = ..\docker\.env
 		..\docker\compose.yaml = ..\docker\compose.yaml
+		..\docker\mosquitto.conf = ..\docker\mosquitto.conf
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemes", "schemes", "{BE670003-55DB-4E7B-B0A7-C2561784A8F3}"

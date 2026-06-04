@@ -6,13 +6,13 @@ using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Application.UseCases.Auth;
 
-public sealed class SendOtpToPhoneUseCase(
+public sealed class RequestOtpToPhoneUseCase(
     ISmsService smsService,
     IOtpIssuer otpIssuer,
     IOtpRepository otpRepository,
     IUserRepository userRepository)
 {
-    public IO<Unit> SendCodeToPhone(PhoneNumber phoneNumber) =>
+    public IO<Unit> RequestOtpToPhone(PhoneNumber phoneNumber) =>
         from user in GetOrCreateUserByPhone(phoneNumber)
         from oneTimePassword in otpIssuer.Create(user.Id)
         from payload in NonEmptyString.From($"Your one time password: {oneTimePassword.Value}").ToIO()

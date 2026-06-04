@@ -7,14 +7,14 @@ using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.Application.UseCases.Auth;
 
-public sealed class CheckOtpUseCase(
+public sealed class VerifyOtpUseCase(
     IOtpRepository otpRepository,
     ITokensIssuer tokensIssuer,
     IUserSessionRepository sessionRepository,
     IUserRepository userRepository,
     ITimeProvider timeProvider)
 {
-    public IO<AuthTokens> CheckOtp(NonEmptyString otpValue) =>
+    public IO<AuthTokens> VerifyOtp(NonEmptyString otpValue) =>
         from otp in otpRepository
             .GetByValue(otpValue)
             .ToIOOrFail(Error.New("The one-time password does not exist"))

@@ -15,46 +15,46 @@ public readonly record struct ScheduleUnitTemplate<T>(
     TimeInterval<T> Interval)
     where T : IComparisonOperators<T, T, bool>, ISubtractionOperators<T, T, TimeSpan>;
 
-public abstract record SetScheduleRequest(Id<ModuleSchedule> ScheduleId)
+public abstract record UpdateScheduleRequest(Id<ModuleSchedule> ScheduleId)
 {
     public T Match<T>(
-        Func<SetDisableScheduleRequest, T> mapDisabled,
-        Func<SetEnabledScheduleRequest, T> mapEnabled,
-        Func<SetDailyScheduleRequest, T> mapDaily,
-        Func<SetWeeklyScheduleRequest, T> mapWeekly) =>
+        Func<UpdateDisableScheduleRequest, T> mapDisabled,
+        Func<UpdateEnabledScheduleRequest, T> mapEnabled,
+        Func<UpdateDailyScheduleRequest, T> mapDaily,
+        Func<UpdateWeeklyScheduleRequest, T> mapWeekly) =>
         this switch
         {
-            SetDisableScheduleRequest request => mapDisabled(request),
-            SetEnabledScheduleRequest request => mapEnabled(request),
-            SetDailyScheduleRequest request => mapDaily(request),
-            SetWeeklyScheduleRequest request => mapWeekly(request),
+            UpdateDisableScheduleRequest request => mapDisabled(request),
+            UpdateEnabledScheduleRequest request => mapEnabled(request),
+            UpdateDailyScheduleRequest request => mapDaily(request),
+            UpdateWeeklyScheduleRequest request => mapWeekly(request),
             _ => throw new InvalidOperationException()
         };
 }
 
-public sealed record SetDisableScheduleRequest(Id<ModuleSchedule> ScheduleId)
-    : SetScheduleRequest(ScheduleId);
+public sealed record UpdateDisableScheduleRequest(Id<ModuleSchedule> ScheduleId)
+    : UpdateScheduleRequest(ScheduleId);
 
-public sealed record SetEnabledScheduleRequest(Id<ModuleSchedule> ScheduleId)
-    : SetScheduleRequest(ScheduleId);
+public sealed record UpdateEnabledScheduleRequest(Id<ModuleSchedule> ScheduleId)
+    : UpdateScheduleRequest(ScheduleId);
 
-public sealed record SetDailyScheduleRequest(
+public sealed record UpdateDailyScheduleRequest(
     Id<ModuleSchedule> ScheduleId,
     ImmutableList<ScheduleUnitTemplate<TimeOnlyWrapper>> Entries)
-    : SetScheduleRequest(ScheduleId);
+    : UpdateScheduleRequest(ScheduleId);
 
-public sealed record SetWeeklyScheduleRequest(
+public sealed record UpdateWeeklyScheduleRequest(
     Id<ModuleSchedule> ScheduleId,
     ImmutableList<ScheduleUnitTemplate<WeekTimeOnly>> Entries)
-    : SetScheduleRequest(ScheduleId);
+    : UpdateScheduleRequest(ScheduleId);
 
-public sealed class SetScheduleUseCase
+public sealed class UpdateScheduleUseCase
 {
     private readonly ISchedulesRepository _schedulesRepository;
     private readonly IGrowHubModulesRepository _modulesRepository;
     private readonly IMessageService _messageService;
 
-    public SetScheduleUseCase(
+    public UpdateScheduleUseCase(
         ISchedulesRepository schedulesRepository,
         IGrowHubModulesRepository modulesRepository,
         IMessageService messageService)
@@ -64,7 +64,7 @@ public sealed class SetScheduleUseCase
         _messageService = messageService;
     }
 
-    public IO<Unit> SetModuleProgram(SetScheduleRequest request) =>
+    public IO<Unit> UpdateSchedule(UpdateScheduleRequest request) =>
         from module in _modulesRepository
             .GetByScheduleId(request.ScheduleId)
             .ToIOOrFail(Error.New("Schedule id not found"))
@@ -82,12 +82,12 @@ public sealed class SetScheduleUseCase
         from _2 in _messageService.ChangeSchedule(module, newSchedule)
         select _2;
     
-    private static Fin<DailySchedule> ToDailySchedule(SetDailyScheduleRequest request, Id<GrowHubModule> moduleId) =>
+    private static Fin<DailySchedule> ToDailySchedule(UpdateDailyScheduleRequest request, Id<GrowHubModule> moduleId) =>
         from units in request.Entries.ToScheduleUnits(request.ScheduleId)
         from schedule in DailySchedule.New(units.ToImmutableList(), moduleId, request.ScheduleId)
         select schedule;
     
-    private static Fin<WeeklySchedule> ToWeeklySchedule(SetWeeklyScheduleRequest request, Id<GrowHubModule> moduleId) =>
+    private static Fin<WeeklySchedule> ToWeeklySchedule(UpdateWeeklyScheduleRequest request, Id<GrowHubModule> moduleId) =>
         from units in request.Entries.ToScheduleUnits(request.ScheduleId)
         from schedule in WeeklySchedule.New(units.ToImmutableList(), moduleId, request.ScheduleId)
         select schedule;

@@ -12,7 +12,7 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
     public partial class ApplicationContextModel
     {
         private ApplicationContextModel()
-            : base(skipDetectChanges: false, modelId: new Guid("978cc1a4-1e63-4fbb-b0d9-17751fef44b0"), entityTypeCount: 12)
+            : base(skipDetectChanges: false, modelId: new Guid("e63d7571-2018-4992-ae2c-d74699f27d14"), entityTypeCount: 12)
         {
         }
 

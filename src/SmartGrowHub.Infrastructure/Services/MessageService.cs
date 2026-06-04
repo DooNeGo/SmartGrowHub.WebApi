@@ -136,7 +136,7 @@ internal sealed class MessageService : IMessageService
             _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, null)
         };
 
-    private static string ToMqtt(TimeOnlyWrapper time) => $"01T{time.Inner:hh:mm}";
+    private static string ToMqtt(TimeOnlyWrapper time) => $"01T{time.Inner:HH:mm}";
 
     private static string ToMqtt(WeekTimeOnly time) => $"{ToMqtt(time.DayOfWeek):D2}T{time.Time:hh:mm}";
 
