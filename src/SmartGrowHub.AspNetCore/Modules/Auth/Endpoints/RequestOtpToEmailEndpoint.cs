@@ -10,7 +10,7 @@ namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
 internal sealed class RequestOtpToEmailEndpoint
 {
-    public static ValueTask<IResult> Request(LogInByEmailRequest request, RequestOtpToEmailUseCase useCase,
+    public static ValueTask<IResult> Request(RequestOtpToEmailRequest request, RequestOtpToEmailUseCase useCase,
         ILogger<RequestOtpToEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from email in EmailAddress.From(request.EmailAddress).ToIO()
             from _ in useCase.RequestOtpToEmail(email)

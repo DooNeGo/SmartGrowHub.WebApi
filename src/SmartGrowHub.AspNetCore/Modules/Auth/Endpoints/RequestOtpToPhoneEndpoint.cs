@@ -9,7 +9,7 @@ namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
 internal sealed class RequestOtpToPhoneEndpoint
 {
-    public static ValueTask<IResult> Request(LogInByPhoneRequest request, RequestOtpToPhoneUseCase useCase,
+    public static ValueTask<IResult> Request(RequestOtpToPhoneRequest request, RequestOtpToPhoneUseCase useCase,
         ILogger<RequestOtpToEmailEndpoint> logger, CancellationToken cancellationToken) => (
             from phone in PhoneNumber.From(request.PhoneNumber).ToIO()
             from _ in useCase.RequestOtpToPhone(phone)

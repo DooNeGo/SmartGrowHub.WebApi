@@ -14,7 +14,7 @@ namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules.Endpoints;
 
 public sealed class UpdateScheduleEndpoint
 {
-    public static ValueTask<IResult> UpdateSchedule(string scheduleId, SetScheduleRequestDto requestDto,
+    public static ValueTask<IResult> UpdateSchedule(string scheduleId, UpdateScheduleRequestDto requestDto,
         UpdateScheduleUseCase useCase, ILogger<UpdateScheduleEndpoint> logger,
         CancellationToken cancellationToken) => (
             from id in Domain.Common.Id<ModuleSchedule>.From(scheduleId).ToIO()
@@ -26,7 +26,7 @@ public sealed class UpdateScheduleEndpoint
             _ => Ok(Result.Success()),
             error => HandleError(logger, error)));
 
-    private static Fin<UpdateScheduleRequest> ToDomain(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateScheduleRequest> ToDomain(Id<ModuleSchedule> id, UpdateScheduleRequestDto requestDto) =>
         requestDto.Type switch
         {
             ScheduleTypeDto.Disabled => Fin.Succ<UpdateScheduleRequest>(new UpdateDisableScheduleRequest(id)),
@@ -36,13 +36,13 @@ public sealed class UpdateScheduleEndpoint
             _ => throw new InvalidOperationException()
         };
 
-    private static Fin<UpdateDailyScheduleRequest> ToDaily(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateDailyScheduleRequest> ToDaily(Id<ModuleSchedule> id, UpdateScheduleRequestDto requestDto) =>
         requestDto.DailyEntries is null
             ? Error.New("Daily entries was null")
             : Fin.Succ(new UpdateDailyScheduleRequest(id,
                 requestDto.DailyEntries.Select(x => x.ToDomain()).ToImmutableList()));
 
-    private static Fin<UpdateWeeklyScheduleRequest> ToWeekly(Id<ModuleSchedule> id, SetScheduleRequestDto requestDto) =>
+    private static Fin<UpdateWeeklyScheduleRequest> ToWeekly(Id<ModuleSchedule> id, UpdateScheduleRequestDto requestDto) =>
         requestDto.WeeklyEntries is null
             ? Error.New("Weekly entries was null")
             : Fin.Succ(new UpdateWeeklyScheduleRequest(id,

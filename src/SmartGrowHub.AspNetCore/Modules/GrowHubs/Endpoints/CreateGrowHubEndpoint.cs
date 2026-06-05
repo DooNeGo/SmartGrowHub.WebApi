@@ -13,7 +13,7 @@ namespace SmartGrowHub.AspNetCore.Modules.GrowHubs.Endpoints;
 internal sealed class CreateGrowHubEndpoint
 {
     public static ValueTask<IResult> CreateGrowHub(
-        RegisterGrowHubRequest request, CreateGrowHubUseCase useCase, HttpContext context,
+        CreateGrowHubRequest request, CreateGrowHubUseCase useCase, HttpContext context,
         IAccessTokenReader tokenReader, ILogger<GetGrowHubsEndpoint> logger, CancellationToken cancellationToken) => (
             from userId in tokenReader.GetUserId(context)
             from model in NonEmptyString.From(request.Model).ToIO()

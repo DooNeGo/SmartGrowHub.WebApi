@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SmartGrowHub.Infrastructure\SmartGrowHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\SmartGrowHub.Shared\SmartGrowHub.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

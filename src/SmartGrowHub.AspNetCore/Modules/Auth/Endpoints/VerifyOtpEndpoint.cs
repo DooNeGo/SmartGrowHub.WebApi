@@ -12,7 +12,7 @@ namespace SmartGrowHub.AspNetCore.Modules.Auth.Endpoints;
 
 internal sealed class VerifyOtpEndpoint
 {
-    public static ValueTask<IResult> Verify(CheckOtpRequest request, VerifyOtpUseCase useCase,
+    public static ValueTask<IResult> Verify(VerifyOtpRequest request, VerifyOtpUseCase useCase,
         ILogger<VerifyOtpEndpoint> logger,
         CancellationToken cancellationToken) => (
             from otp in NonEmptyString.From(request.OtpValue).ToIO()
