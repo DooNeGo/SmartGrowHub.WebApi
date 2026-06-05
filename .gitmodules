@@ -1,0 +1,3 @@
+[submodule "src/SmartGrowHub.Shared"]
+	path = src/SmartGrowHub.Shared
+	url = git@github.com:DooNeGo/SmartGrowHub.Shared.git
