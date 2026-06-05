@@ -1,5 +1,6 @@
 ﻿using SmartGrowHub.AspNetCore.Modules.GrowHubs.Endpoints;
 using SmartGrowHub.AspNetCore.Modules.GrowHubs.Modules;
+using SmartGrowHub.AspNetCore.Modules.GrowHubs.Sensors;
 
 namespace SmartGrowHub.AspNetCore.Modules.GrowHubs;
 
@@ -12,7 +13,9 @@ public static class GrowHubModuleExtensions
         growHubsGroup.MapGet("", GetGrowHubsEndpoint.GetGrowHubs);
         growHubsGroup.MapPost("", CreateGrowHubEndpoint.CreateGrowHub);
             
-        growHubsGroup.AddModulesEndpoints();
+        growHubsGroup
+            .AddModulesEndpoints()
+            .AddSensorsEndpoints();
         
         return routeBuilder;
     }

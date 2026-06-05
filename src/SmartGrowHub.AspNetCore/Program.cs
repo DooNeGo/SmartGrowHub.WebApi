@@ -29,6 +29,7 @@ internal sealed class Program
             serializerOptions.Converters.Add(new JsonStringEnumConverter<ScheduleTypeDto>());
             serializerOptions.Converters.Add(new JsonStringEnumConverter<DayOfWeek>());
             serializerOptions.Converters.Add(new JsonStringEnumConverter<ScheduleUnitKindDto>());
+            serializerOptions.Converters.Add(new JsonStringEnumConverter<SensorTypeDto>());
         });
         
         AccessTokenConfiguration configuration = builder.Configuration

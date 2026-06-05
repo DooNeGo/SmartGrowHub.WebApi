@@ -81,6 +81,8 @@ public static class GrowHubExtensions
     {
         MeasurementUnit.Celsius => "\u00b0C",
         MeasurementUnit.Percent => "%",
+        MeasurementUnit.Centimeters => "cm",
+        MeasurementUnit.Pascals => "Pa",
         _ => throw new ArgumentOutOfRangeException(nameof(unit), unit, null)
     };
 

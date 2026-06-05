@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
@@ -54,11 +55,20 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
     protected abstract IQueryable<TDb> AddIncludes(IQueryable<TDb> query);
     
     protected OptionT<IO, TDomain> GetByPredicate(Expression<Func<TDb, bool>> predicate) =>
-        from moduleDb in OptionT.liftIO<IO, TDb>(
+        from db in OptionT.liftIO<IO, TDb>(
             IO.liftAsync(env =>
                 AddIncludes(_context.Set<TDb>().Where(predicate))
                     .FirstOrDefaultAsync(env.Token)
                     .Map(Prelude.Optional)))
-        from module in ToDomain(moduleDb).ToIO()
-        select module;
+        from domain in ToDomain(db).ToIO()
+        select domain;
+    
+    protected IO<ImmutableList<TDomain>> GetAllByPredicate(Expression<Func<TDb, bool>> predicate) =>
+        from dbs in IO.liftAsync(env =>
+            AddIncludes(_context.Set<TDb>().Where(predicate)).ToListAsync(env.Token))
+        from domains in dbs
+            .AsIterable()
+            .Traverse(ToDomain)
+            .As().ToIO()
+        select domains.ToImmutableList();
 }

@@ -1,5 +1,8 @@
+using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data;
 using SmartGrowHub.Infrastructure.Data.Model;
@@ -11,8 +14,27 @@ internal sealed class SensorMeasurementRepository :
     Repository<SensorMeasurement, SensorReadingDb>,
     ISensorMeasurementRepository
 {
-    public SensorMeasurementRepository(ApplicationContext context) : base(context) { }
+    private readonly ApplicationContext _context;
     
+    public SensorMeasurementRepository(ApplicationContext context) : base(context)
+    {
+        _context = context;
+    }
+
+    public IO<ImmutableList<SensorMeasurement>> GetLatestByGrowHubId(Id<GrowHub> growHubId) =>
+        from dbs in IO.liftAsync(env => AddIncludes(_context.Set<SensorReadingDb>()
+                .Where(x => x.GrowHubId == growHubId.Value))
+            .GroupBy(x => x.SensorId)
+            .Select(grouping => grouping
+                .OrderByDescending(x => x.CreatedAt)
+                .First())
+            .ToListAsync(env.Token))
+        from domains in dbs
+            .AsIterable()
+            .Traverse(ToDomain)
+            .As().ToIO()
+        select domains.ToImmutableList();
+
     protected override SensorReadingDb ToDb(SensorMeasurement domain)
     {
         return new SensorReadingDb
