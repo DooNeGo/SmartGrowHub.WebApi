@@ -1,9 +1,12 @@
+using System.Collections.Immutable;
 using System.Text.Json;
 using MQTTnet;
 using MQTTnet.Protocol;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
+using SmartGrowHub.AspNetCore.Modules.Extensions;
 using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.AspNetCore.HostedServices;
@@ -15,13 +18,19 @@ public sealed class MqttHostedService : IHostedService
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
     };
     
+    private static readonly JsonSerializerOptions MobileAppJsonSerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    
     private readonly IMqttClient _mqttClient;
     private readonly MqttClientOptions _options;
     private readonly MqttClientDisconnectOptions _disconnectOptions;
     private readonly IServiceProvider _serviceProvider;
     private readonly ITimeProvider _timeProvider;
     private readonly ILogger<MqttHostedService> _logger;
-    private readonly Fin<NonEmptyString> _sensorsTopic;
+    private readonly Fin<NonEmptyString> _growHubsSensorsTopic;
+    private readonly Fin<NonEmptyString> _mobileAppsSensorsTopic;
 
     public MqttHostedService(
         IMqttClient mqttClient,
@@ -39,8 +48,17 @@ public sealed class MqttHostedService : IHostedService
         _timeProvider = timeProvider;
         _logger = logger;
         
-        _sensorsTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:Sensors"]!)
+        _growHubsSensorsTopic = NonEmptyString
+            .From(configuration["Mqtt:Topics:GrowHub:Sensors"]!)
+            .MapFail(error =>
+            {
+                var newError = Error.New("Invalid MQTT sensors topic", error);
+                logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
+                return newError;
+            });
+        
+        _mobileAppsSensorsTopic = NonEmptyString
+            .From(configuration["Mqtt:Topics:MobileApps:Sensors"]!)
             .MapFail(error =>
             {
                 var newError = Error.New("Invalid MQTT sensors topic", error);
@@ -53,38 +71,39 @@ public sealed class MqttHostedService : IHostedService
     {
         await _mqttClient.ConnectAsync(_options, cancellationToken);
         await _mqttClient.SubscribeAsync("#", MqttQualityOfServiceLevel.AtMostOnce, cancellationToken);
-        
+
         _mqttClient.ApplicationMessageReceivedAsync += args =>
         {
             string stringPayload = args.ApplicationMessage.ConvertPayloadToString();
-            
+
             _logger.LogInformation("Received message with topic: {topic} and payload: {payload}",
                 args.ApplicationMessage.Topic, stringPayload);
 
-            return _sensorsTopic.Match(
-                Succ: topic => args.ApplicationMessage.Topic.Contains(topic)
-                    ? SaveSensorMeasurement(stringPayload)
-                        .RunSafeAsync(EnvIO.New(token: cancellationToken))
-                        .Map(fin => fin.MapFail(error =>
-                        {
-                            _logger.LogError(
-                                error.ToException(),
-                                "Failed to save sensor measurement with payload: {payload}", stringPayload);
+            return (
+                    from topic in _growHubsSensorsTopic.ToIO()
+                    from _ in args.ApplicationMessage.Topic.Contains(topic)
+                        ? HandleSensors(stringPayload)
+                        : IO.pure(unit)
+                    select _)
+                .RunSafeAsync(EnvIO.New(token: cancellationToken))
+                .Map(fin => fin.MapFail(error =>
+                {
+                    _logger.LogError(
+                        error.ToException(),
+                        "Failed to save sensor measurement with payload: {payload}", stringPayload);
 
-                            return error;
-                        }))
-                        .ToRef()
-                    : Task.CompletedTask,
-                Fail: _ => Task.CompletedTask);
+                    return error;
+                }))
+                .ToRef();
         };
     }
 
-    private IO<Unit> SaveSensorMeasurement(string payload) =>
+    private IO<Unit> HandleSensors(string payload) =>
         from utcNow in _timeProvider.UtcNow
         from measurements in IO.lift(() =>
         {
             var measurementsMqtt = JsonSerializer.Deserialize<SensorMeasurementsMqtt>(payload, JsonSerializerOptions);
-            if (measurementsMqtt is null) return Iterable<SensorMeasurement>();
+            if (measurementsMqtt is null) return ImmutableList<SensorMeasurement>.Empty;
 
             return
                 from growHubId in Domain.Common.Id<GrowHub>.From(measurementsMqtt.DeviceId)
@@ -92,8 +111,29 @@ public sealed class MqttHostedService : IHostedService
                     .AsIterable()
                     .Traverse(mqtt => ToDomain(growHubId, utcNow, mqtt))
                     .As()
-                select measurements;
+                select measurements.ToImmutableList();
         })
+        from _1 in SaveSensorMeasurements(measurements)
+        from _2 in PublishSensorMeasurementsToMobileApps(measurements)
+        select _2;
+
+    private IO<Unit> PublishSensorMeasurementsToMobileApps(ImmutableList<SensorMeasurement> measurements) =>
+        from topic in _mobileAppsSensorsTopic.ToIO()
+        from _ in measurements
+            .AsIterable()
+            .TraverseM(measurement => IO.liftAsync(async env =>
+            {
+                MqttApplicationMessage message = new MqttApplicationMessageBuilder()
+                    .WithTopic($"{topic}/{measurement.SensorId}")
+                    .WithPayload(JsonSerializer.Serialize(measurement.ToDto(), MobileAppJsonSerializerOptions))
+                    .Build();
+
+                await _mqttClient.PublishAsync(message, env.Token);
+                return unit;
+            }))
+        select unit;
+
+    private IO<Unit> SaveSensorMeasurements(ImmutableList<SensorMeasurement> measurements) =>
         from scope in use(IO.lift(() => _serviceProvider.CreateScope()))
         from repository in IO.lift(() => scope.ServiceProvider.GetRequiredService<ISensorMeasurementRepository>())
         from _1 in repository.AddRangeAndSave(measurements)

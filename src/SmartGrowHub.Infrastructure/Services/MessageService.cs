@@ -39,7 +39,7 @@ internal sealed class MessageService : IMessageService
         _mqttClient = mqttClient;
         _logger = logger;
         _modulesTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:Modules"]!)
+            .From(configuration["Mqtt:Topics:GrowHubs:Modules"]!)
             .MapFail(error =>
             {
                 var newError = Error.New("Invalid MQTT modules topic", error);
