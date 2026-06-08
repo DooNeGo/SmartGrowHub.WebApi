@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Solution Items/" />
+  <Folder Name="/Solution Items/docker/">
+    <File Path="../docker/.env" />
+    <File Path="../docker/compose.yaml" />
+    <File Path="../docker/mosquitto.conf" />
+  </Folder>
+  <Folder Name="/Solution Items/schemes/" />
+  <Folder Name="/Solution Items/schemes/auth/">
+    <File Path="../schemes/auth/stage1.mmd" />
+    <File Path="../schemes/auth/stage2.mmd" />
+    <File Path="../schemes/auth/stage3.mmd" />
+  </Folder>
+  <Folder Name="/Solution Items/schemes/database/">
+    <File Path="../schemes/database/database.mmd" />
+  </Folder>
+  <Project Path="SmartGrowHub.Application/SmartGrowHub.Application.csproj" />
+  <Project Path="SmartGrowHub.AspNetCore/SmartGrowHub.AspNetCore.csproj" />
+  <Project Path="SmartGrowHub.Domain/SmartGrowHub.Domain.csproj" />
+  <Project Path="SmartGrowHub.Infrastructure/SmartGrowHub.Infrastructure.csproj" />
+  <Project Path="SmartGrowHub.Shared/SmartGrowHub.Shared.csproj" />
+</Solution>
