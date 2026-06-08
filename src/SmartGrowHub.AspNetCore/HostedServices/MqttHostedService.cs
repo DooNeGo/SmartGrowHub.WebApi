@@ -52,16 +52,16 @@ public sealed class MqttHostedService : IHostedService
             .From(configuration["Mqtt:Topics:GrowHub:Sensors"]!)
             .MapFail(error =>
             {
-                var newError = Error.New("Invalid MQTT sensors topic", error);
+                var newError = Error.New("Invalid MQTT grow hub sensors topic", error);
                 logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
                 return newError;
             });
         
         _mobileAppsSensorsTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:MobileApps:Sensors"]!)
+            .From(configuration["Mqtt:Topics:MobileApp:Sensors"]!)
             .MapFail(error =>
             {
-                var newError = Error.New("Invalid MQTT sensors topic", error);
+                var newError = Error.New("Invalid MQTT mobile app sensors topic", error);
                 logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
                 return newError;
             });
