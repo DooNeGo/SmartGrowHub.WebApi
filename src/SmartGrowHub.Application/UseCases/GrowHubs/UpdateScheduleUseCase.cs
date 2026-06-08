@@ -52,16 +52,16 @@ public sealed class UpdateScheduleUseCase
 {
     private readonly ISchedulesRepository _schedulesRepository;
     private readonly IGrowHubModulesRepository _modulesRepository;
-    private readonly IMessageService _messageService;
+    private readonly IModuleCommandService _moduleCommandService;
 
     public UpdateScheduleUseCase(
         ISchedulesRepository schedulesRepository,
         IGrowHubModulesRepository modulesRepository,
-        IMessageService messageService)
+        IModuleCommandService moduleCommandService)
     {
         _schedulesRepository = schedulesRepository;
         _modulesRepository = modulesRepository;
-        _messageService = messageService;
+        _moduleCommandService = moduleCommandService;
     }
 
     public IO<Unit> UpdateSchedule(UpdateScheduleRequest request) =>
@@ -79,7 +79,7 @@ public sealed class UpdateScheduleUseCase
                 mapWeekly: weekly => ToWeeklySchedule(weekly, moduleId).Cast<WeeklySchedule, ModuleSchedule>())
             .As().ToIO()
         from _1 in _schedulesRepository.UpdateAndSave(newSchedule)
-        from _2 in _messageService.ChangeSchedule(module, newSchedule)
+        from _2 in _moduleCommandService.ChangeSchedule(module, newSchedule)
         select _2;
     
     private static Fin<DailySchedule> ToDailySchedule(UpdateDailyScheduleRequest request, Id<GrowHubModule> moduleId) =>

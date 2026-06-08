@@ -32,7 +32,7 @@ public static class DependencyInjection
                 .AddTransient<IEmailService, EmailService>()
                 .AddSingleton<IFileService, FileService>()
                 .AddTransient<ISmtpClient, SmtpClient>()
-                .AddTransient<IMessageService, MessageService>();
+                .AddTransient<IModuleCommandService, ModuleCommandService>();
 
         private IServiceCollection AddDbContext(IConfiguration configuration) =>
             services.AddDbContextPool<ApplicationContext>(options => options

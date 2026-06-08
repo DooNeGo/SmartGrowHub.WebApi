@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MQTTnet;
 using SmartGrowHub.Application.Services;
@@ -13,7 +12,7 @@ using SmartGrowHub.Domain.Model.Programs;
 
 namespace SmartGrowHub.Infrastructure.Services;
 
-internal sealed class MessageService : IMessageService
+internal sealed class ModuleCommandService : IModuleCommandService
 {
     private static readonly JsonNamingPolicy DefaultNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     private static readonly JsonNamingPolicy EnumNamingPolicy = JsonNamingPolicy.CamelCase;
@@ -31,32 +30,23 @@ internal sealed class MessageService : IMessageService
     };
 
     private readonly IMqttClient _mqttClient;
-    private readonly Fin<NonEmptyString> _modulesTopic;
-    private readonly ILogger<MessageService> _logger;
+    private readonly ILogger<ModuleCommandService> _logger;
 
-    public MessageService(IMqttClient mqttClient, IConfiguration configuration, ILogger<MessageService> logger)
+    public ModuleCommandService(IMqttClient mqttClient, ILogger<ModuleCommandService> logger)
     {
         _mqttClient = mqttClient;
         _logger = logger;
-        _modulesTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:GrowHubs:Modules"]!)
-            .MapFail(error =>
-            {
-                var newError = Error.New("Invalid MQTT modules topic", error);
-                logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
-                return newError;
-            });
     }
 
     public IO<Unit> ChangeSchedule(GrowHubModule module, ModuleSchedule schedule) =>
-        from topic in _modulesTopic.ToIO()
+        from topic in NonEmptyString.From("growHubs/modules").ToIO()
         let messages = BuildMessages(module, schedule, topic)
         from _ in messages
             .AsIterable()
             .Traverse(message => IO.liftAsync(env => _mqttClient.PublishAsync(message, env.Token)))
             .As().ToUnit()
         select _;
-    
+
     private static ImmutableList<MqttApplicationMessage> BuildMessages(
         GrowHubModule module, ModuleSchedule schedule, NonEmptyString topic)
     {

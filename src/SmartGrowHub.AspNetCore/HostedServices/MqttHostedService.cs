@@ -6,7 +6,6 @@ using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
 using SmartGrowHub.AspNetCore.Modules.Extensions;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 
 namespace SmartGrowHub.AspNetCore.HostedServices;
@@ -29,15 +28,12 @@ public sealed class MqttHostedService : IHostedService
     private readonly IServiceProvider _serviceProvider;
     private readonly ITimeProvider _timeProvider;
     private readonly ILogger<MqttHostedService> _logger;
-    private readonly Fin<NonEmptyString> _growHubsSensorsTopic;
-    private readonly Fin<NonEmptyString> _mobileAppsSensorsTopic;
 
     public MqttHostedService(
         IMqttClient mqttClient,
         MqttClientOptions options,
         MqttClientDisconnectOptions disconnectOptions,
         IServiceProvider serviceProvider,
-        IConfiguration configuration,
         ITimeProvider timeProvider,
         ILogger<MqttHostedService> logger)
     {
@@ -47,24 +43,6 @@ public sealed class MqttHostedService : IHostedService
         _serviceProvider = serviceProvider;
         _timeProvider = timeProvider;
         _logger = logger;
-        
-        _growHubsSensorsTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:GrowHub:Sensors"]!)
-            .MapFail(error =>
-            {
-                var newError = Error.New("Invalid MQTT grow hub sensors topic", error);
-                logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
-                return newError;
-            });
-        
-        _mobileAppsSensorsTopic = NonEmptyString
-            .From(configuration["Mqtt:Topics:MobileApp:Sensors"]!)
-            .MapFail(error =>
-            {
-                var newError = Error.New("Invalid MQTT mobile app sensors topic", error);
-                logger.LogCritical(newError.ToException(), "Failed to read mqtt topics from configuration");
-                return newError;
-            });
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -79,12 +57,9 @@ public sealed class MqttHostedService : IHostedService
             _logger.LogInformation("Received message with topic: {topic} and payload: {payload}",
                 args.ApplicationMessage.Topic, stringPayload);
 
-            return (
-                    from topic in _growHubsSensorsTopic.ToIO()
-                    from _ in args.ApplicationMessage.Topic.Contains(topic)
-                        ? HandleSensors(stringPayload)
-                        : IO.pure(unit)
-                    select _)
+            return (args.ApplicationMessage.Topic.Contains("growHubs/sensors")
+                    ? HandleSensors(stringPayload)
+                    : IO.pure(unit))
                 .RunSafeAsync(EnvIO.New(token: cancellationToken))
                 .Map(fin => fin.MapFail(error =>
                 {
@@ -94,7 +69,7 @@ public sealed class MqttHostedService : IHostedService
 
                     return error;
                 }))
-                .ToRef();
+                .AsTask();
         };
     }
 
@@ -118,20 +93,18 @@ public sealed class MqttHostedService : IHostedService
         select _2;
 
     private IO<Unit> PublishSensorMeasurementsToMobileApps(ImmutableList<SensorMeasurement> measurements) =>
-        from topic in _mobileAppsSensorsTopic.ToIO()
-        from _ in measurements
+        measurements
             .AsIterable()
             .TraverseM(measurement => IO.liftAsync(async env =>
             {
                 MqttApplicationMessage message = new MqttApplicationMessageBuilder()
-                    .WithTopic($"{topic}/{measurement.SensorId}")
+                    .WithTopic($"clients/growHubs/{measurement.GrowHubId}/sensors/{measurement.SensorId}")
                     .WithPayload(JsonSerializer.Serialize(measurement.ToDto(), MobileAppJsonSerializerOptions))
                     .Build();
 
                 await _mqttClient.PublishAsync(message, env.Token);
                 return unit;
-            }))
-        select unit;
+            })).IgnoreF().As();
 
     private IO<Unit> SaveSensorMeasurements(ImmutableList<SensorMeasurement> measurements) =>
         from scope in use(IO.lift(() => _serviceProvider.CreateScope()))
