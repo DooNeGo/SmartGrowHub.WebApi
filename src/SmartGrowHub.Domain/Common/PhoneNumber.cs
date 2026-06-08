@@ -16,11 +16,11 @@ public sealed record PhoneNumber : DomainType<PhoneNumber, string>
     public static explicit operator PhoneNumber(string value) => From(value).ThrowIfFail();
 
     public static Fin<PhoneNumber> From(string repr) =>
-        from nonEmpty in NonEmptyString.From(repr).MapFail(error => Error.New(ErrorMessage, error))
-        from phoneNumber in PhoneAttribute.IsValid(repr)
+        from _1 in NonEmptyString.From(repr).MapFail(error => Error.New(ErrorMessage, error))
+        from _2 in PhoneAttribute.IsValid(repr)
             ? Fin.Succ(new PhoneNumber(repr))
             : Fin.Fail<PhoneNumber>(Error.New(ErrorMessage))
-        select phoneNumber;
+        select _2;
 
     public string To() => _value;
 }

@@ -2,9 +2,10 @@
 
 public sealed record UserName : DomainType<UserName, string>
 {
-    private const int MinimumLength = 6;
     private const string ErrorMessage = "Invalid username";
 
+    private static readonly NonNegativeInteger MinimumLength = NonNegativeInteger.From(6).ThrowIfFail();
+    
     private readonly string _value;
 
     private UserName(string value) => _value = value;
@@ -15,11 +16,10 @@ public sealed record UserName : DomainType<UserName, string>
     public static Fin<UserName> From(string rawValue)
     {
         Fin<UserName> result =
-            from nonEmpty in NonEmptyString.From(rawValue.Trim())
-            from latin in LatinString.From(nonEmpty)
-            from minLength in NonNegativeInteger.From(MinimumLength)
-            from bounded in BoundedString.From(latin, minLength, None)
-            select new UserName(bounded);
+            from _1 in NonEmptyString.From(rawValue)
+            from _2 in LatinString.From(rawValue)
+            from _3 in BoundedString.From(rawValue, MinimumLength, None)
+            select new UserName(rawValue);
 
         return result.MapFail(error => Error.New(ErrorMessage, error));
     }
