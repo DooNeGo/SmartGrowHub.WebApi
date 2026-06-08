@@ -9,17 +9,15 @@ public sealed record BoundedString : DomainType<BoundedString, string>
     public static implicit operator string(BoundedString value) => value.To();
     public static explicit operator BoundedString(string value) => From(value).ThrowIfFail();
 
-    public static Fin<BoundedString> From(string repr) =>
-        new BoundedString(repr);
+    public static Fin<BoundedString> From(string repr) => new BoundedString(repr);
 
     public string To() => _value;
 
-    public static Fin<BoundedString> From(
-        string rawValue, Option<NonNegativeInteger> minLength,
+    public static Fin<BoundedString> From(string rawValue, Option<NonNegativeInteger> minLength,
         Option<NonNegativeInteger> maxLength) =>
-            from _1 in ValidateMinLength(rawValue, in minLength)
-            from _2 in ValidateMaxLength(rawValue, in maxLength)
-            select new BoundedString(rawValue);
+        from _1 in ValidateMinLength(rawValue, in minLength)
+        from _2 in ValidateMaxLength(rawValue, in maxLength)
+        select new BoundedString(rawValue);
 
     public override string ToString() => To();
 

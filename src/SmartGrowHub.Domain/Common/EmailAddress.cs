@@ -18,15 +18,15 @@ public sealed record EmailAddress : DomainType<EmailAddress, string>
     public static Fin<EmailAddress> From(string rawValue)
     {
         Fin<EmailAddress> result =
-            from nonEmpty in NonEmptyString.From(rawValue.Trim())
-            from _ in IsValidEmailAddress(nonEmpty)
-            from latin in LatinString.From(nonEmpty)
-            select new EmailAddress(latin);
+            from _1 in NonEmptyString.From(rawValue.Trim())
+            from _2 in ValidateEmailAddress(rawValue)
+            from _3 in LatinString.From(rawValue)
+            select new EmailAddress(rawValue);
 
         return result.MapFail(error => Error.New(ErrorMessage, error));
     }
 
-    private static Fin<string> IsValidEmailAddress(string value) =>
+    private static Fin<string> ValidateEmailAddress(string value) =>
         Attribute.IsValid(value) ? value : Fin.Fail<string>(Error.New(ErrorMessage));
 
     public string To() => _value;
