@@ -17,8 +17,10 @@ public sealed record EmailAddress : DomainType<EmailAddress, string>
 
     public static Fin<EmailAddress> From(string rawValue)
     {
+        rawValue = rawValue.Trim();
+        
         Fin<EmailAddress> result =
-            from _1 in NonEmptyString.From(rawValue.Trim())
+            from _1 in NonEmptyString.From(rawValue)
             from _2 in ValidateEmailAddress(rawValue)
             from _3 in LatinString.From(rawValue)
             select new EmailAddress(rawValue);
@@ -26,8 +28,8 @@ public sealed record EmailAddress : DomainType<EmailAddress, string>
         return result.MapFail(error => Error.New(ErrorMessage, error));
     }
 
-    private static Fin<string> ValidateEmailAddress(string value) =>
-        Attribute.IsValid(value) ? value : Fin.Fail<string>(Error.New(ErrorMessage));
+    private static Fin<Unit> ValidateEmailAddress(string value) =>
+        Attribute.IsValid(value) ? unit : Fin.Fail<Unit>(Error.New(ErrorMessage));
 
     public string To() => _value;
 
