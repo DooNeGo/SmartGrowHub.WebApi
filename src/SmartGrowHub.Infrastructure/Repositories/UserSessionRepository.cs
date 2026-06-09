@@ -1,10 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SmartGrowHub.Application.Repositories;
+﻿using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data;
 using System.Collections.Immutable;
-using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
 
@@ -12,22 +10,13 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class UserSessionRepository : Repository<UserSession, UserSessionDb>, IUserSessionRepository
 {
-    private readonly ApplicationContext _context;
-
-    public UserSessionRepository(ApplicationContext context) : base(context) => _context = context;
+    public UserSessionRepository(ApplicationContext context) : base(context) { }
 
     public OptionT<IO, UserSession> GetByRefreshTokenValue(Ulid value) =>
         GetByPredicate(session => session.RefreshToken == value);
 
     public IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id) =>
-        IO.liftAsync(env => _context.UserSessions
-                .Where(session => session.UserId == id)
-                .ToListAsync(env.Token))
-            .Bind(list => list
-                .AsIterable()
-                .Traverse(session => session.TryToDomain())
-                .Map(iterable => iterable.ToImmutableList())
-                .As().ToIO());
+        GetAllByPredicate(session => session.UserId == id);
 
     protected override UserSessionDb ToDb(UserSession domain) => domain.ToDb();
 

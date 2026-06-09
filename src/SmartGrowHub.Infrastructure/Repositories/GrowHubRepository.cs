@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data;
 using SmartGrowHub.Infrastructure.Data.Model;
@@ -11,19 +11,10 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class GrowHubRepository : Repository<GrowHub, GrowHubDb>, IGrowHubRepository
 {
-    private readonly ApplicationContext _context;
+    public GrowHubRepository(ApplicationContext context) : base(context) { }
 
-    public GrowHubRepository(ApplicationContext context) : base(context) => _context = context;
-
-    public IO<Iterable<GrowHub>> GetAllByUserId(Id<User> id) =>
-        from list in IO.liftAsync(env =>
-            AddIncludes(_context.GrowHubs.Where(x => x.UserId == id.Value))
-                .ToListAsync(env.Token))
-        from domains in list
-            .AsIterable()
-            .Traverse(ToDomain)
-            .As().ToIO()
-        select domains;
+    public IO<ImmutableList<GrowHub>> GetAllByUserId(Id<User> id) =>
+        GetAllByPredicate(hub => hub.UserId == id);
 
     protected override GrowHubDb ToDb(GrowHub domain) => domain.ToDb();
 

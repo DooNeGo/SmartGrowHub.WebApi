@@ -41,10 +41,10 @@ internal abstract class Repository<TDomain, TDb> : IRepository<TDomain>
     public virtual IO<Unit> Update(TDomain domain) =>
         from option in IO.lift(() => Prelude.Optional(_context.Set<TDb>().Local.FindEntry(domain.Id.Value)))
         let newDb = ToDb(domain)
-        from _1 in option.Match(
+        from _ in option.Match(
             Some: entry => IO.lift(() => entry.CurrentValues.SetValues(newDb)),
             None: () => _context.UpdateIO(newDb))
-        select _1;
+        select _;
 
     public IO<Unit> SaveChanges() => _context.SaveChangesIO();
 

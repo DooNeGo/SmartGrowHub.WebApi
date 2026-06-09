@@ -18,7 +18,7 @@ internal sealed class GetGrowHubsEndpoint
         CancellationToken cancellationToken) => (
             from userId in accessTokenReader.GetUserId(context)
             from growHubs in growHubRepository.GetAllByUserId(userId)
-            select growHubs.Map(ToDto).AsEnumerable())
+            select growHubs.Select(ToDto))
         .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(
             growHub => Ok(Result.Success(growHub)),

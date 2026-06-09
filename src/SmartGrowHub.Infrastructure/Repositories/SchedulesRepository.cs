@@ -17,7 +17,7 @@ internal sealed class SchedulesRepository : Repository<ModuleSchedule, ScheduleD
     public override IO<Unit> Update(ModuleSchedule domain) =>
         from option in IO.lift(() => Prelude.Optional(_context.Schedules.Local.FindEntry(domain.Id.Value)))
         let newDb = ToDb(domain)
-        from _1 in option.Match(
+        from _ in option.Match(
             Some: entry => IO.lift(() =>
             {
                 entry.CurrentValues.SetValues(newDb);
@@ -29,7 +29,7 @@ internal sealed class SchedulesRepository : Repository<ModuleSchedule, ScheduleD
                 }
             }),
             None: () => _context.UpdateIO(newDb))
-        select _1;
+        select _;
 
     protected override ScheduleDb ToDb(ModuleSchedule domain) => domain.ToDb();
 

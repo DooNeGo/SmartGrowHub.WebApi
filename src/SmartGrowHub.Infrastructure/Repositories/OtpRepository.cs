@@ -1,8 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
-using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Infrastructure.Data;
 using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
@@ -11,19 +9,10 @@ namespace SmartGrowHub.Infrastructure.Repositories;
 
 internal sealed class OtpRepository : Repository<OneTimePassword, OneTimePasswordDb>, IOtpRepository
 {
-    private readonly ApplicationContext _context;
-
-    public OtpRepository(ApplicationContext context) : base(context) => _context = context;
+    public OtpRepository(ApplicationContext context) : base(context) { }
 
     public OptionT<IO, OneTimePassword> GetByValue(NonEmptyString value) =>
-        from otp in OptionT.liftIO<IO, OneTimePasswordDb>(
-            IO.liftAsync(env =>
-                _context.OneTimePasswords
-                    .Where(otp => otp.Value == value)
-                    .FirstOrDefaultAsync(env.Token)
-                    .Map(Prelude.Optional)))
-        from domainOtp in otp.ToDomain().ToIO()
-        select domainOtp;
+        GetByPredicate(otp => otp.Value == value);
 
     protected override OneTimePasswordDb ToDb(OneTimePassword domain) => domain.ToDb();
 
