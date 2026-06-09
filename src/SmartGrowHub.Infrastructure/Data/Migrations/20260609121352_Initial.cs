@@ -15,7 +15,7 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     EmailAddress = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true)
                 },
@@ -28,10 +28,10 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "GrowHubs",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Model = table.Column<string>(type: "text", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -48,10 +48,10 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "OneTimePasswords",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Value = table.Column<string>(type: "character varying(6)", maxLength: 6, nullable: false),
                     Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,11 +68,11 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "UserSessions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     AccessToken = table.Column<string>(type: "text", nullable: false),
-                    RefreshToken = table.Column<string>(type: "text", nullable: false),
+                    RefreshToken = table.Column<byte[]>(type: "bytea", nullable: false),
                     Expires = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,9 +89,9 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "Modules",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    GrowHubId = table.Column<string>(type: "text", nullable: false)
+                    GrowHubId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -108,10 +108,10 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "Plants",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     PlantedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    GrowHubId = table.Column<string>(type: "text", nullable: false)
+                    GrowHubId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -128,12 +128,13 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "SensorReading",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
+                    SensorId = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     Value = table.Column<float>(type: "real", nullable: false),
                     Unit = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
-                    GrowHubId = table.Column<string>(type: "text", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    GrowHubId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -142,16 +143,17 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         name: "FK_SensorReading_GrowHubs_GrowHubId",
                         column: x => x.GrowHubId,
                         principalTable: "GrowHubs",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    GrowHubModuleId = table.Column<string>(type: "text", nullable: false)
+                    GrowHubModuleId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,13 +170,13 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 name: "SchedulesUnits",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<byte[]>(type: "bytea", nullable: false),
                     Kind = table.Column<int>(type: "integer", nullable: false),
                     Quantity_Magnitude = table.Column<float>(type: "real", nullable: false),
                     Quantity_Unit = table.Column<int>(type: "integer", nullable: false),
                     Interval_Start = table.Column<string>(type: "text", nullable: false),
                     Interval_End = table.Column<string>(type: "text", nullable: false),
-                    ScheduleId = table.Column<string>(type: "text", nullable: false)
+                    ScheduleId = table.Column<byte[]>(type: "bytea", nullable: false)
                 },
                 constraints: table =>
                 {

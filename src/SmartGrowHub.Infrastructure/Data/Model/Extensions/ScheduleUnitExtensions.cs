@@ -15,9 +15,9 @@ internal static class ScheduleUnitExtensions
     };
 
     public static Fin<ScheduleUnit<TimeOnlyWrapper>> ToDailyScheduleUnit(this ScheduleUnitDb scheduleUnit) =>
-        from id in Id<ScheduleUnit<TimeOnlyWrapper>>.From(scheduleUnit.Id)
-        from scheduleId in Id<ModuleSchedule>.From(scheduleUnit.ScheduleId)
         from entry in scheduleUnit.Interval.ToDailyEntry()
+        let id = new Id<ScheduleUnit<TimeOnlyWrapper>>(scheduleUnit.Id)
+        let scheduleId = new Id<ModuleSchedule>(scheduleUnit.ScheduleId)
         from domain in ScheduleUnit<TimeOnlyWrapper>.New(
             scheduleId,
             scheduleUnit.Kind.ToDomain(),
@@ -35,9 +35,9 @@ internal static class ScheduleUnitExtensions
     };
 
     public static Fin<ScheduleUnit<WeekTimeOnly>> ToWeeklyScheduleUnit(this ScheduleUnitDb scheduleUnit) =>
-        from id in Id<ScheduleUnit<WeekTimeOnly>>.From(scheduleUnit.Id)
-        from scheduleId in Id<ModuleSchedule>.From(scheduleUnit.ScheduleId)
         from entry in scheduleUnit.Interval.ToWeeklyEntry()
+        let id = new Id<ScheduleUnit<WeekTimeOnly>>(scheduleUnit.Id)
+        let scheduleId = new Id<ModuleSchedule>(scheduleUnit.ScheduleId)
         from domain in ScheduleUnit<WeekTimeOnly>.New(
             scheduleId,
             scheduleUnit.Kind.ToDomain(),

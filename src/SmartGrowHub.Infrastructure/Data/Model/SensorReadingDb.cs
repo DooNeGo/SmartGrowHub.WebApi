@@ -6,7 +6,7 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 [EntityTypeConfiguration(typeof(SensorReadingConfiguration))]
 internal sealed class SensorReadingDb : IContainsId
 {
-    public required string Id { get; set; }
+    public required Ulid Id { get; set; }
     
     public required string SensorId { get; set; }
 
@@ -16,7 +16,7 @@ internal sealed class SensorReadingDb : IContainsId
 
     public required DateTime CreatedAt { get; set; }
 
-    public required string GrowHubId { get; set; }
+    public required Ulid GrowHubId { get; set; }
 
     public GrowHubDb? GrowHub { get; set; }
 }

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using SmartGrowHub.Infrastructure.Data.Converters;
 using SmartGrowHub.Infrastructure.Data.Model;
 
 #pragma warning disable 219, 612, 618
@@ -28,8 +29,10 @@ namespace SmartGrowHub.Infrastructure.Data.CompiledModels
 
             var sensorReadingDbId = runtimeEntityType.AddProperty(
                 "SensorReadingDbId",
-                typeof(string),
-                afterSaveBehavior: PropertySaveBehavior.Throw);
+                typeof(Ulid),
+                afterSaveBehavior: PropertySaveBehavior.Throw,
+                valueConverter: new UlidConverter());
+            sensorReadingDbId.SetSentinelFromProviderValue(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
             sensorReadingDbId.AddAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
             var magnitude = runtimeEntityType.AddProperty(

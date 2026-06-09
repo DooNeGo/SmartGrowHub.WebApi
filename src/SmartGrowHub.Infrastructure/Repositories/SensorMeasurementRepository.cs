@@ -62,9 +62,9 @@ internal sealed class SensorMeasurementRepository :
     };
 
     protected override Fin<SensorMeasurement> ToDomain(SensorReadingDb db) =>
-        from id in Id<SensorMeasurement>.From(db.Id)
-        from growHubId in Id<GrowHub>.From(db.GrowHubId)
         from sensorId in NonEmptyString.From(db.SensorId)
+        let id = new Id<SensorMeasurement>(db.Id)
+        let growHubId = new Id<GrowHub>(db.GrowHubId)
         select new SensorMeasurement(
             id, growHubId, sensorId, ToDomain(db.Type), db.Quantity.ToDomain(), db.CreatedAt);
 

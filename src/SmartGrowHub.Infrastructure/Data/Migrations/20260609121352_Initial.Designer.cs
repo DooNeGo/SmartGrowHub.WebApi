@@ -12,7 +12,7 @@ using SmartGrowHub.Infrastructure.Data;
 namespace SmartGrowHub.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20260531174925_Initial")]
+    [Migration("20260609121352_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,8 +27,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Model")
                         .IsRequired()
@@ -38,9 +38,9 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
@@ -51,12 +51,12 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.GrowHubModuleDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
-                    b.Property<string>("GrowHubId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -70,15 +70,15 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.OneTimePasswordDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Value")
                         .IsRequired()
@@ -94,12 +94,12 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.PlantDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
-                    b.Property<string>("GrowHubId")
+                    b.Property<byte[]>("GrowHubId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -119,12 +119,12 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ScheduleDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
-                    b.Property<string>("GrowHubModuleId")
+                    b.Property<byte[]>("GrowHubModuleId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -139,15 +139,15 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.ScheduleUnitDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
                     b.Property<int>("Kind")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ScheduleId")
+                    b.Property<byte[]>("ScheduleId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
@@ -158,13 +158,18 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.SensorReadingDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("GrowHubId")
+                    b.Property<byte[]>("GrowHubId")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("SensorId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Type")
@@ -179,8 +184,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("EmailAddress")
                         .HasMaxLength(200)
@@ -203,8 +208,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("SmartGrowHub.Infrastructure.Data.Model.UserSessionDb", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -213,13 +218,13 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                     b.Property<DateTime>("Expires")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("RefreshToken")
+                    b.Property<byte[]>("RefreshToken")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
-                    b.Property<string>("UserId")
+                    b.Property<byte[]>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("bytea");
 
                     b.HasKey("Id");
 
@@ -296,8 +301,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.IntervalDb", "Interval", b1 =>
                         {
-                            b1.Property<string>("ScheduleUnitDbId")
-                                .HasColumnType("text");
+                            b1.Property<byte[]>("ScheduleUnitDbId")
+                                .HasColumnType("bytea");
 
                             b1.Property<string>("End")
                                 .IsRequired()
@@ -317,8 +322,8 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
 
                     b.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "Quantity", b1 =>
                         {
-                            b1.Property<string>("ScheduleUnitDbId")
-                                .HasColumnType("text");
+                            b1.Property<byte[]>("ScheduleUnitDbId")
+                                .HasColumnType("bytea");
 
                             b1.Property<float>("Magnitude")
                                 .HasColumnType("real");
@@ -347,12 +352,14 @@ namespace SmartGrowHub.Infrastructure.Data.Migrations
                 {
                     b.HasOne("SmartGrowHub.Infrastructure.Data.Model.GrowHubDb", "GrowHub")
                         .WithMany("SensorReadings")
-                        .HasForeignKey("GrowHubId");
+                        .HasForeignKey("GrowHubId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.OwnsOne("SmartGrowHub.Infrastructure.Data.Model.QuantityDb", "Quantity", b1 =>
                         {
-                            b1.Property<string>("SensorReadingDbId")
-                                .HasColumnType("text");
+                            b1.Property<byte[]>("SensorReadingDbId")
+                                .HasColumnType("bytea");
 
                             b1.Property<float>("Magnitude")
                                 .HasColumnType("real")

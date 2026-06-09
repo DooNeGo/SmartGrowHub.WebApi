@@ -4,7 +4,6 @@ using SmartGrowHub.Domain.Common;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Infrastructure.Data;
 using System.Collections.Immutable;
-using System.Linq.Expressions;
 using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Infrastructure.Data.Model;
 using SmartGrowHub.Infrastructure.Data.Model.Extensions;
@@ -17,7 +16,7 @@ internal sealed class UserSessionRepository : Repository<UserSession, UserSessio
 
     public UserSessionRepository(ApplicationContext context) : base(context) => _context = context;
 
-    public OptionT<IO, UserSession> GetByRefreshTokenValue(NonEmptyString value) =>
+    public OptionT<IO, UserSession> GetByRefreshTokenValue(Ulid value) =>
         GetByPredicate(session => session.RefreshToken == value);
 
     public IO<ImmutableList<UserSession>> GetAllByUserId(Id<User> id) =>

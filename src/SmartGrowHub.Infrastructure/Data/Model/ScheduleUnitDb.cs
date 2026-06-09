@@ -6,7 +6,7 @@ namespace SmartGrowHub.Infrastructure.Data.Model;
 [EntityTypeConfiguration(typeof(ScheduleUnitConfiguration))]
 internal sealed class ScheduleUnitDb : IContainsId
 {
-    public required string Id { get; set; }
+    public required Ulid Id { get; set; }
     
     public required ScheduleUnitKindDb Kind { get; set; }
     
@@ -14,7 +14,7 @@ internal sealed class ScheduleUnitDb : IContainsId
     
     public required IntervalDb Interval { get; set; }
     
-    public required string ScheduleId { get; set; } 
+    public required Ulid ScheduleId { get; set; } 
     
     public ScheduleDb? Schedule { get; set; }
 }

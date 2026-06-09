@@ -14,7 +14,7 @@ internal sealed class RefreshTokensEndpoint
     public static ValueTask<IResult> Refresh(
         RefreshTokensRequest requestDto, RefreshTokensUseCase useCase,
         ILogger<RefreshTokensEndpoint> logger, CancellationToken cancellationToken) => (
-            from oldToken in NonEmptyString.From(requestDto.RefreshToken)
+            from oldToken in Ulid.From(requestDto.RefreshToken)
                 .MapFail(error => Error.New("Invalid refresh token format", error))
                 .ToIO()
             from response in useCase.RefreshTokens(oldToken)

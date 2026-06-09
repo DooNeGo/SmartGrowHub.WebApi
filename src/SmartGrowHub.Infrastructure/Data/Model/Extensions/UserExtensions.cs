@@ -17,9 +17,8 @@ internal static class UserExtensions
     };
 
     public static Fin<User> TryToDomain(this UserDb user) =>
-        from id in Id<User>.From(user.Id)
-        from u in User.Create(id,
+        User.Create(
+            new Id<User>(user.Id),
             EmailAddress.From(user.EmailAddress).ToOption(),
-            PhoneNumber.From(user.PhoneNumber).ToOption())
-        select u;
+            PhoneNumber.From(user.PhoneNumber).ToOption());
 }

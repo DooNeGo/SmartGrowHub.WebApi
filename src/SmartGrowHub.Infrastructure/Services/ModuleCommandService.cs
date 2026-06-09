@@ -53,7 +53,7 @@ internal sealed class ModuleCommandService : IModuleCommandService
         ImmutableList<MqttApplicationMessage>.Builder messages = ImmutableList.CreateBuilder<MqttApplicationMessage>();
         
         messages.Add(CreateMessage(topic, new ModuleCommandMqtt(
-            module.GrowHubId.Value,
+            module.GrowHubId,
             Ulid.NewUlid().ToString(),
             ToMqtt(module.Type),
             ModuleModeMqtt.None,
@@ -61,7 +61,7 @@ internal sealed class ModuleCommandService : IModuleCommandService
             null)));
         
         messages.Add(CreateMessage(topic, new ModuleCommandMqtt(
-            module.GrowHubId.Value,
+            module.GrowHubId,
             Ulid.NewUlid().ToString(),
             ToMqtt(module.Type),
             ToMqtt(schedule),
@@ -93,7 +93,7 @@ internal sealed class ModuleCommandService : IModuleCommandService
         NonEmptyString topic, GrowHubModule module, ScheduleUnit<T> unit)
         where T : IComparisonOperators<T, T, bool>, ISubtractionOperators<T, T, TimeSpan> =>
         CreateMessage(topic, new ModuleCommandMqtt(
-            module.GrowHubId.Value,
+            module.GrowHubId,
             Ulid.NewUlid().ToString(),
             ToMqtt(module.Type),
             ModuleModeMqtt.None,
@@ -102,7 +102,7 @@ internal sealed class ModuleCommandService : IModuleCommandService
 
     private static ScheduleUnitMqtt ToMqtt<T>(ScheduleUnit<T> unit)
         where T : IComparisonOperators<T, T, bool>, ISubtractionOperators<T, T, TimeSpan> => new(
-        unit.Id.Value, ToMqtt(unit.Kind), ToMqtt(unit.TimeInterval), ToMqtt(unit.Quantity));
+        unit.Id, ToMqtt(unit.Kind), ToMqtt(unit.TimeInterval), ToMqtt(unit.Quantity));
 
     private static QuantityMqtt ToMqtt(Quantity quantity) => new((int)quantity.Magnitude, ToMqtt(quantity.Unit));
 

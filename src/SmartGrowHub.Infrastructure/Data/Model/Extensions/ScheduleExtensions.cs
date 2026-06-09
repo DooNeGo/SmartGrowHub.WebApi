@@ -34,18 +34,20 @@ internal static class ScheduleExtensions
         return scheduleDb;
     }
 
-    public static Fin<ModuleSchedule> ToDomain(this ScheduleDb scheduleDb) =>
-        from id in Id<ModuleSchedule>.From(scheduleDb.Id)
-        from moduleId in Id<GrowHubModule>.From(scheduleDb.GrowHubModuleId)
-        from schedule in scheduleDb.Type switch
+    public static Fin<ModuleSchedule> ToDomain(this ScheduleDb scheduleDb)
+    {
+        var id = new Id<ModuleSchedule>(scheduleDb.Id);
+        var moduleId = new Id<GrowHubModule>(scheduleDb.GrowHubModuleId);
+        
+        return scheduleDb.Type switch
         {
             ScheduleTypeDb.Disabled => Fin.Succ<ModuleSchedule>(new DisabledSchedule(id, moduleId)),
             ScheduleTypeDb.Enabled => Fin.Succ<ModuleSchedule>(new EnabledSchedule(id, moduleId)),
             ScheduleTypeDb.Daily => ToDailySchedule(scheduleDb, id, moduleId).Cast<DailySchedule, ModuleSchedule>(),
             ScheduleTypeDb.Weekly => ToWeeklySchedule(scheduleDb, id, moduleId).Cast<WeeklySchedule, ModuleSchedule>(),
             _ => throw new ArgumentOutOfRangeException(nameof(scheduleDb), scheduleDb.Type, null)
-        }
-        select schedule;
+        };
+    }
 
     private static Fin<DailySchedule> ToDailySchedule(ScheduleDb scheduleDb, Id<ModuleSchedule> id,
         Id<GrowHubModule> moduleId) =>
