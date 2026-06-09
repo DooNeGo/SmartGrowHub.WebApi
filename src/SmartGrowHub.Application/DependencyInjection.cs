@@ -12,5 +12,5 @@ public static class DependencyInjection
             .AddTransient<RefreshTokensUseCase>()
             .AddTransient<VerifyOtpUseCase>()
             .AddTransient<CreateGrowHubUseCase>()
-            .AddTransient<UpdateScheduleUseCase>();
+            .AddTransient<SetScheduleUseCase>();
 }

@@ -5,6 +5,6 @@ namespace SmartGrowHub.Infrastructure.Services;
 
 internal sealed class FileService : IFileService
 {
-    public IO<string> ReadAllTextAsync(string path, Encoding encoding) =>
+    public IO<string> ReadAllText(string path, Encoding encoding) =>
         IO.liftAsync(env => File.ReadAllTextAsync(path, encoding, env.Token));
 }

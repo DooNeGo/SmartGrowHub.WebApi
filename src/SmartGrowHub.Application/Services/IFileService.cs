@@ -4,5 +4,5 @@ namespace SmartGrowHub.Application.Services;
 
 public interface IFileService
 {
-    IO<string> ReadAllTextAsync(string path, Encoding encoding);
+    IO<string> ReadAllText(string path, Encoding encoding);
 }

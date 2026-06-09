@@ -22,7 +22,7 @@ internal sealed class EmailTemplateService(
     private IO<string> GetTemplate(string templateName)
     {
         string path = Path.Combine(environment.WebRootPath, "templates", templateName);
-        return fileService.ReadAllTextAsync(path, Encoding.Default);
+        return fileService.ReadAllText(path, Encoding.Default);
     }
 
     private static string ReplacePlaceholders(string template, (string, string)[] placeholders)
