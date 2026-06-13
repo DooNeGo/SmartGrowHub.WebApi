@@ -3,7 +3,10 @@ using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Shared.Results;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Application.Services;
+using SmartGrowHub.Application.UseCases.GrowHubs;
 using SmartGrowHub.AspNetCore.Modules.Extensions;
+using SmartGrowHub.Domain.Common;
+using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model.Programs;
 using SmartGrowHub.Shared.GrowHubs.Model;
 using static Microsoft.AspNetCore.Http.Results;
@@ -17,7 +20,8 @@ internal sealed class GetGrowHubsEndpoint
         IAccessTokenReader accessTokenReader, ILogger<GetGrowHubsEndpoint> logger,
         CancellationToken cancellationToken) => (
             from userId in accessTokenReader.GetUserId(context)
-            from growHubs in growHubRepository.GetAllByUserId(userId)
+            let growHubId = GrowHubsDefaults.GrowHubId
+            from growHubs in growHubRepository.GetById(growHubId).Run().Map(option => option.AsEnumerable())
             select growHubs.Select(ToDto))
         .RunSafeAsync(EnvIO.New(token: cancellationToken))
         .Map(fin => fin.Match(

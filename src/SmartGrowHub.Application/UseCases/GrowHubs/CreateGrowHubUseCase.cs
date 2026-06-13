@@ -1,11 +1,16 @@
 using System.Collections.Immutable;
 using SmartGrowHub.Application.Repositories;
 using SmartGrowHub.Domain.Common;
-using SmartGrowHub.Domain.Extensions;
 using SmartGrowHub.Domain.Model;
 using SmartGrowHub.Domain.Model.Programs;
 
 namespace SmartGrowHub.Application.UseCases.GrowHubs;
+
+public static class GrowHubsDefaults
+{
+    public static readonly Id<GrowHub> GrowHubId =
+        Domain.Common.Id<GrowHub>.From("01KSZJND2Z4K7CMQJ7B1NVG2BW").ThrowIfFail();
+}
 
 public sealed class CreateGrowHubUseCase
 {
@@ -21,13 +26,16 @@ public sealed class CreateGrowHubUseCase
             ModuleType.Heater, ModuleType.Humidifier, ModuleType.AirFlap,
             ModuleType.Fan, ModuleType.WaterPump
         ];
+
+        Id<GrowHub> id = GrowHubsDefaults.GrowHubId;
         
-        return
-            from id in Domain.Common.Id<GrowHub>.From("01KSZJND2Z4K7CMQJ7B1NVG2BW").ToIO()
-            let growHub = new GrowHub(id, userId, model, model,
-                modulesTypes.Select(type => CreateDefaultModule(id, type)).ToImmutableList(), Option.None)
-            from _ in _repository.AddAndSave(growHub)
-            select _;
+        ImmutableList<GrowHubModule> modules = modulesTypes
+            .Select(type => CreateDefaultModule(id, type))
+            .ToImmutableList();
+        
+        GrowHub growHub = new(id, userId, model, model, modules, Option.None);
+
+        return _repository.Add(growHub);
     }
 
     private static GrowHubModule CreateDefaultModule(Id<GrowHub> growHubId, ModuleType type)
