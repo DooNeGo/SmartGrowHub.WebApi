@@ -48,18 +48,13 @@ public sealed class MqttHostedService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await _mqttClient.ConnectAsync(_options, cancellationToken);
-        await _mqttClient.SubscribeAsync("#", MqttQualityOfServiceLevel.AtMostOnce, cancellationToken);
+        await _mqttClient.SubscribeAsync("growHubs/sensors", MqttQualityOfServiceLevel.AtMostOnce, cancellationToken);
 
         _mqttClient.ApplicationMessageReceivedAsync += args =>
         {
             string stringPayload = args.ApplicationMessage.ConvertPayloadToString();
-
-            _logger.LogInformation("Received message with topic: {topic} and payload: {payload}",
-                args.ApplicationMessage.Topic, stringPayload);
-
-            return (args.ApplicationMessage.Topic.Contains("growHubs/sensors")
-                    ? HandleSensors(stringPayload)
-                    : IO.pure(unit))
+            
+            return HandleSensors(stringPayload)
                 .RunSafeAsync(EnvIO.New(token: cancellationToken))
                 .Map(fin => fin.MapFail(error =>
                 {
