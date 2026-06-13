@@ -37,9 +37,8 @@ public static class DependencyInjection
         private IServiceCollection AddDbContext(IConfiguration configuration) =>
             services.AddDbContextPool<ApplicationContext>(options => options
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll)
-                //.UseModel(ApplicationContextModel.Instance)
-                .EnableDetailedErrors()
-                .EnableSensitiveDataLogging()
+                //.EnableDetailedErrors()
+                //.EnableSensitiveDataLogging()
                 .UseNpgsql(
                     configuration.GetConnectionString("DatabaseConnection"),
                     sqliteOptions => sqliteOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
