@@ -25,7 +25,7 @@
     networks:
       - backend
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U smartgrowhub -d SmartGrowHub"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d SmartGrowHub"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -43,6 +43,8 @@
         condition: service_started
     ports:
       - "8080:8080"
+    volumes:
+      - ./data/.aspnet/DataProtection-Keys:/root/.aspnet/DataProtection-Keys
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
