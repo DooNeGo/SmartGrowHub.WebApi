@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SmartGrowHub.Application;
@@ -7,7 +6,6 @@ using SmartGrowHub.AspNetCore.HostedServices;
 using SmartGrowHub.AspNetCore.Services;
 using SmartGrowHub.Infrastructure;
 using SmartGrowHub.Infrastructure.Tokens;
-using SmartGrowHub.Shared.SerializerContext;
 using SmartGrowHub.AspNetCore.Modules;
 
 namespace SmartGrowHub.AspNetCore;
@@ -18,11 +16,11 @@ internal sealed class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.ConfigureHttpJsonOptions(options =>
-        {
-            JsonSerializerOptions serializerOptions = options.SerializerOptions;
-            serializerOptions.TypeInfoResolverChain.Add(SmartGrowHubSerializerContext.Default);
-        });
+        // builder.Services.ConfigureHttpJsonOptions(options =>
+        // {
+        //     JsonSerializerOptions serializerOptions = options.SerializerOptions;
+        //     serializerOptions.TypeInfoResolverChain.Add(SmartGrowHubSerializerContext.Default);
+        // });
         
         AccessTokenConfiguration configuration = builder.Configuration
             .CreateAccessTokenConfiguration()
